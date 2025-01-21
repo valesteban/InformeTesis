@@ -1,2 +1,1 @@
 = Resumen
-#lorem(400)

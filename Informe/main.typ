@@ -9,16 +9,16 @@
 )
 
 // Resumen
-#include "inicio/resumen.typ"
-#pagebreak()
+// #include "inicio/resumen.typ"
+// #pagebreak()
 
 // Dedicatoria
 #align(right + horizon, [_dedicatoria._ \ ])
 #pagebreak()
 
 // Agradecimientos
-#include "inicio/agradecimientos.typ"
-#pagebreak()
+// #include "inicio/agradecimientos.typ"
+// #pagebreak()
 
 // Indice
 #[
@@ -53,34 +53,40 @@
 
 // Configuración para documento principal
 #show: conf
-
+//----------------------------------------------------------
 // Inicio documento
 
 // Capitulo 1: Introducción
 #include "capitulos/1-Introduccion.typ"
 #pagebreak()
 
-// Capitulo 3: Marco Teórico
-#include "capitulos/2-MarcoTeorico.typ"
+// Capitulo 2: Internet
+#include "capitulos/2-Internet.typ"
 #pagebreak()
 
-// Capitulo 3: Datos
-#include "capitulos/3-Datos.typ"
+// Capitulo 3: BGP
+#include "capitulos/3-BGP.typ"
 #pagebreak()
 
-// Capitulo 4: Experimentos
-#include "capitulos/4-Experimentos.typ"
+// Capitulo 4: AS Inference
+#include "capitulos/4-AS-Inference.typ"
+#pagebreak()
 
-// Capitulo 5: Resultados y Analisis
-#include "capitulos/5-Analisis.typ"
+// Capitulo 5: Redes Neuronales
+#include "capitulos/5-Redes-Neuronales.typ"
+#pagebreak()
 
-#include "capitulos/5-Internet.typ"
-#include "capitulos/BGP.typ"
-#include "capitulos/AS-Inference.typ"
-// Capitulo 2: Background/Estado del arte
-//#include "capitulos/2-estadoDelArte.typ"
-//#pagebreak()
+// Capitulo 6: Datos
+#include "capitulos/6-Datos.typ"
+#pagebreak()
 
+// Capitulo 7: Experimentos
+#include "capitulos/7-Experimentos.typ"
+#pagebreak()
+
+// Capitulo 8: Análisis
+#include "capitulos/8-Analisis.typ"
+#pagebreak()
 
 #figure(
   image("imagenes/puma.jpg", width: 90%),
