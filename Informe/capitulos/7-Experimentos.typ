@@ -1,24 +1,22 @@
-= Clasificaction tipo de relaciones entre Sistemas Autónomos
+= Experimentos
 
-ToR information allows us to infer the possible routes
-selected by BGP, e.g., in case of a link failure
 
 
 == Benchmark
 
 Para abordar este problema se comenzó por la creación de un Benchmark.
-
+.....
 
 Para esto se probaron los siguientes metodos anteriores:
 1. Gao [sacado de BGP2VEC] Paper - @InferringASRelatioships2001
 2. Ruan [sacado de BGP2VEC]: ntroduced by Ruan
 and Susan Varghese @computing-observed-autonomous-system-relationships-in-the-internet 
-3. Sark [sacado de BGP2VEC]: Es el algortimo presentado por Subramanian et al.@CharacterizingIAS  "Characterizing the Internet Hierarchy from Multiple Vantage Points"
-4. AS Rank @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
-5. TopoScope @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
-6. ProbLink @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
-7. ND-ToR @Near-Deterministic-Inference-of-AS-Relationships using
-two different cores
+// 3. Sark [sacado de BGP2VEC]: Es el algortimo presentado por Subramanian et al.@CharacterizingIAS  "Characterizing the Internet Hierarchy from Multiple Vantage Points"
+// 4. AS Rank @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
+// 5. TopoScope @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
+// 6. ProbLink @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
+// 7. ND-ToR @Near-Deterministic-Inference-of-AS-Relationships using
+// two different cores
 
 
 
@@ -36,10 +34,6 @@ Las Relaciones entre SA son privadas, esto hace que en algoritmos de inferencia 
 Lo primero que podriamos hacer es buscar  un SA que publique sus AS relaciones.
 esto fue loq ue hoz la personsa de la tesis  y creo un dataset a partir de la informacion que provee Hurricane's BGP Toolkit.
 
-
-== Hurricane BGP Toolkit
-El Hurricane Electric BGP Toolkit es un conjunto de herramientas en línea desarrollado por Hurricane Electric, diseñado para analizar y monitorear datos de BGP.
-https://bgp.he.net/
 
 
 = Experimentos
