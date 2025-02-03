@@ -1,82 +1,88 @@
 = Border Gateway protocol (BGP)
 
-Es un Inter-Autoonomous Sistem protocolo de ruteo, el cual tiene como principal funcion el intercambio de de network reachability entre otros sistemas BGP.
+Como se mencionó en la sección anterior, BGP @RFC-BGP es un protocolo de enrutamiento utilizado para intercambiar información de rutas entre Sistemas Autónomos en Internet. El cual utiliza TCP @RFC793-TCP como su protocolo de transporte, lo que significa que no necesita preocuparse por la fragmentación de paquetes, la confirmación de recepción (ACK), la retransmisión de datos, entre otros aspectos de confiabilidad.
 
-Dicho protocolo usa TCP [RFC793] como su protocolo de transport, por lo que no tiene necesidad de preocuparse de la implementacion en casos de fragemnyacion de paquetes, ACK, retransmision ,etc.
-//TODO: Explicar como funciona que es incremental corto porque despues sale maś detallado.
-EL protocolo BGP ocupa el puerto 179 TCP y es un protoclo del tipo: Path Vector, loq ue quiere decir que  ....
+Como sabemos el Internet esta formado por miles de redes privadas, públicas, corporativas y gubernamentales que están interconectadas mediante protocolos estandarizados entre sí. BGP se encarga de analizar todas la posibles rutas a los diferentes destinos y seleccionar la mejor ruta. 
+
+A medida que un paquete viaja por las diferentes redes de Internet, cada Sistema Autonomos decide el siguiente salto por el cual se enviara un el mensaje. Esta desición se toma en base a la información de ruteo recolectada por en intercambio de mensaje BGP.
 
 
-*Resumen del funcionaqmiento de BGP:*
+Por ejemplo, cuando un usuario en Chile carga una página web con servidores en Argentina, BGP permite que la comunicación se establezca ya que asegura que los paquetes sigan la mejor ruta disponible a través de múltiples redes interconectadas.
 
-Una ves que la coneccino TCP es estblecida entre los pares, estos intercambian mensajes OPEN para confirmar los paraemtros de connecion para el correcto funcionamiento de BGP. Luego se envia un mensaje KEEPALIVE para confirmar la coneccion.
-Luego la información que se envia consiste en una porcion de la BGP routing tablel que es permitida por las politicas de exportaciond eruteo , llamada la Adj-RIB-Out. A medida que la tabla de ruteo va cambiando se envian actualizaciones incrementales a traves de mensajes UPDATE o mensaje KEEPALIVE para asegurar que la xonexion entre ambos extremso sigue viva. En caso de algun errore se envian mensaje NOTIFICATION que indica el tipo de error que se encontro y luego de enviado este la conexión es cerrada, ene ste caso todas la rutas guardads de BGP son borradas.
+== Funcionaqmiento de BGP
 
-Un mensaje BGP es procesado una vez que es completamente recibido, su tmañp maximo  y minimo son de 4096 y 19 octetos respectivamente, este ultimo corresponde unicaamente al HEADER de un mensaje BGP.
-El tamaño minimo de un mensaje BGP es de 19 octetos correspondiente unicamente al HEADER de un mensaje, existen 4 tipos de mensajes en BGP: OPEN, UPDATE, KEEPALIVE y NOTIFICATION El tamaño minimo de un mensaje BGP es de 19 octetos correspondiente unicamente al HEADER de un mensaje
+Una vez que la conexión TCP se ha establecido entre los pares BGP, estos intercambian mensajes _OPEN_ para confirmar los parámetros de la sesión. Luego, envían un mensajes _KEEPALIVE_ para confirmar la conexión.
+
+La infomración que se intercambia en primera instancia consiste en una porción de la tabla de entrutamiento de BGP, llamada _Adj-RIB-Out_, la cual está filtrada de acuerdo a las politicas locales de exportación hacia los diferentes AS. a medida que esta tabla va cambiando en envian actualizaciones incrementales mediando mensajes _UPDATE_. 
+Además, para asegurar la conexión sigue activa, los pares BGP intercambian cada cierto tiempo mensajes _KEEPALIVE_.
+
+En caso de que se detecte algun tipo de error durante la conexión, se envia un mensaje _NOTIFICATION_ el cual indica el tipo de error. Tras su envio la conexipon BGP se cierra y todas las rutas aprendidas en la sesión son eliminadas.
+
+
+Los mensajes BGP solo son procesados una vez que han sido completamente recibidos. Su tamaño mínimo es de 19 octetos, correspondiente al _HEADER_, mientras que el tamaño máximo es de 4096 octetos. Existen 4 tipos de mensajes en BGP: _OPEN_, _UPDATE_, _KEEPALIVE_ y _NOTIFICATION_.
+
+
+A continuación la figura @FuncionamientoBGP muestra un ejemplo de como BGP propaga la información de ruteo a través de los diferentes AS. quienes repiten el proceso de anunciar la dirección de destino a sus pares modificando la informacipon de AS PATH y asi sucesivamente hasta qie la información llega al AS 64501, el cual gracias a la informacion acumula podra sabra como llegar a la red del AS 64503 y podrá eleir entre los dos posibles rutas que tiene almacenda dentro de sus rutas .
+
+
+
+La figura @FuncionamientoBGP muestra cómo BGP propaga la información de ruteo entre distintos AS. Cada sistema autónomo anuncia la dirección de destino a sus pares, en este caso especifico el AS 64503 anuncia su dirección a sus pares 64502 y 64504, quienes a su vez anuncian la dirección a sus pares, modificando el _AS_PATH_ a medida que la información se propaga. Finalmente, el AS 64501 recibe estos anuncios y, basándose en la información acumulada, determinar la mejor ruta para alcanzar la red del AS 64503.
+
+#figure(
+  image("../imagenes/BGPFuncionamiento.png", width: 50%),
+  caption: [Ejemplo de propagación de anuncion. En este caso AS 6453 comienza anunciando su dirección a sus pares.],
+) <FuncionamientoBGP>
+
+
+
+
+
+
+
 
 *Mensaje OPEN*
 
-Luego de establecida la conexión TCP entre los pares BGP, el primer mensaje que se envia en un OPEN con el cual ambso lados confirman los parametros de la conexión.
-Aqui se indica la versio de BGP que se esta usando, el AS del emisor, el hold time, el BGP identifier y los parametros opcionales.
-EL hold time corresponde al tiempo maximo que puede pasar entre la recepcion de un mensaje KEEPALIVE y/o UPDATE del emisor antes de que la conexión sea cerrada.
+Luego de establecida la conexión TCP entre los pares BGP, el primer mensaje que se envia en un mensaje _OPEN_ ,mediante el cual ambos lados confirman los parámetros de la conexión.
+
+En este mensaje se especifica la versión de BGP ha utilizar, el número de Sistema Autónomo (AS) del emisor, el Hold Time, el BGP identifier y los parámetros opcionales.
+
+El Hold Time define el tiempo máximo que puede pasar sin recibir un mensaje _KEEPALIVE_ o _UPDATE_  una sesión antes de que la conexión sea cerrada.
+
 
 *Mensaje UPDATE*
 
-Este mensaje es usado para transferir la información de ruteo entre los pares BGP. En este se anuncian las nuevas rutas y withdraws de rutas que ya no son validas. Aqui se incluyen los path attributes  los cuales entregan onformación sobre las rutas que se estan anunciando, alguns ejemplos de estos son: ORIGIN, AS_PATH, NEXT_HOP, MULTI_EXIT_DISC, LOCAL_PREF, ATOMIC_AGGREGATE, AGGREGATOR.
-//FIXME: Ver si poner más informacion
+Se utiliza para transferir informaciónde enrutamiento entre los pares BGP. A través de este mensaje se anuncian nuevas rutas y se notifican los withdraws de aquellas que ya no son válidas.
+
+Además, estos mensajes incluyen path atributes, los cuales proporcionn información sobre las rutas que se están anunciando para que luego cada AS pueda decidir la mejor ruta a los ddifernetes destinos. Algunos ejemplos de estos atributos son ORIGIN, _AS_PATH_, _NEXT_HOP_, _MULTI_EXIT_DISC_, _LOCAL_PREF_, _ATOMIC_AGGREGATE_ y _AGGREGATOR_.
+
 
 *Mensaje KEEPALIVE*
 
-El intercambio de mensajes KEEPALIVE dentro del protocolo BGP es usado para cnfirmar   ue la conexion entre ambos pares continua viva, de tal forma que no expire el hold time.El mensaje KEEPALIVE consiste unicamente el HEADER del mensaje, donde se infdica que este mensaje BGP  corresponde a un KEEP alive por medio del campo _type_ el cual corrsponde al valor 2 y por lo tanto tiene un tamaño de 19 octetos.
+El intercambio de mensajes _KEEPALIVE_ dentro del protocolo BGP se utiliza para confirmar que la conexión entre ambos pares sigue activa, evitando que el hold time expire.
+
+Este mensaje consta unicamente del _HEADER_ de un mensaje BGP, donde se indica que corresponde a un _KEEPALIVE_ por medio del campo _type_, cuyo valor es 2el cual corrsponde al valor 2. Dicho mensaje tiene un tamaño de 19 octetos.
+
 
 *Mensaje NOTIFICATION*
 
-Este tipo de mensaje es enviado cuando algun error es detectado y luego de ser enviado este mensaje , la conexión es cerrada. El mensaje contiene un codigo de error y un subcodigo de error, los cuales indican en que que tipo de mensaje se encontro el error y que tipo de error fue. Ademas de esto el mensaje contiene un campo de datos el cual entrega mas informacion sobre el error encontrado.
 
-//FIXME: Ver si incluyo State machien BGP
+El mensaje _NOTIFICATION_ se envía cuando se detecta un error en la comunicación BGP. Una vez enviado, la conexión es cerrada.
 
-== Routing Information Base (RIB)
-
-Cuando se usa BGP, los routers BGP reciben mensaje UPDATE de sus vecinos BGP, los cuales son analiados y filtrados basandose en las policias que tenga es AS, ára leso ser anunciada a sus otros vecinos. Para esto BGP usa una base de datos llamada Routing Information Base (RIB),esta consta de tres partes:
-
-- *Adj-RIB-In:* Guarda  la routing information de los mensaje UPDATES recibidos de sus peers BGP. store unprocessed routing info  leaprendida de BGP updates recibida se sus peers. 
-- *Loc-RIB:* Contiene las rutas que el BGP router selecciona luego de aplicar sus policias locales (proceso de desición) a la información de la _Adj-RIB-in_.
-- *Adj-RIB-Out:* Almacena la información que el BGP router selecciona para ser anunciada/Advertised a sus pares BGP. Es la informacipon que se incluye en los mensaje UPDATE.
-
-El flujo de información en BGP es el siguiente: Se recibe la información de los mensjaes UPDATE de sus vecinos, se guarda en la _Adj-RIB-In_, uno por cada peer. Luego la data es analizada y las porciones adecuadas se seleccionan para actualizar la _Loc-RIB_. Finalmente la indormación de la Loc-RIBse escribe en _Adj-RIB-Out_ para ser enviada a los vecinos BGP. Este flujo se conoce como el proceso de desicion BGP.
-//FIXME: Revisar esto del RFC sección 9, Esta información se saco 100% de las slides de BGP del ramo de Redes
-
-Sin embargo no todas las rutas del _Loc-RIB_ son agregadas a la tabla de enrutamiento la cual consiste en la informacion que el router ocupa para hacer el forwarding de paquetes, estan deben cubrir ciertos criterios que estan dadso por el software/vendor del router.
+Este mensaje incluye un código de error y un subcódigo de error, los cuales indican en qué tipo de mensaje se produjo el error y la zona  específica del problema. Además, contiene un campo de datos que proporciona información adicional sobre el error detectado.
 
 
-La importancia de esta iinformación radica en que la mayoria de los metodos de inferencia de relaciones entre ASes ocupan la información de las RIBs como input de los metodos.
+== BGP Routing Information Base (RIB)
 
-// FIXME: Ver si agregar o no el proceso de desición de BGP
-
-
-¿Cómo es la propagación de las BGP Routes?
+Cuando se utiliza BGP, los routers BGP reciben mensajes _UPDATE_ de sus vecinos, los cuales son analizados y filtrados según las políticas locales de ruteo del AS, para luego las rutas seleccionadas ser anunciados a sus vecinos. Para esto BGP utiliza una base de datos denominada Routing Information Base (RIB), que se compone de tres partes:
 
 
+- *Adj-RIB-In:* Almacena la información de ruteo de los mensajes UPDATE recibidos de los vecinos BGP. 
 
-¿Cómo seecciona las rutas BGP?
+- *Loc-RIB:* Contiene la infomración de ruteo local, es decir las mejores rutas seleccionadas para cada dirección.
 
+- *Adj-RIB-Out:* Guarda la información selecionada por router para ser anunciada a sus pares. Consiste en la información de Loc_RIBs luego de ser aplicadas las politicas internas de ruteo. Esta es la información que se incluye en los mensajes UPDATE.
 
+El flujo de información en BGP y el proceso de toma de decisiones de rutas se realiza de la siguiente manera:
+primero, se reciben los mensajes UPDATE de los vecinos, los cuales se almacenan en la Adj-RIB-In, una entrada por cada vecino. Luego, se evalúa el grado de preferencia de cada ruta almacenada en la Adj-RIB-In. Con base en esta evaluación, se seleccionan las mejores rutas para cada destino y se instalan en la Loc-RIB. Finalmente, la información contenida en la Loc-RIB se transfiere a la Adj-RIB-Out para ser anunciada a los vecinos BGP, siguiendo las políticas de ruteo locales. Este flujo de información se conoce como el proceso de decisión BGP.
 
-
-
-
-
-
-
-
-
-// == BGP Communities
-// Es un atributo, tag o label  
-
-// @RFC-BGP-Communities-Attribute
-
-
-// LINKS
-
-// - Como funciona BGP, muy buena explicacion: https://blog.cloudflare.com/es-es/prepends-considered-harmful/
+Es importante destacar que las bases de datos que almacenan la información de rutas BGP no son lo mismo que la tabla de ruteo de un router, que es la que el router utiliza para realizar el forwarding de los paquetes. Las rutas almacenadas en la RIB deben cumplir con ciertos criterios, definidos por el software o el proveedor del router, para ser agregadas a la tabla de ruteo.
