@@ -111,3 +111,4 @@
 
 // Anexos
 #include "anexos/anexoA.typ"
+#include "anexos/anexoB.typ"

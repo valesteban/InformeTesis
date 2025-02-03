@@ -1,5 +1,45 @@
 = Experimentos
 
+// == Creación de grafos.
+
+// PAra trabajar con un grafo de la libreria DGL, los nodos deben tener una representación vectorial. Por lo tanto no nos sobra unicamente con tener la topología de los SA que como se vio en la parte de DATOS puede ser sacada de esas 3 fuentes, siendo la principal y mas RAW la de RIPE NCC y RouteVIews, ya que CAIDA contiene estos datoso pero ya en datsets creados por otros investigadores. 
+// Es por esto que tenemos que ver como agregarles las featiures. a lo que se tomaren diferentes enfoques a est e problema:
+// - Ocupar features ya creadas por el paper [AGREGAR], elc ual tiene diferentes caracteristicas indicadas en el anex [poenr que parte del anexo] a la fecha de Julio de  2022, sin embargo este dataset contiene muchos valores no conocidos para los SA, además de que hace que solo nos podamos trabajar en esa fecha.
+
+// - Crear representaciones en base a las caracteristicas topologicas de nuestro grafo de internet. En este caso se crearon embeddings para lso nodos los cuales contenian el grado de entrada y salida, la cantidad de vecinos, la cantidad de vecinos en comun con otros nodos, entre otros. Tambien se crearon embeddings para las aristas, los cuales contenian la cantidad de vecinos en comun entre los nodos que conectan, la cantidad de nodos en comun entre los nodos que conectan, entre otros.
+
+// - Otro enfoque fue crear representaciones de los nodos en base a metodos/algoritmos ya existentes que intentar representar la posicion/importancia de nodo en el contexto de grafo. Se ocupo por ejemplo PageRank, DeepWalk.
+
+// . Finalemnet el ultimo enfoque que s etomo fue crear estas representaciones desde 0.
+
+
+// RIBs vs BGP UPDATES
+
+// RIB = Routing Information Base
+// - Pretty much what most people thing about as
+// the "Route Table"
+// • BGP UPDATES
+// - These are the actual UPDATE and
+// WITHDRAW messages as they are
+// communicated by the BGP protocol
+
+// Why UPDATES
+// • As routes are added and withdrawn, we
+// may get to see some of those sub-optimal
+// routes which are normally hidden by BGP
+
+// Turning into CSV
+// + Parse the MRT files and output one line
+// per path.
+// + https://github.com/YoshiyukiYamauchi/mrtparse
+
+// Sort  Uniq
+// • If we take that output from a lot of different
+// sources then we are going to get
+// duplicates.
+// • We need a way to sort these CSV files
+// and remove duplicates
+
 
 
 == Benchmark

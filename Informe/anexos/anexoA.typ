@@ -13,21 +13,6 @@
   #block(context counter(heading).display("A.1") + " " + it.body)
   #v(0.5em)
 ]
-= Vocabulario
-- **RIR**: Regional Internet Registry.
-- **AS**: Autonomous System
-- **BGP**: Border Gateway Protocol
-- **RRC**: Route Collectors
-- **IXP**: Internet Exchange Point
-- **Internet Carrier**: Empresas que operan infrestructras de Red de gran escala. Ofrecen servicios de intercambio de datos.
-Forman parte del nucleo de Internet.
-ejemplos de carrier son: AT&T.
-- **ISP**:
-- **CDN**: Content Delivery Network
-
-
-- **Internet Service Provider (ISP)**: Proveedor de servicios de Internet. Empresa que ofrece servicios de acceso a Internet a usuarios finales. Se encuentras en la parte mśa oeriferica de la red de Internt
-
 = titulo anexo 1
 
 Collectors RIPE NCC:

@@ -86,3 +86,25 @@ El flujo de información en BGP y el proceso de toma de decisiones de rutas se r
 primero, se reciben los mensajes UPDATE de los vecinos, los cuales se almacenan en la Adj-RIB-In, una entrada por cada vecino. Luego, se evalúa el grado de preferencia de cada ruta almacenada en la Adj-RIB-In. Con base en esta evaluación, se seleccionan las mejores rutas para cada destino y se instalan en la Loc-RIB. Finalmente, la información contenida en la Loc-RIB se transfiere a la Adj-RIB-Out para ser anunciada a los vecinos BGP, siguiendo las políticas de ruteo locales. Este flujo de información se conoce como el proceso de decisión BGP.
 
 Es importante destacar que las bases de datos que almacenan la información de rutas BGP no son lo mismo que la tabla de ruteo de un router, que es la que el router utiliza para realizar el forwarding de los paquetes. Las rutas almacenadas en la RIB deben cumplir con ciertos criterios, definidos por el software o el proveedor del router, para ser agregadas a la tabla de ruteo.
+
+
+
+// EXTRAS
+
+// The main problem of BGP is the lack of validity and
+// verification mechanisms that render it vulnerable to attacks
+// such as BGP hijacking or black-holin[C. Zheng, L. Ji, D. Pei, J. Wang, and P. Francis, "A light-weight
+// distributed scheme for detecting ip prefix hijacks in real-time", ACM
+// SIGCOMM Computer Communication Review, vol. 37, no. 4, p. 277,
+// 2007]
+
+
+
+
+== EXTRAS 
+// TODO: Agregar en alguna parte
+- Export policies:
+  - PErmitir/denegar una ruta
+  - Asignar multiples exit discriminator
+  - Agregar community values
+  - Prepending

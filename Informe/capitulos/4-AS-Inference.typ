@@ -1,6 +1,8 @@
 = AS Inference
 
 
+
+
  - These routing policies are constrained by the contractual commercial agreements between Administrative domains [GAO] 
 - Routing policies are mainly determined by the business relationships between ASes [ruan]
 
@@ -59,9 +61,9 @@ Para validar sus resultados, Gao utilizó información interna de At&T y datos d
 
 
 Su algotimo consistió en :
-1.- *Parsear las Routing Tables*: Se parsean las tablas de enrutamiento BGP y se calcula el grado de cada AS.
-2.- *Identificar el top provider*: Se identifica el top provider de cada AS path.
-3.- *Clasificar las relaciones*: Se clasifican las relaciones entre los ASes en base a la jerarquía de los ASes y el top provider.
++ *Parsear las Routing Tables*: Se parsean las tablas de enrutamiento BGP y se calcula el grado de cada AS.
++ *Identificar el top provider*: Se identifica el top provider de cada AS path.
++ *Clasificar las relaciones*: Se clasifican las relaciones entre los ASes en base a la jerarquía de los ASes y el top provider.
 
 La clasificaciónde relaciones esaba dado por la logica de que una ves encontrado el top provider de un as path, los pares AS que se encontrasen antes del top provider tendrian una relación de P2C, mientras que los pares que se encontrasen despues del top provider tendrian una relación de P2P y realcion S2s si ambos pares proveian de transito para each other es decir, podia encontrarse ese par tanto antes como despues del top provider.
 
@@ -79,27 +81,6 @@ En caso de las relaciones de P2P Gao primero identifico aquellos Ases con qquien
 
 
 // === Problink
-
-// ProbLink es un algoritmo probabilistico para inferir las relaciones entre Sistemas Autonomos propuesto por Yuchen Jin et al. @ProbLink. 
-// Este permite el uso de atributos con valores estocásticos. Toma en cuenta información sobre los links y caminos qure atraviesan . ProbLink no impone un orden específico en que los ASes y lso enlances deben ser analizados, en su lugar itera con tinuamente hasta alcanzar una convergencia. 
-
-// // El algoritmo comienza con la clasificación inicial con los resultados de CoreToLeaf, un algoritmo de clasificación de relaciones entre ASes propuesto por los mismos autores de baja complejidad. Si CoreToLeaf etiqueta el link $L$ como un link P2C, entonces $P(L=P2P) = 0.0$, $P(L=C2P)= 0.0$ y $P(L=P2C)=1.0$.
-
-// Para cada atributo se calcula la distribución de probabilidad condicional basada en lso datos observados y el conjunto inicial de etiquetas.
-// Luego en cada iteración, se actualiza las probabilidades de los tipos de cada enlace ejecutando su algoritmo probabilistico y se recalcula las distribuciones d elas caracteristicas utilizando los valores de probaboilidad actualizadas de cada enlace. 
-// Se repite el proceso hasta la convergencia, es decir , ahsta que el porcentaje de enlaces que cambia de etiqute caiga por debajo de un umbral.
-
-
-
-// // TODO:agregar link al github
-// //FIXME: Agrego mas cosas importantes que dicen??? o lo pongo en la seccion genral???
-
-
-
-
-
-
-// === Topocospe
 
 
 === Lu Rank
@@ -166,68 +147,109 @@ Para la etapa inicial de entrenamiento de BGP2Vec, se utilizaron anuncios extra�
 Para el entrenamiento de la Red Neuronal encargada de la clasificación de las relaciones entre ASes, se utilizó el conjunto de datos de relaciones entre AS de CAIDA @CAIDAS-relationship, que contiene relaciones P2P y P2C/C2P. Además para algunos experimentos, se empleó el dataset ToR de BGProtect (www.BGProtect.com) @BGProtect, basado en el trabajo de Shavitt et al. @Near-deterministic-Iinference-of-AS-relationships..
 
 
-https://github.com/talshapira/BGP2Vec/tree/main
+// https://github.com/talshapira/BGP2Vec/tree/main
 // Se uso este conjunto de datos para entrenar ls red neuronal y varios algoritmos de aprendizaje supervisado basados en embedding de ASN, y como referencia para la comparación con trabajos previos.
 
 // El algoritmo de BGP2Vec se basa en la misma idea de Word2Vec, donde se buscar representar vectorialmente los ASes de manera que las relaciones entre ellos se puedan inferir a partir de la distancia entre los vectores. Para esto, se utilizan los anuncios BGP de rutas de AS (AS PATH) para entrenar un modelo de Deep Learning que genere embeddings de los ASes. Estos embeddings son utilizados para clasificar las relaciones entre los ASes.
 // E n este caso s eocupo skip-gram, que es un modelo de aprendizaje no supervisado para aprender representaciones vectoriales de palabras. El objetivo es aprender representaciones vectoriales de palabras que sean útiles para predecir las palabras vecinas en un contexto dado.
 
-¿Cómo se creó el Dataset?
+// ¿Cómo se creó el Dataset?
 
-Para este caso se necesitan 2 datasets, el primero el dataset correspondiente a las rutas BGP, para por medio de Word2Vec characterizeembedding
-de los Ases y un segundo dataset para entrenar la red neuronal srtificial para la tarea de clasificacion.
+// Para este caso se necesitan 2 datasets, el primero el dataset correspondiente a las rutas BGP, para por medio de Word2Vec characterizeembedding
+// de los Ases y un segundo dataset para entrenar la red neuronal srtificial para la tarea de clasificacion.
  
-1. A partir del dataset de rutas BGP proporcionadas por CAIDA @CAIDAS-relationship, para el caso especifico de este problema _aaaammdd.as-rel2.txt.bz2_ correspondiente a la fecha dd/mm/aaaa, se generaron dos listas: una con pares de Sistemas Autonomos que comparten algún tipo de relación, y otra que etiqueta el tipo de la relación de cada par.
+// 1. A partir del dataset de rutas BGP proporcionadas por CAIDA @CAIDAS-relationship, para el caso especifico de este problema _aaaammdd.as-rel2.txt.bz2_ correspondiente a la fecha dd/mm/aaaa, se generaron dos listas: una con pares de Sistemas Autonomos que comparten algún tipo de relación, y otra que etiqueta el tipo de la relación de cada par.
 
-// TODO: Agregar fecha dataset 
+// // TODO: Agregar fecha dataset 
 
-```python
-tor_dataset = []
-tor_labels = []
+// ```python
+// tor_dataset = []
+// tor_labels = []
 
-with bz2.open(DATA_PATH + ToR_CSV, "rt") as csv_file:
-    reader = csv.reader(csv_file,delimiter='|')
-    for i, row in enumerate(reader):
-      if row[0][0] != '#' and int(row[2]) in TOR_CSV_LABELS_DICT.values():
-        # print(row)
-        # Agrego arista en ambos sentidos 
-        tor_dataset.append(np.asarray(row[:2]))
-        tor_dataset.append(np.asarray(row[1::-1]))
+// with bz2.open(DATA_PATH + ToR_CSV, "rt") as csv_file:
+//     reader = csv.reader(csv_file,delimiter='|')
+//     for i, row in enumerate(reader):
+//       if row[0][0] != '#' and int(row[2]) in TOR_CSV_LABELS_DICT.values():
+//         # print(row)
+//         # Agrego arista en ambos sentidos 
+//         tor_dataset.append(np.asarray(row[:2]))
+//         tor_dataset.append(np.asarray(row[1::-1]))
 
-        # Si etiqueta -1 -> 2; si etiqueta 0 -> 0; si etiqueta 1 -> 1
-        label = int(row[2])
-        if label == -1:         # Si es P2C,
-          label = 2
-          tor_labels += [label, 1]
-        elif label == 0:        # Si es P2P
-          tor_labels += [label, label]
-        else:                   # Si es C2P
-          tor_labels += [label,2]
-```
-Estas listas se gurdan en archivos np con los nombres _bgp2vec_caida_tor_dataset.npy_ y _bgp2vec_caida_tor_labels.npy_ respectivamente.
+//         # Si etiqueta -1 -> 2; si etiqueta 0 -> 0; si etiqueta 1 -> 1
+//         label = int(row[2])
+//         if label == -1:         # Si es P2C,
+//           label = 2
+//           tor_labels += [label, 1]
+//         elif label == 0:        # Si es P2P
+//           tor_labels += [label, label]
+//         else:                   # Si es C2P
+//           tor_labels += [label,2]
+// ```
+// Estas listas se gurdan en archivos np con los nombres _bgp2vec_caida_tor_dataset.npy_ y _bgp2vec_caida_tor_labels.npy_ respectivamente.
 
-Las etiquetas correspondientes a las relaciones entre ASes corresponden a:
-- 0: Peer-to-Peer (P2P)
-- 1: Customer-to-Provider (C2P)
-- 2: Provider-to-Customer (P2C)
-Con un conteo de 619648, 121096 y 121096 relaciones, respectivamente.
+// Las etiquetas correspondientes a las relaciones entre ASes corresponden a:
+// - 0: Peer-to-Peer (P2P)
+// - 1: Customer-to-Provider (C2P)
+// - 2: Provider-to-Customer (P2C)
+// Con un conteo de 619648, 121096 y 121096 relaciones, respectivamente.
 
-2. Crear 
-
-
-
-3. Se entrena  el modelo BGP2VEC con el dataset de rutas BGP y se guarda el modelo en el archivo _bgp2vec.word2vec_.
-
-```python
-test_limit = 2000000 #cantidad paths/horaciones
-mode = None# 'test' # par limitar cantidad de paths/oraciones
-epochs = 1
-debug = True
+// 2. Crear 
 
 
-# Crea embeddings de ASN con  BGP2VEC y lo guarda en "bgp2vec/bgp2vec.word2vec"
-bgp2vec = BGP2VEC(model_path = MODELS_PATH ,oix_path=oix_path,rewrite=True, test_limit= test_limit, mode = mode, epochs = epochs)
 
-```
+// 3. Se entrena  el modelo BGP2VEC con el dataset de rutas BGP y se guarda el modelo en el archivo _bgp2vec.word2vec_.
 
-4. 
+// ```python
+// test_limit = 2000000 #cantidad paths/horaciones
+// mode = None# 'test' # par limitar cantidad de paths/oraciones
+// epochs = 1
+// debug = True
+
+
+// # Crea embeddings de ASN con  BGP2VEC y lo guarda en "bgp2vec/bgp2vec.word2vec"
+// bgp2vec = BGP2VEC(model_path = MODELS_PATH ,oix_path=oix_path,rewrite=True, test_limit= test_limit, mode = mode, epochs = epochs)
+
+// ```
+
+// 4. 
+
+
+== ProbLink
+
+
+
+ProbLink es un algoritmo probabilistico para inferir las relaciones entre Sistemas Autonomos propuesto por Yuchen Jin et al. @ProbLink. 
+Este permite el uso de atributos con valores estocásticos. Toma en cuenta información sobre los links y caminos qure atraviesan . ProbLink no impone un orden específico en que los ASes y lso enlances deben ser analizados, en su lugar itera con tinuamente hasta alcanzar una convergencia. 
+
+// El algoritmo comienza con la clasificación inicial con los resultados de CoreToLeaf, un algoritmo de clasificación de relaciones entre ASes propuesto por los mismos autores de baja complejidad. Si CoreToLeaf etiqueta el link $L$ como un link P2C, entonces $P(L=P2P) = 0.0$, $P(L=C2P)= 0.0$ y $P(L=P2C)=1.0$.
+
+Para cada atributo se calcula la distribución de probabilidad condicional basada en lso datos observados y el conjunto inicial de etiquetas.
+Luego en cada iteración, se actualiza las probabilidades de los tipos de cada enlace ejecutando su algoritmo probabilistico y se recalcula las distribuciones d elas caracteristicas utilizando los valores de probaboilidad actualizadas de cada enlace. 
+Se repite el proceso hasta la convergencia, es decir , ahsta que el porcentaje de enlaces que cambia de etiqute caiga por debajo de un umbral.
+
+
+
+== Desafíos en la inferencia de Relaciones entre Sistemas Autónomos
+// - Muchoas tecnicas de inferencia de relaciones entre AS relaizan 3 suposiciones-.
+//   1. Highest degree ASes sit at top of the routing hierarchy
+//   2. Peering ASes have similar degree
+//   3. Providers have larger degree than customers
+// @InferringASRelatioships2001 @ASRelationshipsCustomerConesValidation @InferringASRelationshipsDeadEndorLivelyBeginning
+// esto afecta la accuracy de los algormios ya  que un paso impoortante de stos es encontrar/identificar ql clique Tier 1 Ases al top de la jerarquía.
+// Debido al fenomeno de "flattening of the internet" [he flattening
+// internet topology: Natural evolution, unsightly barna-
+// cles or contrived collapse?] sabemos que Large content providers como Google, Microsoft y otros los cuales tineen un numero alto de degree are more willing to peer with large number  of lower tier Ases to get free and more efficient traffic exchange. 
+// // TODO: buscar más de esto
+
+// - violacion de la property Valley-free , que son la causa principal de inferir p2c links y conflictos. 3% of the BGP Paths violate valley-free property in AS-Rank segun @ProbLink en su estidio , la cual policias de AS que usan unconventional economic models [alley-free violation in inter-
+// net routinganalysis based on BGP community data. In
+// Communications (ICC)]. Por lo que un algoritmo robusto debiese tomar encuenta todos los path que pasan por ese link. y podría tener q revisitar y update la inferencia hehca por un  despues de inferir los tipos de los links vecinos.
+// // TODO: leer papaer
+
+// - Current technics are Sensitive to VP and Snapshot Selection: @probabilidad encontro que hay una variación alta de la accuracy cuando esta fue apluciada a AS-Rank algorimo para snapshops de los BGP Path de forma consecutiva. }en el fonod por el paso 1 
+
+
+= EXTRAS
+
+// Estudios hechos por Yuchenjin et al. @ProbLink dentro de su estudio en la creación de un algoritmo de inferencias de ASes, determinó 5 tipos de links que eran dificiles de inferir. Para esto ocupo CoreToLeaf un algoritmo basico de inferencia el cual solo ocupaba la asumtio of valley-free y la ubicacion de Top provider AS para determinar las relaciones(mas info en  la seccion de ProbLink):
+

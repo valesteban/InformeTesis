@@ -1,6 +1,7 @@
 = Internat Data collection
 // https://www.pacnog.org/pacnog17/presentations/MappingTheInternet.pdf
 
+//TODO: Rellenar esta parte como introducción a la información de dodne existen datos de Internet/BGP
 
 == CAIDA
 
@@ -104,6 +105,33 @@ he resource was created to help support peering between networks and peering coo
 
 
 // Para pasar archivos en formato MRT a archivos CSV  https://github.com/YoshiyukiYamauchi/mrtparse
+
+// ------------------------------------
+// FORMATO MRT
+// + https://tools.ietf.org/html/draft-ietf-grow-mrt-09
+// + This format was developed in concert with the
+// Multi-threaded Routing Toolkit (MRT) from
+// whence the format takes it name. The format
+// can be used to export routing protocol
+// messages, state changes, and routing
+// information base contents.
+// + A lot of the RouteViews and RIS files are in MRT
+// dump format. We need to be able to parse them
+// to extract the Paths.
+
+
+// Turning into CSV
+// + Parse the MRT files and output one line
+// per path.
+// + https://github.com/YoshiyukiYamauchi/mrtparse
+
+// Sort  Uniq
+// • If we take that output from a lot of different
+// sources then we are going to get
+// duplicates.
+// • We need a way to sort these CSV files
+// and remove duplicates
+
 
 
 
