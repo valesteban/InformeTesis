@@ -77,13 +77,20 @@ El plan de trabajo que se espera llevar a cabo durante esta investigación const
 // \end{itemize}
 
 == Estructura del trabajo
-la tesis está organizada de la siguiente manera:
-- capítuulo 2 blabla
-- capítulo 3 blablabla
-- capítulo 4 no existe todavía
+//FIXME: Arreglar secciones individuales
 
-// #bibliography(
-//     "../bibliografia.bib",
-//     title: "Bibliografía",
-//     style: "ieee",
-// )
+Este documento se organiza de la siguiente manera:
+
+- *Capítulo 2* se presenta una visión general de la infraestructura de Internet y sus conceptos clave, incluyendo los Sistemas Autónomos (AS), IXPs, el ruteo, entre otros.
+
+- *Capítulo 3* explicación del protocolo BGP y sus componentes esenciales y funcionamiento.
+
+- *Capítulo 4* se abordan las relaciones entre los AS, determinadas por políticas de ruteo, y se describen algunos métodos de inferencia de relaciones correspondientes a los usados para construir un benchmark.
+
+- *Capítulo 5* introducción a las Redes Neuronales y GNN.
+
+- *Capítulo 6* se cubren las fuentes de información disponibles públicas sobre la infrestructura de internet, más especifico para este trabajo.
+
+- *Capítulo 7* se detallan el diseño de los experimentos y los resultados obtenidos.
+
+- *Capítulo 8* analisis de los resultados y conclusiones.
