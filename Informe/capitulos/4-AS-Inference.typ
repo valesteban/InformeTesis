@@ -1,55 +1,86 @@
-= AS Inference
+= Tipos de Relaciones
 
 
 
+El ruteo de los paquetes que transitan por Internet no depende únicamente de la 
+infraestructura física, sino también por las políticas de enrutamiento establecidas 
+entre los Sistemas Autónomos, las cuales están principalmente determinadas por las 
+relaciones comerciales entre los ASes @computing-observed-autonomous-system-relationships-in-the-internet.
 
- - These routing policies are constrained by the contractual commercial agreements between Administrative domains [GAO] 
-- Routing policies are mainly determined by the business relationships between ASes [ruan]
+Estas relaciones son las que determinan por donde fluye el trafico entre los ASes, 
+ya que cada uno define sus políticas en base  asus necesidades y modelos de negocio. 
+Existen dos principales tipos de relaciones entre los Sistemas Autonomos: Customer-Provider 
+(C2P), donde un cliente paga a un provedor para accerder a partes del internet que no 
+pueder llegar y Peering(P2P), donde dos AS intercambian tráfico destinado a sus respectivos 
+clientes de manera mutua y sin pago de por medio.
 
+Gao @InferringASRelatioships2001 fue la primera en estudiar las relaciones entre los ASes. 
+En su estudio, sentó las bases para abordar su estudio al proponer una forma de representar 
+las relaciones en Internet mediante un grafo parcialemente dirigido, donde nodos representan 
+los Ases y las aristas las relaciones entre ellos. En este modelo, las relaciones de 
+Customer-Provider se representan mediante una arista dirigida. Estos acuerdo son más comunes 
+en los bordes del grafo de lo que sería Internet, donde la topología estaría compuesta 
+principalmente por "hojas", las cuales están principalmente preocupadas por la entrega 
+de su propio tráfico. En contraste, en el núcleo de Internet, la topología consiste en 
+redes densamente interconectadas @SurveyInterconnectionAgreements.
 
-- Since 2 ISPs might merge into one and each administrative domain can poses several ASes, an adminis domain can operate one or several ASes. @InferringASRelatioships2001
-
-- Routing policies are mainly determined by the business relationships between ASes [ruan]
-
-
-
-( BGP permite que cada sistema autónomo (AS) elija su propia política administrativa al seleccionar rutas y propagar información de alcance a otros. Estas políticas de enrutamiento están restringidas por los acuerdos comerciales contractuales entre dominios administrativos.)
-- Las políticas de enrutamiento de BGP están determinadas principalmente por las relaciones comerciales entre ASes vecinos
-- Dado que las relaciones entre ASes no son de acceso público, varios estudios han propuesto algoritmos heurísticos para inferir dichas relaciones utilizando datos de BGP disponibles públicamente.
-
-
-- La mayoría de estos algoritmos se basan en la propiedad libre de valles de los caminos AS. Sin embargo, no todos los caminos AS cumplen esta propiedad, ya que algunos ASes no se ajustan a la política de exportación común. Como resultado, las relaciones inferidas entre ASes suelen ser inexactas. (e ha demostrado que si todos los ASes se adhieren a esta política de exportación común, entonces todos los caminos AS estarán libres de valles.)
-
-// ToR information allows us to infer the possible routes selected by BGP, e.g., in case of a link failure @Internet-resiliency-to-attacks-and-failures-under-BGP-policy-routing,
-
-// It can also be used to identify malicious fiddling with the routing system,
-// known as IP hijack attack @Chinas-Maxim-Leave-No-Access-Point-Unexploited-The-Hidden @
-
-// BGP allows each AS to choose its own administrative policy in selecting routes and propagating reachability information to others.@InferringASRelatioships2001 
-
-
-// - "On infering AS relationships in the Internet" (2001)
-
-// - "characterize the Internet Hierchy from  relationships between ASes in the Internet"
-
-// los Sistemas autónomos son operados y controlados de manera independiente. 
+// // SU INFERNCIA------------------------------------------
 
 
+// // [RELEVANCIA]
+// //FIXME: completar porner referencias ; porq es de vitalidad importancia maas osbre q no sena publicas
 
-// La mayoria de las soluciones son metodos heuristicos con algoritmos basado en data publica de anuncios BGP sacados de routeviews y otros
-// == algoritmos de inferencia
+// // Relationship inferences have a variety of applications in different fields of research.
+// // Some of these include identifying network congestion [26], detecting malicious Au-
+// // tonomous Systems (ASes) [51, 23], deploying security mechanisms for BGP [22],
+// // safeguarding the anonymity of data [72], optimising video streaming [31], understand-
+// // ing the effects of public policy proposals on Internet governance [55] and selecting
+// // BGP routing paths [25] .
 
-Gao fue la primera perdona en plantear el problema de inferencia de las relaciones entre Sistemas Autónomos. En su estudio @InferringASRelatioships2001, sento las primeras bases para tratar el problema como:
-- Propuso una representacion de forma de grafo para la representación de las relaciones entre los Sistemas Autónomos. Entre las que se encontrabas relaciones de Customer-Provider, Peering y Sibling.
-- Propuso un algoritmo heurístico para inferir las relaciones entre ASes a partir de tablas de enrutamiento BGP.
+Conocer las relaciones entre los ASes es de vital imporcia, ya que permite entender el 
+comportamiento del trafico de Internet, detectar posibles ataques y fallos en la red, 
+y optimizar el ruteo de los paquetes. Sin embargo estas no son de acceso público, por 
+lo que inferir estas relaciones es un problema de gran relevancia en la actualidad. A 
+través de las rutas anunciadas mediante BGP, es posible inferir el tipo de relación 
+entre los ASes. 
 
-Para Gao esto defidefinio a un Customer como que AS que paga a un provedor para obtener conectividad al resto del Internet, Provider como aquel que transita trafico de sus clientes, relación de peering como aquellos que s eponene de acuerdo  de transitar trafico de  sus clientes entre ellos.
-Como el ruteo entre ASes es controlado por el protocoolo de ruteo BGP, conectividad fisica entre dos ASes no significa reachability.
+
+La inferencia de estas relaciones ha sido un tema de estudio durante las últimas dos décadas, 
+en las cuales se han propuesto diferentes algoritmos para resolverlo, siendo la mayoría de estos 
+metodos heurísticos   //FIXME: Agregar referencia de los metodos heuristicos InferringASRelatioships2001 @computing-observed-autonomous-system-relationships-in-the-internet .
+y basandose los datos públicos sobre enrutamiento BGP, como las tablas de enrutamiento (RIBs) y los anuncios BGP.
 
 
+Gao presento un primer algoritmo basando en la idea de que el grado de un AS en el grafo 
+suele ser mayor que el de sus clientes, mientras que los ASes peers tienden a tener un grado similar.
+Su metodo también incorporó el concepto de _valley-free_ (VF) en los caminos de enrutamiento.
+El concepto de _valley-free_ establece que una ruta consistirá en cero o más enlaces C2P, seguido de cero o un 
+enlace de peering, y luego cero o más enlaces P2C.
+Esta propiedad captura los incentivos económicos que hasta cierto punto determinan 
+en trafico entre los ASes, ya que un AS no anunciará las rutas aprendidas de un 
+peer o proveedor, ya que eso implicaría el tránsito gratuito de tráfico, lo que 
+aumentaría los costos de infraestructura sin generar beneficios a cambio @ProbLink.
+
+Subramanian et al. @CharacterizingIAS formuló la tarea como un problema de optimización, definiendolo como “the type
+of relationship (ToR) problem”, este problema consistía en etiquetar todas las aristas en un grafo de AS para
+maximizar el número de rutas VF en un conjunto de rutas BGP. Para simplificar el problema,
+excñuyó las relaciones S2S (sibling-to-sibling), que son aquellas que entre dos Ases que pertenecen a un mismo dominio.
+
+
+Se han realizado más estudios que han ido perfeccionando y profundizando en la comprensión del comportamiento de las relaciones entre ASes @ASRelationshipInferenceValidation @NearDeterministicInference @ProbLink @ComputingTypesRelationshipsBetweenAS @computing-observed-autonomous-system-relationships-in-the-internet.
+
+Luckie et al. @ASRank introdujeron el algoritmo _AS-Rank_ considerado el estado del arte para inferir C2P y P2P utilizando datos de BGP.
+Ellos se basarón en tres supuestos: existe un clique de ASes proveedores de tránsito en la cima de la jerarquía de la topología de 
+Internet, Los clientes establecen relaciones con otros ASes con el fin de ser globalmente alcanzables y No existen ciclos de enlaces C2P para que el enrutamiento converja.
+Basándose en estos supuestos, introdujeron un nuevo algoritmo para inferir el "cono de clientes" de un AS, que es el conjunto de AS que puede alcanzar utilizando enlaces P2C.
  
+Por ultimo, Shapira y Shavitt @BGP2VecASRelationships emplearon técnicas de Deep Learning para la tarea de clasificación.
+Utilizaron BGP2Vec con el objetivo de crear representaciones de los Sistemas Autónomos y luego pasaron estos embeddings 
+aprendidos a una Red Neuronal Artificial, la cual se encargaba de clasificar los tipos de relaciones entre pares de ASes, 
+obteniendo una precisión del 95.2%. Cabe destacar que el entrenamiento de esta Red Neuronal fue realizado con los datos inferidos del dataset @CAIDAS-relationship.
 
 
+En nuestro caso desarrollamos esta tarea utilizando redes neuronales de grafos, realizando un experimento similar al de Shapira y Shavitt @BGP2VecASRelationships, pero aplicando GNNs en lugar de una Red Neuronal tradicional. Para ello, primero crearemos un pequeño benchmark utilizando algunos de los métodos de inferencia de relaciones entre ASes para luego relizar uan comparacion entre estas tecnicas.
 
 === Gao
 
@@ -72,24 +103,13 @@ Pero como no se puede asumir que todods lso speaging routers que pertences a un 
 
 En caso de las relaciones de P2P Gao primero identifico aquellos Ases con qquienes no podría establecer relaciones de peering las identifico bajo la idea de que en una relacion de peering los ASes no differ more than R times.
 
-
-// === AS Rank:
-
-
-
-// https://asrank.caida.org/
-
-
-// === Problink
-
-
 === Lu Rank
 
-Uno de los algoritmos más recientes es el propuesto por Ruan y Susan en 2014 @computing-observed-autonomous-system-relationships-in-the-internet. Hasta ese momento, la mayoría de los métodos para inferir los tipos de relaciones entre sistemas autónomos se basaban en la suposición de que todos los AS siguen una política uniforme de exportación de rutas. Según esta política, las rutas provenientes de proveedores y peers no son exportadas AS vecinos que también son proveedores o peers. Bajo este idea, todos los AS Paths serían _"valley-free"_. 
+Uno de los algoritmos más recientes es el propuesto por Ruan y Susan en 2014 @computing-observed-autonomous-system-relationships-in-the-internet. Hasta ese momento, la mayoría de los métodos para inferir los tipos de relaciones entre sistemas autónomos se basaban en la suposición de que todos los AS siguen una política uniforme de exportación de rutas. Según esta política, las rutas provenientes de proveedores y peers no son exportadas AS vecinos que también son proveedores o peers. Bajo este idea, todos los AS Paths serían _valley-free_. 
 
-Los algoritmos previos asumían que todos los AS paths eran _"valley-free"_ o buscaban maximizar el número de caminos que cumplían esa propiedad. Sin embargo, se sabe que un número gran número de AS paths en los updates  o tablas de enrutamiento BGP no son "_valley-free_". Esto hace que al depender de dicha propiedad las relaciones inferidas sean imprecisas.
+Los algoritmos previos asumían que todos los AS paths eran _valley-free_ o buscaban maximizar el número de caminos que cumplían esa propiedad. Sin embargo, se sabe que un número gran número de AS paths en los updates  o tablas de enrutamiento BGP no son _valley-free_. Esto hace que al depender de dicha propiedad las relaciones inferidas sean imprecisas.
 
-Ruan y Susan en lugar de basarse en la propiedad de _"valley-free"_, prupusieron un método para clasificar las relaciones observadas entre AS, sustentandose en las relacioens de tránsito entre ellas, a tarves de los datos de BGP. A diferencia del algoritmo de Gao @InferringASRelatioships2001 [TODO:], que se basa principalmente en el grado de los AS, este metodo utiliza el concepto de grado de tránsito de los ASlo cual en conjunto con la ideantificación de los top providers de los AS Path, permiten identificar las relaciones entre AS. .
+Ruan y Susan en lugar de basarse en la propiedad de _valley-free_, prupusieron un método para clasificar las relaciones observadas entre AS, sustentandose en las relacioens de tránsito entre ellas, a tarves de los datos de BGP. A diferencia del algoritmo de Gao @InferringASRelatioships2001, que se basa principalmente en el grado de los AS, este metodo utiliza el concepto de grado de tránsito de los ASlo cual en conjunto con la ideantificación de los top providers de los AS Path, permiten identificar las relaciones entre AS. .
 
 El algoritmo propuesto consta de tres fases principales:
 1. *Preprocesamiento de los datos:* La entrada consiste en un conjunto de BGP routing table dumps obtenidos de RouteViews @RouteViewsProject. Estos datos se sanitizan eliminando loops, descartando ASN inválidos, eliminando ASN duplicados y excluyendo conjuntos de ASN terminales, en caso de que estén presentes en las secuencias.
@@ -216,8 +236,6 @@ Para el entrenamiento de la Red Neuronal encargada de la clasificación de las r
 
 == ProbLink
 
-
-
 ProbLink es un algoritmo probabilistico para inferir las relaciones entre Sistemas Autonomos propuesto por Yuchen Jin et al. @ProbLink. 
 Este permite el uso de atributos con valores estocásticos. Toma en cuenta información sobre los links y caminos qure atraviesan . ProbLink no impone un orden específico en que los ASes y lso enlances deben ser analizados, en su lugar itera con tinuamente hasta alcanzar una convergencia. 
 
@@ -226,6 +244,13 @@ Este permite el uso de atributos con valores estocásticos. Toma en cuenta infor
 Para cada atributo se calcula la distribución de probabilidad condicional basada en lso datos observados y el conjunto inicial de etiquetas.
 Luego en cada iteración, se actualiza las probabilidades de los tipos de cada enlace ejecutando su algoritmo probabilistico y se recalcula las distribuciones d elas caracteristicas utilizando los valores de probaboilidad actualizadas de cada enlace. 
 Se repite el proceso hasta la convergencia, es decir , ahsta que el porcentaje de enlaces que cambia de etiqute caiga por debajo de un umbral.
+
+Las características utilizadas para calcular la probabilidad de cada relación son:
+- *Atributo Triplet:* Analiza secuencias de tres enlaces en una ruta BGP y modela la _valley-freeness_ de manera probabilística.
+- *Atributo Non-path:* Mide la probabilidad de que un enlace tenga enlaces adyacentes p2p o p2c que no aparezcan antes en ninguna ruta. Captura la propiedad de que un enlace es menos probable que sea p2c si tiene muchos enlaces adyacentes p2p/p2c sin aparecer previamente en las rutas.
+- *Atributo Distance to clique:* Identifica que los ASes de alto nivel están más cerca entre sí en términos de saltos AS y que estos suelen actuar como proveedores, mientras que los ASes de bajo nivel tienden a ser peers.
+- *Atributo Vantage point:* El número de puntos de vista (VPs) que observan un enlace puede indicar su tipo. Se basa en la suposición de que los enlaces p2c son más propensos a ser observados por múltiples VPs en comparación con los enlaces p2p y c2p.
+- *Atributo Co-located IXP and co-located private peering facility:* Usa datos de PeeringDB para identificar ASes que comparten IXPs o instalaciones, lo que sugiere una mayor probabilidad de que estén en una relación de peering.
 
 
 
@@ -248,8 +273,26 @@ Se repite el proceso hasta la convergencia, es decir , ahsta que el porcentaje d
 
 // - Current technics are Sensitive to VP and Snapshot Selection: @probabilidad encontro que hay una variación alta de la accuracy cuando esta fue apluciada a AS-Rank algorimo para snapshops de los BGP Path de forma consecutiva. }en el fonod por el paso 1 
 
+// TODO: Agregar que a diferencia d eotros algoritmos que unicamente ocupaabn los bgp update so ribs, este tmb otra otros datos como .....
 
-= EXTRAS
+// == EXTRAS
 
 // Estudios hechos por Yuchenjin et al. @ProbLink dentro de su estudio en la creación de un algoritmo de inferencias de ASes, determinó 5 tipos de links que eran dificiles de inferir. Para esto ocupo CoreToLeaf un algoritmo basico de inferencia el cual solo ocupaba la asumtio of valley-free y la ubicacion de Top provider AS para determinar las relaciones(mas info en  la seccion de ProbLink):
 
+
+// ToR information allows us to infer the possible routes selected by BGP, e.g., 
+// in case of a link failure @Internet-resiliency-to-attacks-and-failures-under-BGP-policy-routing,
+
+// It can also be used to identify malicious fiddling with the routing system,
+// known as IP hijack attack @Chinas-Maxim-Leave-No-Access-Point-Unexploited-The-Hidden @
+
+// BGP allows each AS to choose its own administrative policy in selecting routes and propagating reachability information to others.@InferringASRelatioships2001 
+
+
+
+
+// - Congestión en la red @InferringPersistentInterdomainCongestion
+// - Detección de Sistemas Autónomos (ASes) maliciosos [51, 23]
+// - La implementación de mecanismos de seguridad para BGP [22]
+// - La protección del anonimato de los datos [72]
+// - La optimización de la transmisión de video [31] 

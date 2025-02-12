@@ -1,259 +1,137 @@
 = Infrestructura de Internet 
 
+El Internet es una red global de redes que interconecta miles de millones de dispositivos en todo el mundo que proporciona servicios a aplicaciones distribuidas @Computer-Networking. Entre estos dispositivos se encuentran computadoras, teléfonos celulares, servidores de contenido y muchos otros.
 
-- Internet es una red de computadoras que interconecta miles de millones de dispositivos informáticos en todo el mundo. @Computer-Networking
+Cuando un dispositivo final intenta establecer una conexión a traves de Internet, los datos a enviar son encapsulados en paquetes con cabeceras que contienen la información necesaria para llegar a traves de Internet al dispositivo final.
+En algunos casos los datos puedes ser separados en diferentes paquetes y ser enviados por diferentes rutas hasta llegar al dispositivo final, donde son reensamblados. 
+El recorrido que sigue un paquete desde su origen hasta su destino a través de distintos routers se conoce como ruta. 
 
-- Según algunas estimaciones, en 2015 había alrededor de 5 mil millones de dispositivos conectados a Internet, y se proyectaba que este número alcanzaría los 25 mil millones en 2020 [Gartner 2014]. @Computer-Networking
-- Además, se estimaba que en 2015 había más de 3.2 mil millones de usuarios de Internet en todo el mundo, aproximadamente el 40% de la población mundial [ITU 2015]. @Computer-Networking
+Los sistemas finales acceden a Internet por medio de provedores de Internet (ISPs), los cuales a su vez son una red conformada por routers y enlaces de comunicacion.  
+Estos ISPs de nivel inferior se conectan a ISPs de nivel superior,nacionales e internacionales como Level 3, Cogent, entre otros @ASRank-web, que se encuentran en la cima de la jerarquía de Internet, al tener conexiones directas con el "backbone" de Internet.
+Asi estós proporcionan a los usuarios finales el acceso a provedores de contenidos (CDN por sus siglas en ingles), sitios web y otros servicios, los cuales también estan conectados a la infrestructura de Internet
 
-- El conglomerado de redes de investigación, académicas y gubernamentales, combinado con el núcleo de la red ARPANET, fue el principio de lo que llegaría a ser conocido como Internet.
-- 
+Para el correcto funcionamiento de Internet existen diferentes protocolos, sin embargo, los dos más importantes corresponden al Protocolo de Control de Transmisión (TCP) y el Protocolo de Internet (IP),conocidos colectivamente como TCP/IP. El desarrollo de estos estandares los lleva acabo el Internet Engineering Task Force (IETF) @IETF, y los documentos se conocen como Requests for Comments (RFCs).
 
-Gracias a la infrestructura de Internet un computados puede comunicarse con otro ubicado en una red lejana. Permitiendo asi el intercambio de información entre computadores de todo el mundo.
 
-- In summary, today’s Internet—a network of networks—is complex, consisting of a dozen or so tier-1
-ISPs and hundreds of thousands of lower-tier ISPs. The ISPs are diverse in their coverage, with some
-spanning multiple continents and oceans, and others limited to narrow geographic regions. The lower-
-tier ISPs connect to the higher-tier ISPs, and the higher-tier ISPs interconnect with one another. Users
-and content providers are customers of lower-tier ISPs, and lower-tier ISPs are customers of higher-tier ISPs. In recent years, major content providers have also created their own networks and connect directly into lower-tier ISPs where possible @Computer-Networking
-[Computer networking : a top-down approach [7th edition]]
 
+//TODO: Poner algo: "Segun XX 2n 2025 hay alredeor de x mil millones de dispositivos conectados a Internet y se proyecta que para 2030 ...."
 
-#figure(
-  image("../imagenes/Estructura-Internet-ISP.png", width: 40%),
-  caption: [TODO:],
-) <Red-de-Redes>
 
 
 
+// #figure(
+//   image("../imagenes/InfrestructuraInternet.png.jpg", width: 40%),
+//   caption: [TODO:],
+// ) 
 
-#figure(
-  image("../imagenes/network-of-networks.svg", width: 40%),
-  caption: [TODO:],
-) <Red-de-Redes>
 
-// En el caso de Internet, se define como una extensa red creada mediante  la interconexión de redes más pequeñas coonocidas como Sistemas Autónomos (AS), los que consisten en grupos de máquinas interconectadas que comparten un mismo protocolo de enrutamiento. Estos AS están gestionadas por diversas organizaciones, que pueden ser desde proveedores de acceso a Internet (ISP), grandes empresas tecnológicas, universidades o incluso agencias gubernamentales. A cada AS, se le asigna un número único conocido como ASN, el cual es utilizado parar identificar al AS. Además, a cada AS se le asigna un conjunto de direcciones IP del cual es responsable que le lleguen los paquetes.
+// #figure(
+//   image("../imagenes/InternetLY.png", width: 40%),
+//   caption: [TODO:],
+// ) <Internet>
 
 
 
+// #figure(
+//   image("../imagenes/Internet2.png", width: 40%),
+//   caption: [TODO:],
+// ) <Internet2>
 
- Este se puede dividir en Sistemás administrativos  los cuales posen uno o varios Sistemás Autónomos.
-Dominio sadministrativos pueden ser desde college campuses, corporate networks , Large ISP (Internet Service Providers). 
-Cada Sistemas Autonomo es representado por un numero de 16 bits llamado ASN (Autonomous System Number)., lo que hace que existan 65536 ASN posibles, de los cuales no todos estan asignados  a dominios adminitrativos y no todos los asignados son usados. 
-Muchos ISPs poseen más de  un solo ASes.
 
-Cada Sistemas Autonomo tiene sus propios routers y touting policies a traves del cual se comunica con otros Sistemas Autonomos para intercambiar trafico.Informe/capitulos/1-Introduccion.pdf
+// #figure(
+//   image("../imagenes/Estructura-Internet-ISP.png", width: 40%),
+//   caption: [TODO:],
+// ) <Red-de-Redes>
 
-== Sistemas Autonomos (AS)
 
+// #figure(
+//   image("../imagenes/network-of-networks.svg", width: 40%),
+//   caption: [TODO:],
+// ) <Red-de-Redes>
 
-- Representados por un numero (ASN) de 16 bits.
-(65536 ASN posibles, de los cuales no todos estan asignados  a dominios adminitrativos y no todos los asignados son usados. )
-- Muchos ISPs por ejemplo poseen más de un solo AS.
-- los Sistemas autónomos son operados y controlados de manera independiente. 
 
+== Sistemas Autonomos 
 
-== Internet Exchange Points (IXPs)
+En la estructura de Internet un Sistema Autonomo (AS) consiste en un conjunto routers y enlaces de comunicación que comparten una política de enrutamiento común. Estos son operados de forma independiente por una organización, como un ISP, una universidad, una empresa, entre otros.
 
-- Tipicamente considera un medio compartido , interconecta varios routers de varios AS. La conexion fisica en un IXP no implica necesariamente que cada par de ASes intercambia trafico.
-- IXP tienen asignados un ASN, pero de forma universalemnet aceptado este se saca de un AS PATH (pero algunos IXP lo dejan como metodo de debbuging)@InferringASRelatioships2001.
+Los AS utilizan el protocolo BGP, para intercambiar información de enrutamiento y así tener una conexión global entre ASes y por ende del Internet. Las conexiones entre los Ases pueden ser de cliente-proveedor o de peer-to-peer, pero están influenciadas por acuerdos comerciales. Bajo estos acuerdos, podemos crear un grafo de la infrestructura de Internet, donde los nodos son los ASes y las aristas son las conexiones entre ellos. Cabe destacar en este caso conexión no implica necesariamente que haya un intercambio de trafico entre los ASes conectados, ya que el enrutamiento está controlado por BGP, un protocolo de enrutamiento basado en politicas (reachability)@InferringASRelatioships2001.
 
+Los AS se identifican con un número de Sistema Autonomo (ASN) de 16 bits y controlan un conjunto de direcciones IP.
+Esta asignación es llevada a cabo por los Registros _Regional Internet Registry_ (RIRs), quienes reciben bloques de IPs por la _Internet Assigned Numbers Authority_ (IANA) y los distribuyen a los _Local Internet Registries_ (LIR) y usuarios finales.
 
-Los Internet Exchange Points (IXPs) son puntos de interconnecion entre redes, funciona como un medio compartido. Tipicamente, consiste en un switch (capa 2) de alta velocidad y capacidad que permite la interconexión de routers pertenecientes a distintos Sistemas Autónomos. Esto facilita el estableciemiento de relaciones de peering entre los Sistemas Autónomos, permitiendo el intercambio de tráfico de manera eficiente y a bajo costo.
-Algunos IXPs existentes en Chile son PIT Chile y NAP Chile, quienes establecen conexiones. En Chile existe una normativa que regula la interconexión nacional según la cual, todos los ISP que operen deben estar interconectados entre sí. La interconexión nacional se logra conectándose a NAP Chile. 
+Los ISP, quienes puedes estar conformados por uno o varios Sistemas Autonomos, se dividen comunmente en tres niveles de jerarquía. El Tier-1, donde se encuentran los AS que conformaan el "backbone" de Internet, estos intercambian paquetes entre si sin un costo asociado.Los Tier-2 son generalmente operadores nacionales que compran tránsito a los Tier-1 y venden tránsito a los Tier-3. Finalmente los Tier-3 son los operadores locales que pagan por el tránsito para proporcionar acceso a Internet a los usuarios finales @InterconnectionPeeringSettlements. Tambien Luckie et al.@ASRelationshipsCustomerConesValidation analizó los AS y propuso una métrica para indicar que tan global es un AS, donde si el customer cone es mayor o igual a 200 se considera Tier, si es mayor a 2000 se considera Tier 2 y si es menor a 200 se considera Tier 3.
 
+Una ultima separación que se puede hacerentre AS es segun sus conexiones a otros Sistemas Autonomos, en
+single-homed y multi-homed. Los AS single-homed tienen solo una conexión a otro AS, mientras que un multi-homed tiene conexiones a más de un AS.
 
-Cada Sistema Autoonomo tiene la responsabilidad de 
-// In the absolute simplest terms… a managed switch. Seriously, that’s pretty much it. I’m only kidding a bit. IXPs allow internet service providers or content providers to have a general space to come together and peer with each other. Each participant will have a router at the IXP site and peer with every participant, route server, or a subset of the participants. Peering will be done using external BGP (eBGP). This can also be a combination of peering with a route server and a few participants. The cost to run an IXP is usually divided between the participants.
 
-// Imagine two internet providers with customers of their own in the west coast. The ISPs only peer with each other on the east coast. If customers on the west coast want to talk to each other, that traffic would have to travel from coast to coast just to end up back on the west coast. Not very efficient or economical. The ISPs could peer with each other at the west coast, but what if there’s another ISP or five? This would not scale very well and would become very costly. Below is a simple list of other IXP benefits:
+// Dado que dos ISPs podrían fusionarse en uno solo y cada dominio administrativo puede poseer varios ASes, un dominio administrativo puede operar uno o varios ASes. @InferringASRelationships2001.
 
-//     Save money
-//     Traffic stays local
-//     Performance
-//     Better customer experience
 
+== Internet Exchange Points
 
+Los _Internet Exchange Points_ (IXPs) son puntos de interconexión donde múltiples AS pueden establecer relaciones de peering @Computer-Networking.
 
-Internet Exchange
-Point (IXP), which is a meeting point where multiple ISPs can peer together. An IXP is typically in a
-stand-alone building with its own switches [Ager 2012]. There are over 400 IXPs in the Internet today
-[IXP List 2016]. We refer to this ecosystem—consisting of access ISPs, regional ISPs, tier-1 ISPs,
-PoPs, multi-homing, peering, and IXPs—as Network Structure 4.
-[Computer networking : a top-down approach [7th edition]]
+Un IXP consiste generalmente en un switch de alta velocidad y capacidad que conecta routers de diferentes AS, permitiendo el intercambiodirecto de tráfico sin necesidad de atravesar por redes intermedias. Mejorando asi el intercambio de tráfico haciendolo más eficiente y de bajo costo.
 
+Las relaciones de tráfico en un IXP seestablecen mediante el protocolo BGP, por ende a pesar que los AS esten fisicaamente conectados a tarves del IXP, no se establecen un relación a no ser que se configure explicitamente.
 
-#figure(
-  image("../imagenes/internet-exchange-point.jpg", width: 40%),
-  caption: [TODO:],
-) <IXP>
+Al igual que los AS, los IXPs tienen un ASN. Sin embargo, de forma generalizada, este ASN se extrae de los AS PATH en BGP. Algunos IXP lo mantienen visible como metodo de debbuging @InferringASRelatioships2001. 
 
-Internet Exchange Points:
 
-    An Internet exchange point (IXP) is a physical location through which Internet infrastructure companies such as Internet Service Providers (ISPs) and Telecom Service Providers connect with each other.
-    These locations exist on the “edge” of different networks, and allow network providers to share transit outside their own network.
-    Internet exchange points (IXes or IXPs) are common grounds of IP networking, allowing participant Internet service providers (ISPs) to exchange data destined for their respective networks.
-    Organizationally, most IXPs are each independent not-for-profit associations of their constituent participating networks (that is, the set of ISPs which participate at that IXP).
-    The primary alternative to IXPs is private peering, where ISPs directly connect their networks to each other.
-    The primary purpose of an IXP is to allow networks to interconnect directly, via the exchange, rather than going through one or more third-party networks. The primary advantages of direct interconnection are cost, latency, and bandwidth.0
+// #figure(
+//   image("../imagenes/internet-exchange-point.jpg", width: 40%),
+//   caption: [TODO:],
+// ) <IXP>
 
 
 
+// #figure(
+//   image("../imagenes/ISP1.png", width: 40%),
+//   caption: [TODO:],
+// ) <IXP1>
 
-// Generalmente son  un Swiych (layer 2) de muy alta velocidad/capacidad. (Parece que hay capa 3 (IP) pero la enorme mayoría no).
-// // Permiten a los AS conectados establecer sesiones BGP entre ellos a najo costo, en vez de tener $nelevado2$ enlaces, basta con n enlaces. 
-// Pero no requieren ser un AS ni son un hop de ruteo.
 
+// #figure(
+//   image("../imagenes/ISP2.png", width: 40%),
+//   caption: [TODO:],
+// ) <IXP2>
 
 
+// #figure(
+//   image("../imagenes/ISP3.png", width: 40%),
+//   caption: [TODO:],
+// ) <IXP3>
 
-En base a esta estrctura podemos grer un grafo de internet, donde los nodos son los ASes y las aristas son las conexiones entre ellos. Cabe destacar en este caso que conexion no implica necesariamente que haya un intercambio de trafico entre los ASes conectados. Estod ebido a las posibles politicas de intercambio entre ASes.
 
 
-
-
-
-
-
-
-
-// Cada AS :
-// - Es administrado por una organizaciín por ejemplo ISP, universidad, empresa, etc.
-
-// - Controla un conjunto de direcciones IP.
-
-// - Es ideantificado con un numero.
-
-// Algunas observaciones:
-// - Un AS puede incluir ips de diferentes paises. por ejemplo AS de Facebook  (AS32934) tiene direcciones ip en Singapure, Canada Nigeria, KEnya, EEUU y en mas paises.
-
-
-// - It seems like IP address can be in more than one AS. For example, if I look up 209.216.230.240, it has 2 ASNs associated with it – AS6130 and AS21581. Apparently when this happens the more specific route takes priority – so packets to that IP would get routed to AS21581.
-
-
-// Ases comunmente son divididos en 3 tier levels:  
-// Ases comunmente son divididos en 3 tier levels:   (https://onlinelibrary.wiley.com/doi/10.1111/cgf.14287)
-// depending on their status as customer or provider of traffic. esto es mas bien un acuendo aceptado, mas q por una definicion fomral.
-// // well-accepted agreement than a binding definition.
-// - Tier 1:  re global networks which can reach all other networks without paying for the transit.
-// - Tier 3: are small local networks which pay for transit and peering to reach other networks. 
-// - Tier 2: are in the middle with a mixture of paid and free transit/peering.
-
-// Luckie et al. [] analizo las rewlaciones y propuso una metrica para (customer cone metric) para indicar  que tan global es un AS., se usa esta metrica para separar entre los tiers.
-
-// - Customer cone >= 200 -> Tier
-// - 2000 > Customer cone > =200 -> Tier 2
-// - Customer cone < 200 -> Tier 3
-
-
-
-
-// --------------------------------------------------
-
-
-// -  Clique: Un conjunto de Sistemas Autonomos que estan interconectados, es decir,cada AS dentro del clique tiene una conexion directa con todos los demas AS dentro del clique. Este tipo de estructura suele encontrarse  en la capa más alta de la jerarquía   de tinterent, conocida como Tier-1 ASes.
-
-// Los AS Tier-1 fomran un clique estableciendo coneciones de peering mutuo, intercambiando trafico sin costo entre ellos.
-
-
-
-
-
-
-
-
-
-// == RIR (Regional Internet Registry)
-
-// La IANA a traves d elos RIR 
-// Son organizaciones responsables de la asignacion y administracion de direcciones IP y numeros de Sistemas Autonomos (ASNs) en determinadas regiones geograficas.
-
-// - ARIN (American Registry for Internet Numbers): Norteamerica, el Caribe y Africa Subsahariana.
-// - RIPE NCC (Réseaux IP Européens Network Coordination Centre): Europa, Oriente Medio y Asia Central.
-// -APNIC (Asia-Pacific Network Information Centre): Asia y el Pacifico.
-// - LACNIC (Latin American and Caribbean Network Information Centre): America Latina y el Caribe.
-// - AfriNIC (African Network Information Centre): Africa.
-
-
-
-// TODO: Definir Tier-1 AS.
-
-
-
-
-
-#figure(
-  image("../imagenes/topologiaBGP.png", width: 40%),
-  caption: [Grafo de una red con 5 Sistemas Autónomos con 4 direcciones IP cada uno.],
-) <BGP-SA>
-
-
-// ==== Transit agreements
-// FIXME: Esta copiado textual de papers
-// are commercial contracts in which,
-// typically, a customer pays a service provider for access to the Internet;
-
-// these agreements are
-// most prevalent at the edges of the Internet, where the topology consists primarily of singly
-// connected “leaf” networks that are principally concerned with the delivery of their own traffic.   
-
-// - Transit agreements: Son contratos comenciales, donde tipicamnet un cliente paga  a un sefive provider para accerder a partes del internet que no pueder llegar. Estos acuerdo son más orevalentes en los bordes/final del grafod e internet donde la topología consiste en su mayoria en "leafs"
-// // @SurveyInterconnectionAgreements que representan networks que estas preocupadas principalmente de envia  su propio trafico al esto de Internet.
-
-// - Peering agreements: Son los acuerdos de interconexión entre operadores que permiten a las redes intercambiar tráfico dirigido a los clientes de cada uno. son más comunes en el núcleo de Internet, donde la topología consiste en redes densamente interconectadas @SurveyInterconnectionAgreements que se dedican principalmente al transporte de tráfico en nombre de las redes que son sus clientes.// FIXME: Arrgealr igual que el paper
-
-
-
-// The common understanding is that only routes to customer networks are exchanged,
-// that BGP version 4 is used to communicate those routes, and that each network will exercise a
-// reasonable duty of care in cooperating to prevent abusive or criminal misuse of the network.
-
-// En caso de los peering agreementes 
-
-
-// REFERENCIAS
-// - https://www.berec.europa.eu/sites/default/files/files/document_register_store/2016/11/BoR_%2816%29_237_PCH-Peering-Survey-2016.pdf
-
-
-
-// == RIR
-
-// + APNIC (Asia-Pacific Network Information Centre): Asian pacific
-// + RIPE NCC (Réseaux IP Européens Network Coordination Centre): Europa
-// + ARIN (American Registry for Internet Numbers): America del Norte
-// + AfriNIC (African Network Information Centre): Africa
-// + LACNIC (Latin American and Caribbean Network Information Centre): America Latina y el Caribe
-
-
-
-
-
+// #figure(
+//   image("../imagenes/topologiaBGP.png", width: 40%),
+//   caption: [Grafo de una red con 5 Sistemas Autónomos con 4 direcciones IP cada uno.],
+// ) <BGP-SA>
 
 
 
 
 == Ruteo 
 
-El ruteo consiste en la elección de caminos que seguirá un paquete dentro de una red, con el propósito de garantizar que la información que se transmite por Internet pueda llegar a su destino mediante la ruta más eficiente. Una red está formada por múltiples maquinas a las cuales se les llama nodo y las rutas que las unen. La comunicación entre dos nodos de la red se puede establecer mediante la interconexión de diferentes caminos, permitiendo así, conectar dos nodos que no tienen una conexión directa por medio de nodos intermedios. De esta forma el enrutamiento es el proceso de seleccionar la mejor ruta entre estos nodos en base a algún parámetro o reglas.
-Un enrutador o router es un dispositivo de red que se conecta a otros dispositivos y redes.
-Son los encargados de seleccionar las rutas que irán tomando los datos enviados.
-El ruteo opera gracias a las tablas de rutas presentes en los routers y a la información proporcionada en los encabezados de los paquetes, los cuales contienen datos sobre el destino del paquete. Cuando llega un paquete a un router, se consulta ls tabla de enrutamiento para localizar la dirección destinos, y posteriormente dirigir el paquete al próximo router o punto de red.
-Para ilustrar esto, supongamos un usuario accede a una página web desde su hogar. En este escenario, los paquetes viajan desde el computador hasta el router de su casa. Este router luego examina el encabezado del paquete para identificar el destino final en su tabla de rutas y lo envía al siguiente punto en red. Este nuevo punto será el encargado de realizar nuevamente el proceso de redirigir el paquete. Este procedimiento se repite en todos los routers hasta que finalmente el paquete llega al destino final.
-Existen dos tipos de enrutamiento: estático y dinámico. El enrutamiento estático implica el uso de tablas estáticas, las cuales deben ser modificadas manualmente para cambiar su configuración. Es útil en situaciones donde los parámetros de red permanecen constantes.
+El ruteo es el proceso mediante el cual se selecciona el camino que seguirá un paquete dentro de una red para llegar a su destino mediante la mejor ruta. La comunicación entre dos dispositivos de la red puede establecerse mediante diferentes rutas, lo que permite conectar dispositivos de red sin una conexión directa a través de dispositivos intermedios.
+
+Un enrutador o router es un dispositivo de red encargado de seleccionar las rutas que seguirán los datos enviados a traves de la red.
+El camino que sigue un paquete se elige según la información de las tablas de enrutamiento (RIBs) de los routers y en la información contenida en los encabezados de los paquetes, donde se indica el destino final.
+Cuando llega un paquete a un router, se consulta en la tabla de enrutamiento la dirección final para obtener el proximo router o punto de red al cual se debe dirigir el paquete. Cuando un paquete llega a un router, este consulta su tabla de enrutamiento para determinar el siguiente salto, es decir, el próximo router o punto de red al que debe enviarlo.
+
+Por ejemplo, cuando un usuario accede a una página web desde su hogar, los paquetes viajan desde el computador hasta el router de su casa. Este router luego examina el encabezado del paquete para identificar el destino final, consulta su tabla de enrutamiento y lo reenvia al siguiente punto de la red. Este nuevo router intermedio repite el proceso hasta que el paquete alcanza su destino final.
+
+Existen dos tipos de enrutamiento: estático y dinámico. El enrutamiento estático implica el uso de tablas estáticas, las cuales deben ser modificadas manualmente para cambiar su configuración.
 Por otro lado, en el enrutamiento dinámico, los routers se encargan de ir actualizando las tablas de enrutamiento en tiempo real, ajustándolas según las condiciones de la red. Este proceso se lleva a cabo mediante los protocolos de enrutamiento.
 
-
-*Ruteo Interno*
-
-Se encarga de gestionar las rutas a seguir de un paquete dentro de un Sistema Autónomo. En este contexto los routers ocupan protocolos de enrutamiento interno para intercambiar la información del estado de la red y las rutas disponibles. Entre los protocolos de ruteo interno
-se tiene:
+También se pueden clasificar los protocolos de enrutamiento en dos categorías: ruteo interno y ruteo externo.
+El ruteo Interno se encarga de gestionar las rutas a seguir de un paquete dentro de un Sistema Autónomo. Algunos d elos protocolos son:
 - *OSPF (Open Shortest Path First):* Utiliza el algoritmo de Dijkstra para determinar las rutas más cortas entre nodos @RFC-OSPF.
-- *RIP (Routing Information Protocol):* Utiliza un enfoque de vector de distancia para
-calcular la ruta más optima, basándose en la cantidad de saltos @RFC-RIP .
+- *RIP (Routing Information Protocol):* Utiliza un enfoque de vector de distancia para calcular la ruta más optima, basándose en la cantidad de saltos @RFC-RIP.
 
-*Ruteo Externo*
-
-Se centra en la gestión de rutas entre los diferentes Sistemas Autónomos que conforman el Internet. En este caso, se usan protocolos de enrutamiento externo, que al igual que los protocolos de enrutamiento interno se encarga de intercambiar la información de las rutas disponibles, permitiendo así que paquetes viajen de manera más efectiva. Algunos protocolos de enrutamiento externos son:
+El ruteo externo se centra en la gestión de rutas entre los Sistemas Autónomos que conforman el Internet. En este caso, se usan protocolos de enrutamiento externo. Algunos protocolos de enrutamiento externos son:
 
 - *BGP (Border Gateway Protocol):* Tiene un enfoque de vector de distancia. Utiliza un enfoque de vector de distancia y toma decisiones basadas en políticas de red para intercambiar información eficientemente @RFC-BGP.
 - *IS-IS (Intermediate System to Intermediate System):* Protocolo deenrutamiento de estado de enlace, similar a OSPF @IS-IS.
@@ -261,10 +139,10 @@ Se centra en la gestión de rutas entre los diferentes Sistemas Autónomos que c
 
 
 
-#figure(
-  image("../imagenes/RoutingEI.png", width: 50%),
-  caption: [TODO:],
-) <Ruteo-Externo-Interno>
+// #figure(
+//   image("../imagenes/RoutingEI.png", width: 50%),
+//   caption: [TODO:],
+// ) <Ruteo-Externo-Interno>
 
 
 
@@ -275,14 +153,14 @@ Se centra en la gestión de rutas entre los diferentes Sistemas Autónomos que c
 
 
 
-// == INTERNETT
-// #h(0.5cm)
-// Paper: The (In)Completeness of the Observed Internet AS-level Structure (2010)
+// #figure(
+//   image("../imagenes/Graph-rutas.png", width: 40%),
+//   caption: [TODO:],
+// ) <Graph>
 
-// Hierarchical structure of the logical Internet graph (2001)
-// Internet Topology Research Redux (2013)
-// Internet path inflation due to policy routing (2001)
-// Inferring AS Relationships Beyond Counting Edges (2004)
-// CORIA — Analyzing internet connectivity risks using network graphs (2017)
-// IXPs: mapped? (2009)
+// De esta forma podemos representar 
+// graph:$ G = (N,E)$
 
+// N = set of routers = { u, v, w, x, y, z }
+
+// E = set of links ={ (u,v), (u,x), (v,x), (v,w), (x,w), (x,y), (w,y), (w,z), (y,z) }
