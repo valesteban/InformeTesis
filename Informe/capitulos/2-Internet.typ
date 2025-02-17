@@ -59,13 +59,11 @@ Los AS utilizan el protocolo BGP, para intercambiar información de enrutamiento
 Los AS se identifican con un número de Sistema Autonomo (ASN) de 16 bits y controlan un conjunto de direcciones IP.
 Esta asignación es llevada a cabo por los Registros _Regional Internet Registry_ (RIRs), quienes reciben bloques de IPs por la _Internet Assigned Numbers Authority_ (IANA) y los distribuyen a los _Local Internet Registries_ (LIR) y usuarios finales.
 
-Los ISP, quienes puedes estar conformados por uno o varios Sistemas Autonomos, se dividen comunmente en tres niveles de jerarquía. El Tier-1, donde se encuentran los AS que conformaan el "backbone" de Internet, estos intercambian paquetes entre si sin un costo asociado.Los Tier-2 son generalmente operadores nacionales que compran tránsito a los Tier-1 y venden tránsito a los Tier-3. Finalmente los Tier-3 son los operadores locales que pagan por el tránsito para proporcionar acceso a Internet a los usuarios finales @InterconnectionPeeringSettlements. Tambien Luckie et al.@ASRelationshipsCustomerConesValidation analizó los AS y propuso una métrica para indicar que tan global es un AS, donde si el customer cone es mayor o igual a 200 se considera Tier, si es mayor a 2000 se considera Tier 2 y si es menor a 200 se considera Tier 3.
+Los ISP, quienes puedes estar conformados por uno o varios Sistemas Autonomos, se dividen comunmente en tres niveles de jerarquía. El Tier-1, donde se encuentran los AS que conformaan el "backbone" de Internet, estos intercambian paquetes entre si sin un costo asociado.Los Tier-2 son generalmente operadores nacionales que compran tránsito a los Tier-1 y venden tránsito a los Tier-3. Finalmente los Tier-3 son los operadores locales que pagan por el tránsito para proporcionar acceso a Internet a los usuarios finales @InterconnectionPeeringSettlements. Tambien Luckie et al. @ASRank analizó los AS y propuso una métrica para indicar que tan global es un AS, donde si el customer cone es mayor o igual a 200 se considera Tier, si es mayor a 2000 se considera Tier 2 y si es menor a 200 se considera Tier 3.
 
 Una ultima separación que se puede hacerentre AS es segun sus conexiones a otros Sistemas Autonomos, en
 single-homed y multi-homed. Los AS single-homed tienen solo una conexión a otro AS, mientras que un multi-homed tiene conexiones a más de un AS.
 
-
-// Dado que dos ISPs podrían fusionarse en uno solo y cada dominio administrativo puede poseer varios ASes, un dominio administrativo puede operar uno o varios ASes. @InferringASRelationships2001.
 
 
 == Internet Exchange Points
@@ -128,6 +126,7 @@ Por otro lado, en el enrutamiento dinámico, los routers se encargan de ir actua
 
 También se pueden clasificar los protocolos de enrutamiento en dos categorías: ruteo interno y ruteo externo.
 El ruteo Interno se encarga de gestionar las rutas a seguir de un paquete dentro de un Sistema Autónomo. Algunos d elos protocolos son:
+
 - *OSPF (Open Shortest Path First):* Utiliza el algoritmo de Dijkstra para determinar las rutas más cortas entre nodos @RFC-OSPF.
 - *RIP (Routing Information Protocol):* Utiliza un enfoque de vector de distancia para calcular la ruta más optima, basándose en la cantidad de saltos @RFC-RIP.
 

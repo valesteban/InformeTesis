@@ -101,10 +101,10 @@ Es importante destacar que las bases de datos que almacenan la información de r
 
 
 
-== EXTRAS 
-// TODO: Agregar en alguna parte
-- Export policies:
-  - PErmitir/denegar una ruta
-  - Asignar multiples exit discriminator
-  - Agregar community values
-  - Prepending
+// == EXTRAS 
+// // TODO: Agregar en alguna parte
+// - Export policies:
+//   - PErmitir/denegar una ruta
+//   - Asignar multiples exit discriminator
+//   - Agregar community values
+//   - Prepending

@@ -1,16 +1,18 @@
 = Internat Data collection
 // https://www.pacnog.org/pacnog17/presentations/MappingTheInternet.pdf
 
-//TODO: Rellenar esta parte como introducción a la información de dodne existen datos de Internet/BGP
+La recopilación de datos de Internet es fundamental para comprender su funcionamiento, identificar áreas de mejora y optimizar su infraestructura.  Información sobre tráfico, rutas y otros permite detectar anomalías, prevenir amenazas y optimizar el rendimiento global. Además, estos datos son clave para la investigación y el desarrollo de nuevas tecnologías que mejoren la conectividad y la eficiencia de la red.
+
+A continuación, se presentan algunas fuentes clave que proporcionan datos públicos sobre Internet:
 
 == CAIDA
 
 El Centro de Análisis de Datos de Internet Aplicados o CAIDA por sus siglas en inglés
 @CAIDA es una organización de investigación cuyo principal objetivo es la recopilación y análisis de datos relacionados a la infrestructura, rendimiento y trafico del Internet. Este funciona como un canal de difusión donde se publican y comparten tanto herramientas como investigaciones relacionado a las redes de Internet.
 
-En el contexto de nuestro problema de *inferencia de Relaciones entre Sistemas Autonomos*, CAIDA ofrece el dataset *CAIDA AS Relationships* @CAIDAS-relationship. Este clasifica las relaciones entre Sistemas Autonomos en dos principales tipos: Customer-to-provider (C2P) y Peer-to-peer (P2P). Estas relaciones son inferidas a partir de datos públicos de ruteoBGP ofrecidos por RouteViews@RouteViewsProject y RIPE RIS@RIPE-RIS.
+En el contexto de nuestro problema de *inferencia de Relaciones entre Sistemas Autonomos*, CAIDA ofrece el dataset *CAIDA AS Relationships* @CAIDAS-relationship. Este clasifica las relaciones entre Sistemas Autonomos en dos principales tipos: Customer-to-provider (C2P) y Peer-to-peer (P2P). Estas relaciones son inferidas a partir de datos públicos de ruteoBGP ofrecidos por RouteViews @RouteViewsProject y RIPE RIS @RIPE-RIS.
 El dataset *CAIDA AS Relationships* está compuesto por dos subdatasets:
-- *serial-1:* Contiene las relaciones inferidas utilizando un método similar al descrito en el estudio de M. Lukie et al.@ASRelationshipsCustomerConesValidation .Esta disponible dasde 1998 hasta la actualidad, con un archivo mensual. Cada archivo incluye un grafo completo derivado de instantáneas de las tablas BGP de RouteViews y RIPE RIS, tomadas cada 2 horas durante un período de 5 días.
+- *serial-1:* Contiene las relaciones inferidas utilizando un método similar al descrito en el estudio de M. Lukie et al. @ASRank .Esta disponible dasde 1998 hasta la actualidad, con un archivo mensual. Cada archivo incluye un grafo completo derivado de instantáneas de las tablas BGP de RouteViews y RIPE RIS, tomadas cada 2 horas durante un período de 5 días.
 
 - *serial-2:* Basado en el dataset Serial-1, este agrega enlaces inferidos mediante BGP communities, utilizando el método descrito por Vasileios et al. @Inferring-Multilateral-Peering . Está disponible desde octubre de 2015 hasta el presente, con archivos generados mensualmente.
 
@@ -62,36 +64,40 @@ Para acceder a los datos, existen dos formas: directamente a través de archivos
 
 == The peering DB
 
-PeeringDB @PeeringDB es una base de datos de acceso libre, una iniciativa sin fines de lucro, gestionada y promovida por voluntarios, donde los usuarios comparten información sobre redes. Esta información facilita la interconexión global de redes en Puntos de Intercambio de Internet (IXPs), centros de datos, y además proporciona datos valiosos para investigaciones.
+PeeringDB (@PeeringDB) es una base de datos pública y de acceso libre, gestionada y promovida por voluntarios. Su objetivo principal es facilitar la interconexión entre redes, proporcionando información detallada sobre operadores de red, proveedores de tránsito, centros de datos y Puntos de Intercambio de Internet (IXPs). Gracias a su contenido, es una fuente valiosa para la comunidad de Internet y para investigaciones relacionadas con el enrutamiento y la interconexión de redes. 
 
-Fue creada con el fin de facilitar 
-he resource was created to help support peering between networks and peering coordinators, and today, it includes a wide range of interconnection data from networks, 
-
-== Otroas Gerramientas
-=== Hurricane Electric Internet Services
-
-// == Hurricane BGP Toolkit
-// El Hurricane Electric BGP Toolkit es un conjunto de herramientas en línea desarrollado por Hurricane Electric, diseñado para analizar y monitorear datos de BGP.
-// https://bgp.he.net/
-
-// == Hurricane BGP Toolkit
-// El Hurricane Electric BGP Toolkit es un conjunto de herramientas en línea desarrollado por Hurricane Electric, diseñado para analizar y monitorear datos de BGP.
-// https://bgp.he.net/
-
-
-=== Servidores Looking glass
-=== BGGPView
-
-
-
-// https://bgpview.io/
+PeeringDB contiene una amplia variedad de información, incluyendo los números de Sistema Autónomo (ASN), las políticas de peering, las ubicaciones de redes y los detalles de los IXPs, como la cantidad de participantes y las entidades que los operan. 
 
 
 
 
-// === Formato MRT
 
-// - Multi-threaded Routing Toolkit (MRT)
+// == Otroas Gerramientas
+// TODO: Ver si quiero agregar mas a esta sección
+// === Hurricane Electric Internet Services
+
+// // == Hurricane BGP Toolkit
+// // El Hurricane Electric BGP Toolkit es un conjunto de herramientas en línea desarrollado por Hurricane Electric, diseñado para analizar y monitorear datos de BGP.
+// // https://bgp.he.net/
+
+// // == Hurricane BGP Toolkit
+// // El Hurricane Electric BGP Toolkit es un conjunto de herramientas en línea desarrollado por Hurricane Electric, diseñado para analizar y monitorear datos de BGP.
+// // https://bgp.he.net/
+
+
+// === Servidores Looking glass
+// === BGGPView
+
+
+
+// // https://bgpview.io/
+
+
+
+
+// // === Formato MRT
+
+// // - Multi-threaded Routing Toolkit (MRT)
 
 // Muchos de los archivos de RouteViews y RIS estan en formato MRT. Para extraer los Paths se necesita parsearlos.
 

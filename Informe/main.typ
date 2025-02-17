@@ -62,31 +62,31 @@
 
 // Capitulo 2: Internet
 #include "capitulos/2-Internet.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 3: BGP
 #include "capitulos/3-BGP.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 4: AS Inference
 #include "capitulos/4-AS-Inference.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 5: Redes Neuronales
 #include "capitulos/5-Redes-Neuronales.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 6: Datos
 #include "capitulos/6-Datos.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 7: Experimentos
 #include "capitulos/7-Experimentos.typ"
-#pagebreak()
+// #pagebreak()
 
 // Capitulo 8: Análisis
 #include "capitulos/8-Analisis.typ"
-#pagebreak()
+// #pagebreak()
 
 #figure(
   image("imagenes/puma.jpg", width: 90%),

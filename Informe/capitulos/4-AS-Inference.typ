@@ -74,13 +74,13 @@ Ellos se basarón en tres supuestos: existe un clique de ASes proveedores de tr�
 Internet, Los clientes establecen relaciones con otros ASes con el fin de ser globalmente alcanzables y No existen ciclos de enlaces C2P para que el enrutamiento converja.
 Basándose en estos supuestos, introdujeron un nuevo algoritmo para inferir el "cono de clientes" de un AS, que es el conjunto de AS que puede alcanzar utilizando enlaces P2C.
  
-Por ultimo, Shapira y Shavitt @BGP2VecASRelationships emplearon técnicas de Deep Learning para la tarea de clasificación.
+Por ultimo, Shapira y Shavitt @UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning emplearon técnicas de Deep Learning para la tarea de clasificación.
 Utilizaron BGP2Vec con el objetivo de crear representaciones de los Sistemas Autónomos y luego pasaron estos embeddings 
 aprendidos a una Red Neuronal Artificial, la cual se encargaba de clasificar los tipos de relaciones entre pares de ASes, 
 obteniendo una precisión del 95.2%. Cabe destacar que el entrenamiento de esta Red Neuronal fue realizado con los datos inferidos del dataset @CAIDAS-relationship.
 
 
-En nuestro caso desarrollamos esta tarea utilizando redes neuronales de grafos, realizando un experimento similar al de Shapira y Shavitt @BGP2VecASRelationships, pero aplicando GNNs en lugar de una Red Neuronal tradicional. Para ello, primero crearemos un pequeño benchmark utilizando algunos de los métodos de inferencia de relaciones entre ASes para luego relizar uan comparacion entre estas tecnicas.
+En nuestro caso desarrollamos esta tarea utilizando redes neuronales de grafos, realizando un experimento similar al de Shapira y Shavitt @UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning, pero aplicando GNNs en lugar de una Red Neuronal tradicional. Para ello, primero crearemos un pequeño benchmark utilizando algunos de los métodos de inferencia de relaciones entre ASes para luego relizar uan comparacion entre estas tecnicas.
 
 === Gao
 
@@ -136,7 +136,7 @@ Esta última regla puede corresponder también a una relación S2S, en caso de q
 
 === BGP2Vec
 
-En 2020, Tal Shapira y Yuval Shavitt presentaron un nuevo enfoque @BGP2VecASRelationships, para 
+En 2020, Tal Shapira y Yuval Shavitt presentaron un nuevo enfoque @UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning, para 
 la inferencia de Sistemas Autónomos utilizando por primera vez técnicas de Deep Learning. Este metodo 
 se realiza se basa en la creacion de empebings de estos Sistemas autonomos utilizando unicamente anuncion BGP provenientes de datasets públicos.
 El modelo alcanzó una precisión del 95.8 % en la clasificación de relaciones entre ASes.
@@ -164,7 +164,7 @@ Una vez entrenado los embeddings para casa ASN, se continua con la tarea de clas
 
 Para la etapa inicial de entrenamiento de BGP2Vec, se utilizaron anuncios extraídos de RouteViews @RouteViewsProject, que contenían anuncios de rutas de AS (AS PATH) recolectadas por 19 colectores. Este dataset recopiló 3,600,000 rutas de AS con 62,525 vértices de AS y 113,400 enlaces no dirigidos.
 
-Para el entrenamiento de la Red Neuronal encargada de la clasificación de las relaciones entre ASes, se utilizó el conjunto de datos de relaciones entre AS de CAIDA @CAIDAS-relationship, que contiene relaciones P2P y P2C/C2P. Además para algunos experimentos, se empleó el dataset ToR de BGProtect (www.BGProtect.com) @BGProtect, basado en el trabajo de Shavitt et al. @Near-deterministic-Iinference-of-AS-relationships..
+Para el entrenamiento de la Red Neuronal encargada de la clasificación de las relaciones entre ASes, se utilizó el conjunto de datos de relaciones entre AS de CAIDA @CAIDAS-relationship, que contiene relaciones P2P y P2C/C2P. Además para algunos experimentos, se empleó el dataset ToR de BGProtect (www.BGProtect.com) @BGProtect, basado en el trabajo de Shavitt et al. @NearDeterministicInference .
 
 
 // https://github.com/talshapira/BGP2Vec/tree/main
@@ -259,7 +259,7 @@ Las características utilizadas para calcular la probabilidad de cada relación 
 //   1. Highest degree ASes sit at top of the routing hierarchy
 //   2. Peering ASes have similar degree
 //   3. Providers have larger degree than customers
-// @InferringASRelatioships2001 @ASRelationshipsCustomerConesValidation @InferringASRelationshipsDeadEndorLivelyBeginning
+// @InferringASRelatioships2001 @InferringASRelationshipsDeadEndorLivelyBeginning
 // esto afecta la accuracy de los algormios ya  que un paso impoortante de stos es encontrar/identificar ql clique Tier 1 Ases al top de la jerarquía.
 // Debido al fenomeno de "flattening of the internet" [he flattening
 // internet topology: Natural evolution, unsightly barna-
