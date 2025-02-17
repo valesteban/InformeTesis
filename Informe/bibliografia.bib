@@ -1,208 +1,263 @@
-% GNN + REDES ----------------------
-@article{BenchmarkingGNN,
-    author = {Dimitrios P. Giakatos, Sofia Kostoglou,Pavlos Sermpezis, Athena Vakali},
-    title = {Benchmarking Graph Neural Networks for Internet Routing Data},
-    journal = {GNNet '22: Proceedings of the 1st International Workshop on Graph Neural Networking},
-    year = {2022}
-}
-@article{ModelingTCPPerformanceGNN,
-    author = {Benedikt Jaeger, Max Helm, Lars Schwegmann, Georg Carle},
-    title = {Modeling TCP Performance using Graph Neural Networks},
-    journal = {GNNet '22: Proceedings of the 1st International Workshop on Graph Neural Networking},
-    year = {2022}
-}
-@article{UnveilingPotentialGNNBGP,
-    author = {Hamid Latif, Jordi Paillissé,Jinze Yang ,Albert Cabellos-Aparicio, Pere Barlet-Ros},
-    title = {Unveiling the Potential of Graph Neural Networks for BGP Anomaly Detection},
-    journal = {GNNet '22: Proceedings of the 1st International Workshop on Graph Neural Networking},
-    year =  { 2022}
-}
 
 Autonomous Sistems ----------------------
 
+FIXME:
 @article{InterconnectionPeeringSettlements,
-    author = {Geoff Huston },
+    author = {Geoff Huston},
     title = {Interconnection, Peering and Settlements},
     year = {2003},
     url = {http://websrv.cs.fsu.edu/~xyuan/cis6930/huston99.pdf}
-
 }
 
 
 AS RELATIONSHIPS ----------------------
 
-
-@article{InferringASRelationshipsDeadEndorLivelyBeginning,
-    author = {X. Dimitropoulos, D. Krioukov, B. Huffaker, G. Riley,et al.} ,
-    title = {Inferring AS relationships: Dead end or lively beginning?} ,
-    journal = {In International Workshop on Experimental and Efficient Algorithms} ,
-    year =  { 2005}
+BIEN
+@inproceedings{InferringASRelationshipsDeadEndorLivelyBeginning,
+    author = {Dimitropoulos, Xenofontas and Krioukov, Dmitri and Huffaker, Bradley and claffy, kc and Riley, George},
+    year = {2005},
+    month = {08},
+    title = {Inferring AS Relationships: Dead End or Lively Beginning?},
+    volume = {3503},
+    isbn = {978-3-540-25920-6},
+    journal = {Lecture Notes in Computer Science},
+    doi = {10.1007/11427186_12}
 }
 
-
-@article{ASRelationshipsCustomerConesValidation,
-    author = {M. Luckie, B. Huffaker, k. claffy, A. Dhamdhere, and V. Giotsas} ,
-    title = {AS Relationships, Customer Cones, and Validation} ,
-    journal = { in Internet Measurement Conference (IMC)} ,
-    year =  { 2013}
+BIEN
+@inproceedings{ASRank,
+    author = {Luckie, Matthew and Huffaker, Bradley and Dhamdhere, Amogh and Giotsas, Vasileios and claffy, kc},
+    title = {AS relationships, customer cones, and validation},
+    year = {2013},
+    isbn = {9781450319539},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2504730.2504735},
+    doi = {10.1145/2504730.2504735},
+    abstract = {Business relationships between ASes in the Internet are typically confidential, yet knowledge of them is essential to understand many aspects of Internet structure, performance, dynamics, and evolution. We present a new algorithm to infer these relationships using BGP paths. Unlike previous approaches, our algorithm does not assume the presence (or seek to maximize the number) of valley-free paths, instead relying on three assumptions about the Internet's inter-domain structure: (1) an AS enters into a provider relationship to become globally reachable; and (2) there exists a peering clique of ASes at the top of the hierarchy, and (3) there is no cycle of p2c links. We assemble the largest source of validation data for AS-relationship inferences to date, validating 34.6\% of our 126,082 c2p and p2p inferences to be 99.6\% and 98.7\% accurate, respectively. Using these inferred relationships, we evaluate three algorithms for inferring each AS's customer cone, defined as the set of ASes an AS can reach using customer links. We demonstrate the utility of our algorithms for studying the rise and fall of large transit providers over the last fifteen years, including recent claims about the flattening of the AS-level topology and the decreasing influence of tier-1 ASes on the global Internet.},
+    booktitle = {Proceedings of the 2013 Conference on Internet Measurement Conference},
+    pages = {243-256},
+    numpages = {14},
+    keywords = {AS relationships, customer cone, routing policies},
+    location = {Barcelona, Spain},
+    series = {IMC '13}
 }
 
-@paper{Inferring-Multilateral-Peering,
-    author = {Vasileios Giotsas, Shi Zhou, Matthew Luckie and kc claffy},
-    title = {Inferring Multilateral Peering},
+BIEN
+@inproceedings{Inferring-Multilateral-Peering,
+    author = {Giotsas, Vasileios and Zhou, Shi and Luckie, Matthew and claffy, kc},
+    title = {Inferring multilateral peering},
+    year = {2013},
+    isbn = {9781450321013},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2535372.2535390},
+    doi = {10.1145/2535372.2535390},
+    abstract = {The AS topology incompleteness problem is derived from difficulties in the discovery of p2p links, and is amplified by the increasing popularity of Internet eXchange Points (IXPs) to support peering interconnection. We describe, implement, and validate a method for discovering currently invisible IXP peering links by mining BGP communities used by IXP route servers to implement multilateral peering (MLP), including communities that signal the intent to restrict announcements to a subset of participants at a given IXP. Using route server data juxtaposed with a mapping of BGP community values, we can infer 206K p2p links from 13 large European IXPs, four times more p2p links than what is directly observable in public BGP data. The advantages of the proposed technique are threefold. First, it utilizes existing BGP data sources and does not require the deployment of additional vantage points nor the acquisition of private data. Second, it requires only a few active queries, facilitating repeatability of the measurements. Finally, it offers a new source of data regarding the dense establishment of MLP at IXPs.},
+    booktitle = {Proceedings of the Ninth ACM Conference on Emerging Networking Experiments and Technologies},
+    pages = {247 - 258},
+    numpages = {12},
+    keywords = {topology, routing policies, multilateral peering, ixp, bgp, as relationships},
+    location = {Santa Barbara, California, USA},
+    series = {CoNEXT '13}
 }
 
-
+BIEN
 @article{InferringASRelatioships2001,
-    author = {Lixin Gao},
+    author = {Gao, Lixin},
     title = {On inferring autonomous system relationships in the internet},
-    journal = { IEEE/ACM Transactions on Networking} ,
-    year = { 2001}
+    year = {2001},
+    issue_date = {December 2001},
+    publisher = {IEEE Press},
+    volume = {9},
+    number = {6},
+    issn = {1063-6692},
+    url = {https://doi.org/10.1109/90.974527},
+    doi = {10.1109/90.974527},
+    abstract = {The Internet consists of rapidly increasing number of hosts interconnected by constantly evolving networks of links and routers. Interdomain routing in the Internet is coordinated by the Border Gateway Protocol (BGP). BGP allows each autonomous system (AS) to choose its own administrative policy in selecting routes and propagating reachability information to others. These routing policies are constrained by the contractual commercial agreements between administrative domains. For example, an AS sets its policy so that it does not provide transit services between its providers. Such policies imply that AS relationships are an important aspect of Internet structure. We propose an augmented AS graph representation that classifies AS relationships into customer-provider, peering, and sibling relationships. We classify the types of routes that can appear in BGP routing tables based on the relationships between the ASs in the path and present heuristic algorithms that infer AS relationships from BGP routing tables. The algorithms are tested on publicly available BGP routing tables. We verify our inference results with AT&T internal information on its relationship with neighboring ASs. As much as 99.1\% of our inference results are confirmed by the AT&T internal information. We also verify our inferred sibling relationships with the information acquired from the WHOIS lookup service. More than half of our inferred sibling-to-sibling relationships are confirmed by the WHOIS lookup service. To the best of our knowledge, there has been no publicly available information about AS relationships and this is the first attempt in understanding and inferring AS relationships in the Internet. We show evidence that some routing table entries stem from router misconfigurations.},
+    journal = {IEEE/ACM Trans. Netw.},
+    month = dec,
+    pages = {733-745},
+    numpages = {13},
+    keywords = {routing, protocols, Internet, Border Gateway Protocol (BGP)}
 }
 
-@article{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,
-    author = {Tal Shapira, Yuval Shavitt },
-    title = {Unveiling the Type of Relationship Between Autonomous Systems Using Deep Learning} ,
-    journal = {NOMS 2020 - 2020 IEEE/IFIP Network Operations and Management Symposium},
-    year = {2020},
+
+BIEN
+@INPROCEEDINGS{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,
+    author={Shapira, Tal and Shavitt, Yuval},
+    booktitle={NOMS 2020 - 2020 IEEE/IFIP Network Operations and Management Symposium}, 
+    title={Unveiling the Type of Relationship Between Autonomous Systems Using Deep Learning}, 
+    year={2020},
+    pages={1-6},
+    keywords={Economics;Deep learning;Heuristic algorithms;Biological system modeling;Supervised learning;Routing;Natural language processing;Deep Learning;Internet;BGP;AS relationships;AS embedding},
+    doi={10.1109/NOMS47738.2020.9110358}
 }
+
+BIEN
 @article{ASRelationshipInferenceValidation,
-    author = {X. Dimitropoulos, D. Krioukov, M. Fomenkov, B. Huffaker, Y. Hyun, kc claffy, and G. Riley} ,
-    title = {AS Relationships: Inference and Validation},
-    journal = { ACM SIGCOMM Computer Communication Review (CCR), v.37, n.1, pp.29-40} ,
-    year =  {2007}
+    author = {Dimitropoulos, Xenofontas and Krioukov, Dmitri and Fomenkov, Marina and Huffaker, Bradley and Hyun, Young and claffy, kc and Riley, George},
+    title = {AS relationships: inference and validation},
+    year = {2007},
+    issue_date = {January 2007},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {37},
+    number = {1},
+    issn = {0146-4833},
+    url = {https://doi.org/10.1145/1198255.1198259},
+    doi = {10.1145/1198255.1198259},
+    abstract = {Research on performance, robustness, and evolution of the global Internet is fundamentally handicapped without accurate and thorough knowledge of the nature and structure of the contractual relationships between Autonomous Systems (ASs). In this work we introduce novel heuristics for inferring AS relationships. Our heuristics improve upon previous works in several technical aspects, which we outline in detail and demonstrate with several examples. Seeking to increase the value and reliability of our inference results, we then focus on validation of inferred AS relationships. We perform a survey with ASs' network administrators to collect information on the actual connectivity and policies of the surveyed ASs. Based on the survey results, we find that our new AS relationship inference techniques achieve high levels of accuracy: we correctly infer 96.5\% customer to provider (c2p), 82.8\% peer to peer (p2p), and 90.3\% sibling to sibling (s2s) relationships. We then cross-compare the reported AS connectivity with the AS connectivity data contained in BGP tables. We find that BGP tables miss up to 86.2\% of the true adjacencies of the surveyed ASs. The majority of the missing links are of the p2p type, which highlights the limitations of present measuring techniques to capture links of this type. Finally, to make our results easily accessible and practically useful for the community, we open an AS relationship repository where we archive, on a weekly basis, and make publicly available the complete Internet AS-level topology annotated with AS relationship information for every pair of AS neighbors.},
+    journal = {SIGCOMM Comput. Commun. Rev.},
+    month = jan,
+    pages = {29-40},
+    numpages = {12},
+    keywords = {routing policies, inference, as relationships}
 }
 
-@article{NearDeterministicInference,
-    author = {U. Weinsberg, Y. Shavitt, and E. Shir} ,
-    title = {Near-deterministic inference of
-AS relationships},
-    journal = {ConTel 2009} ,
-    year =  {2009}
+BIEN
+@INPROCEEDINGS{NearDeterministicInference,
+    author={Weinsberg, Udi and Shavitt, Yuval and Shir, Eran},
+    booktitle={IEEE INFOCOM Workshops 2009}, 
+    title={Near-Deterministic Inference of AS Relationships}, 
+    year={2009},
+    pages={1-2},
+    keywords={Inference algorithms;Internet;Voting;Routing;Peer to peer computing;Robustness;Ear;Heuristic algorithms;North America;Europe},
+    doi={10.1109/INFCOMW.2009.5072167}
+}
+
+BIEN
+@INPROCEEDINGS{EvaluationASRelationshipInferences,
+    author={Jianhong Xia and Lixin Gao},
+    booktitle={IEEE Global Telecommunications Conference, 2004. GLOBECOM '04.}, 
+    title={On the evaluation of AS relationship inferences [Internet reachability/traffic flow applications]}, 
+    year={2004},
+    volume={3},
+    pages={1373-1377 Vol.3},
+    keywords={Inference algorithms;Internet;Routing protocols;Peer to peer computing;Topology;Heuristic algorithms;Data mining;Scalability},
+    doi={10.1109/GLOCOM.2004.1378209}
 }
 
 
-@article{EvaluationASRelationshipInferences,
-    author = {Jianhong Xia and Lixin Gao },
-    title = {On the Evaluation of AS Relationship Inferences},
-    journal = { IEEE Globecom} ,
-    year = {2004}
+BIEN
+@INPROCEEDINGS{CharacterizingIAS,
+  author={Subramanian, L. and Agarwal, S. and Rexford, J. and Katz, R.H.},
+  booktitle={Proceedings.Twenty-First Annual Joint Conference of the IEEE Computer and Communications Societies}, 
+  title={Characterizing the Internet hierarchy from multiple vantage points}, 
+  year={2002},
+  volume={2},
+  pages={618-627 vol.2},
+  keywords={Peer to peer computing;Web and internet services;Telecommunication traffic;Routing protocols;Computer science;IP networks;Contracts;Network topology;Performance analysis},
+  doi={10.1109/INFCOM.2002.1019307}
 }
 
-@article{InferringASRelationships,
-    author = {Xenofontas Dimitropoulos, Dmitri Krioukov, Bradley Huffaker, kc claffy and George Riley   } ,
-    title = {Inferring AS Relationships: Dead End or Lively Beginning} ,
-    journal = {International Workshop on Efficient and Experimental Algorithms (WEA)},
-    year = {2005}
-}
 
-@article{CharacterizingIAS,
-    author = {Lakshminarayanan Subramanian, Sharad Agarwal, Jennifer Rexford, Randy H. Katz} ,
-    title = {Characterizing the Internet hierarchy from multiple vantage points},
-    journal = {IEEE INFOCOM},
-    year = {2002}
-} 
-L. Subramanian, S. Agarwal, J. Rexford, and R. H. Katz, “Char-
-acterizing the internet hierarchy from multiple vantage points,” in
-Proceedings.Twenty-First Annual Joint Conference of the IEEE Com-
-puter and Communications Societies, vol. 2, June 2002, pp. 618–627
-vol.2.
-
+BIEN
 @paper{computing-observed-autonomous-system-relationships-in-the-internet,
-    author = {L. Ruan and J. Susan Varghese,},
+    author = {Lu Ruan and Jinu Susan Varghese},
     title = {Computing observed autonomous system relationships in the internet},
     year = {2014}
 }
 
-
-
-
-
-@paper{BGP2VecASRelationships,
-    author = {Tal Shapira y Yuval Shavitt},
-    title = {Unveiling the Type of Relationship Between Autonomous Systems Using Deep Learning},
-    year = {2020}
+BIEN
+@article{ComputingTypesRelationshipsBetweenAS,
+author = {Di Battista, Giuseppe and Erlebach, Thomas and Hall, Alexander and Patrignani, Maurizio and Pizzonia, Maurizio and Schank, Thomas},
+title = {Computing the types of the relationships between autonomous systems},
+year = {2007},
+issue_date = {April 2007},
+publisher = {IEEE Press},
+volume = {15},
+number = {2},
+issn = {1063-6692},
+url = {https://doi.org/10.1109/TNET.2007.892878},
+doi = {10.1109/TNET.2007.892878},
+abstract = {We investigate the problem of computing the types of the relationships between Internet Autonomous Systems. We refer to the model introduced by Gao [IEEE/ACM TRANSACTIONS ON NETWORKING, 9(6):733-645, 2001] and Subramanian et al. (IEEE Infocom, 2002) that bases the discovery of such relationships on the analysis of the AS paths extracted from the BGP routing tables. We characterize the time complexity of the above problem, showing both NP-completeness results and efficient algorithms for solving specific cases. Motivated by the hardness of the general problem, we propose approximation algorithms and heuristics based on a novel paradigm and show their effectiveness against publicly available data sets. The experiments provide evidence that our algorithms perform significantly better than state-of-the-art heuristics.},
+journal = {IEEE/ACM Trans. Netw.},
+month = apr,
+pages = {267-280},
+numpages = {14},
+keywords = {algorithms, internet, routing}
 }
 
-@paper{Near-Deterministic-Inference-of-AS-Relationships,
-    author = {Yuval Shavitt, Eran Shir and Udi Weinsberg},
-    title = {Inferring autonomous system relationships in the internet},
-    year = {2009}
+BIEN
+@inproceedings{ProbLink,
+author = {Jin, Yuchen and Scott, Colin and Dhamdhere, Amogh and Giotsas, Vasileios and Krishnamurthy, Arvind and Shenker, Scott},
+title = {Stable and practical AS relationship inference with problink},
+year = {2019},
+isbn = {9781931971492},
+publisher = {USENIX Association},
+address = {USA},
+abstract = {Knowledge of the business relationships between Autonomous Systems (ASes) is essential to understanding the behavior of the Internet routing system. Despite significant progress in the development of relationship inference algorithms, the resulting inferences are impractical for many critical real-world applications, cannot offer adequate predictability in the configuration of routing policies, and suffer from inference oscillations. To achieve more practical and stable relationship inference, we first illuminate the root causes of the contradiction between these shortcomings and the near-perfect validation results for AS-Rank, the state-of-the-art relationship inference algorithm. Using a "naive" inference approach as a benchmark, we find that available validation datasets over-represent AS links with easier inference requirements. We identify which types of links are harder to infer and develop appropriate validation subsets to enable more representative evaluation.We then develop a probabilistic algorithm, ProbLink, to overcome the challenges in inferring hard links, such as non-valley-free routing, limited visibility, and nonconventional peering practices. ProbLink reveals key AS-interconnection features derived from stochastically informative signals. Compared to AS-Rank, our approach reduces the error rate for all links by 1.6\texttimes{} and, importantly, by up to 6.1\texttimes{} for various types of hard links. We demonstrate the practical significance of our improvements by evaluating their impact on three applications. Compared to the current state-of-the-art, ProbLink increases the precision and recall of route leak detection by 4.1\texttimes{} and 3.4\texttimes{} respectively, reveals 27\% more complex relationships, and increases the precision of predicting the impact of selective advertisements by 34\%.},
+booktitle = {Proceedings of the 16th USENIX Conference on Networked Systems Design and Implementation},
+pages = {581-597},
+numpages = {17},
+location = {Boston, MA, USA},
+series = {NSDI'19}
 }
 
-@paper{ComputingTypesRelationshipsBetweenAS,
-    author = {G. D. Battista, M. Patrignani, and M. Pizzonia},
-    title = {Computing the types
-of the relationships between autonomous systems,},
-    year = {2003},
-    journal = {EEE INFOCOM 2003}
+BIEN
+@inproceedings{TopoScope,
+author = {Jin, Zitong and Shi, Xingang and Yang, Yan and Yin, Xia and Wang, Zhiliang and Wu, Jianping},
+title = {TopoScope: Recover AS Relationships From Fragmentary Observations},
+year = {2020},
+isbn = {9781450381383},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3419394.3423627},
+doi = {10.1145/3419394.3423627},
+abstract = {Knowledge of the Internet topology and the business relationships between Autonomous Systems (ASes) is the basis for studying many aspects of the Internet. Despite the significant progress achieved by latest inference algorithms, their inference results still suffer from errors on some critical links due to limited data, thus hindering many applications that rely on the inferred relationships. We take an in-depth analysis on the challenges inherent in the data, especially the limited coverage and biased concentration of the vantage points (VPs). Some aspects of them have been largely overlooked but will become more exacerbated when the Internet further grows. Then we develop TopoScope, a framework for accurately recovering AS relationships from such fragmentary observations. TopoScope uses ensemble learning and Bayesian Network to mitigate the observation bias originating not only from a single VP, but also from the uneven distribution of available VPs. It also discovers the intrinsic similarities between groups of adjacent links, and infers the relationships on hidden links that are not directly observable. Compared to state-of-the-art inference algorithms, TopoScope reduces the inference error by up to 2.7-4 times, discovers the relationships for around 30,000 upper layer hidden AS links, and is still more accurate and stable under more incomplete or biased observations.},
+booktitle = {Proceedings of the ACM Internet Measurement Conference},
+pages = {266-280},
+numpages = {15},
+location = {Virtual Event, USA},
+series = {IMC '20}
 }
 
-
-@paper{Near-deterministic-Iinference-of-AS-relationships,
-    author = {U. Weinsberg, Y. Shavitt, and E. Shir},
-    title = {Near-deterministic inference of AS relationships},
-    year = {2009}
-}
-@paper{ProbLink,
-    author = {Yuchen Jin, Colin Scott, Amogh Dhamdhere and Vasileios Giotsas},
-    title = {Stable and Practical AS Relationship Inference with ProbLink},
-    year = {2019}
-}
-
-@paper{TopoScope,
-    author = {Zitong Jin et al.},
-    title = {TopoScope: Recover AS Relationships From Fragmentary
-Observations},
-    year = {2020}
-}
-
-
-@paper{ASRank,
-    author = {M. Luckie, B. Huffaker, A. Dhamdhere, V. Giotsas, et al},
-    title = {AS relationships, customer cones, and validation.},
-    year = {2013}
-}
-
-
-@article{gnnReviewMethods,
-    author = {Jie Zhou, Ganqu Cui, Shengding Hu ,Zhengyan Zhang ,Cheng Yang, Zhiyuan Liu, Lifeng Wang, Changcheng Li, Maosong Sun},
-    title = {Graph neural networks: A review of methods and applications},
-    year = {2018}
-}
-
-@misc{ASRank-web,
-    title = {CAIDA AS Rank},
-    url = {https://asrank.caida.org/asns}
-}
-FIXME: poenr fecha en que se visito sitio web
-
-@misc{IETF,
-    title = {Internet Engineering Task Force (IETF)},
-    url = {https://www.ietf.org/}
-}
 ---------------------BGP-------------------------
-@paper{Internet-resiliency-to-attacks-and-failures-under-BGP-policy-routing,
-    author = {Danny Dolev, Sugih Jamin, Osnat Mokryn, Yuval Shavitt },
-    title = {Internet resiliency to attacks and failures under
-BGP policy routing},
-    year = {2006}
+
+BIEN
+@article{Internet-resiliency-to-attacks-and-failures-under-BGP-policy-routing,
+author = {Dolev, Danny and Jamin, Sugih and Mokryn, Osnat and Shavitt, Yuval},
+year = {2006},
+month = {11},
+pages = {3183-3196},
+title = {Internet resiliency to attacks and failures under BGP policy routing},
+volume = {50},
+journal = {Computer Networks},
+doi = {10.1016/j.comnet.2005.11.010}
 }
 
-@paper{Chinas-Maxim-Leave-No-Access-Point-Unexploited-The-Hidden,
-    author = {Chris C. Demchak and Yuval Shavitt},
-    title = {China’s Maxim – Leave No Access Point Unexploited: The Hidden
-Story of China Telecom’s BGP HijackingStory of China Telecom’s BGP Hijackin},
-    year = {2018}
-}  
-
-@paper{A-Survey-among-Network-Operators-on-BGP-Prefix-Hijacking,
-    author = {Pavlos Sermpezis, Vasileios Kotronis, Alberto Dainotti and Xenofontas Dimitropoulos},
-    title = {A Survey among Network Operators
-on BGP Prefix Hijacking},
-    year = {2018}
+BIEN
+@article{Chinas-Maxim-Leave-No-Access-Point-Unexploited-The-Hidden,
+author = {Demchak, Chris and Shavitt, Yuval},
+year = {2018},
+month = {06},
+title = {China’s Maxim – Leave No Access Point Unexploited: The Hidden Story of China Telecom’s BGP Hijacking},
+volume = {3},
+journal = {Military Cyber Affairs},
+doi = {10.5038/2378-0789.3.1.1050}
 }
 
+BIEN
+@article{A-Survey-among-Network-Operators-on-BGP-Prefix-Hijacking,
+author = {Sermpezis, Pavlos and Kotronis, Vasileios and Dainotti, Alberto and Dimitropoulos, Xenofontas},
+title = {A Survey among Network Operators on BGP Prefix Hijacking},
+year = {2018},
+issue_date = {January 2018},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {48},
+number = {1},
+issn = {0146-4833},
+url = {https://doi.org/10.1145/3211852.3211862},
+doi = {10.1145/3211852.3211862},
+abstract = {BGP prefix hijacking is a threat to Internet operators and users. Several mechanisms or modifications to BGP that protect the Internet against it have been proposed. However, the reality is that most operators have not deployed them and are reluctant to do so in the near future. Instead, they rely on basic - and often inefficient - proactive defenses to reduce the impact of hijacking events, or on detection based on third party services and reactive approaches that might take up to several hours. In this work, we present the results of a survey we conducted among 75 network operators to study: (a) the operators' awareness of BGP prefix hijacking attacks, (b) presently used defenses (if any) against BGP prefix hijacking, (c) the willingness to adopt new defense mechanisms, and (d) reasons that may hinder the deployment of BGP prefix hijacking defenses. We expect the findings of this survey to increase the understanding of existing BGP hijacking defenses and the needs of network operators, as well as contribute towards designing new defense mechanisms that satisfy the requirements of the operators.},
+journal = {SIGCOMM Comput. Commun. Rev.},
+month = apr,
+pages = {64-69},
+numpages = {6},
+keywords = {BGP}
+}
 
 %--------------DATASETS--------------------------------
 
@@ -232,195 +287,153 @@ on BGP Prefix Hijacking},
 @mics{BGProtect,
     title = {BGProtect, www.BGProtect.com}
 }
-
-% -----REFERENCIAS VICHO ---------------------
-@ARTICLE{InternetQoSBigPicture,
-  author={Xipeng Xiao and Ni, L.M.},
-  journal={IEEE Network},
-  title={Internet QoS: a big picture},
-  year={1999},
-  volume={13},
-  number={2},
-  pages={8-18},
-  doi={10.1109/65.768484}
-}
-
-@ARTICLE{PerformanceAnalysis,
-  author={Bianchi, G.},
-  journal={IEEE Journal on Selected Areas in Communications},
-  title={Performance analysis of the IEEE 802.11 distributed coordination function},
-  year={2000},
-  volume={18},
-  number={3},
-  pages={535-547},
-  keywords={Performance analysis;Access protocols;Media Access Protocol;Collision avoidance;Multiaccess communication;Analytical models;Wireless LAN;Throughput;Physical layer;Wireless application protocol},
-  doi={10.1109/49.840210}
-}
-
-@inproceedings{CorlessJK97,
-  author    = {Robert M. Corless,
-               David J. Jeffrey,
-               Donald E. Knuth},
-  title     = {A Sequence of Series for the Lambert {W} Function},
-  booktitle = {International Symposium on Symbolic and Algebraic
-               Computation, {ISSAC} '97, Maui, Hawaii, USA, July 21--23, 1997},
-  pages     = {197--204},
-  year      = {1997},
-}
-
-@article{NewmanT42,
-  author    = {M. H. A. Newman and
-               Alan M. Turing},
-  title     = {A Formal Theorem in Church's Theory of Types},
-  journal   = {J. Symb. Log.},
-  volume    = {7},
-  number    = {1},
-  pages     = {28--33},
-  year      = {1942},
-  doi       = {10.2307/2267552},
-}
-
-@phdthesis{Turing38,
-  author    = {Alan M. Turing},
-  title     = {Systems of Logic Based on Ordinals},
-  school    = {Princeton University, NJ, {USA}},
-  year      = {1938},
-  doi       = {10.1112/plms/s2-45.1.161},
-}
-
-%--------------DATASETS--------------------------------
-
-
-@article{gnn-graph,
-    author = {J. Zhou, G. Cui, S. Hu, Z. Zhang, C. Yang, Z. Liu, L. Wang, C. Li, M. Sun},
-    title = {Graph
-neural networks: A review of methods and applications,},
-    journal = {AI Open} ,
-    year = {2020}
-}
-%https://arxiv.org/ftp/arxiv/papers/1812/1812.08434.pdf
  
+BGP ---------------------------------
 
-
- 
- BGP ---------------------------------
-@article{RFC-BGP,
-    author = {},
-    title = {A Border Gateway Protocol 4 (BGP-4).},
-    journal = {RFC
-4271},
-    year = {2006}
+@techreport{RFC-BGP,
+    author = "Y. Rekhter and T. Li and S. Hares",
+    title = "{A Border Gateway Protocol 4 (BGP-4)}",
+    institution = "RFC Editor",
+    number = "RFC 4271",
+    year = "2006",
+    month = "January",
+    url = "https://datatracker.ietf.org/doc/html/rfc4271",
 }
 
-@article{RFC-BGP-Communities-Attribute,
-    author = {},
-    title = {BGP Communities Attribute},
-    journal = {RFC 1997} 
+FIXME: Revisar autores
+@techreport{RFC-BGP-Communities-Attribute,
+    author = "P. Traina",
+    title = "{BGP Communities Attribute}",
+    institution = "RFC Editor",
+    number = "RFC 1997",
+    year = "1996",
+    month = "August",
+    url = "https://www.rfc-editor.org/rfc/rfc1997.txt",
 }
 
+FIXME:
 @article{SurveyInterconnectionAgreements,
     author = {Bill Woodcock and Marco Frigino},
     title = {2016 Survey of Internet Carrier Interconnection Agreements}
 }
 
-https://www.berec.europa.eu/sites/default/files/files/document_register_store/2016/11/BoR_%2816%29_237_PCH-Peering-Survey-2016.pdf
-@aarticle{RFC793-TCP,
-    author = {},
-    title = { TRANSMISSION CONTROL PROTOCOL},
-    journal = {RFC 793},
-    year = {1981}
-}
-PROTOCOLOS RUTEO -------------------------
-@article{RFC-OSPF,
-    author = {J. Moy},
-    title = { OSPF Version 2},
-    journal = {RFC 2328,  https://www.rfc-editor.org/rfc/rfc2328.html},
-    year = {1998}
+BIEN
+@techreport{RFC793-TCP,
+    author = "J. Postel",
+    title = "{Transmission Control Protocol}",
+    institution = "RFC Editor",
+    number = "RFC 793",
+    year = "1981",
+    month = "September",
+    url = "https://www.rfc-editor.org/rfc/rfc793.txt",
 }
 
-@article{RFC-RIP,
-    author = {},
-    title = { RIP Version 2},
-    journal = {RFC 2328, https://datatracker.ietf.org/doc/html/rfc2453},
-    year = {1998}    
+BIEN
+@techreport{RFC-OSPF,
+    author = "J. Moy",
+    title = "{OSPF Version 2}",
+    institution = "RFC Editor",
+    number = "RFC 2328",
+    year = "1998",
+    month = "April",
+    url = "https://www.rfc-editor.org/rfc/rfc2328.html",
 }
 
-@article{IS-IS,
-    title = {IS-IS for IP Internets (isis), http://www.ietf.org/html.charters/isis-charter.html},
+BIEN
+@techreport{RFC-RIP,
+    author = "G. Malkin",
+    title = "{RIP Version 2}",
+    institution = "RFC Editor",
+    number = "RFC 2453",
+    year = "1998",
+    month = "November",
+    url = "https://datatracker.ietf.org/doc/html/rfc2453",   
 }
 
-https://docs.dgl.ai/
-
-@article{EuclideanGNN,
-    author = {Michael M. Bronstein, Joan Bruna, Yann LeCun, Arthur Szlam, Pierre Vandergheynst} ,
-    title = {Geometric deep learning:
-going beyond Euclidean data},
-    journal = {IEEE Signal Processing Magazine} ,
-    year = {2017}
+BIEN
+@online{IS-IS,
+    author = "{Internet Engineering Task Force (IETF)}",
+    title = "{IS-IS for IP Internets (isis)}",
+    url = "http://www.ietf.org/html.charters/isis-charter.html",
+    note = "Último acceso: 17 de febrero de 2025"
 }
 
-@article{back-propagation,
-    author = {Rumelhart, D. E., G. E. Hinton, R. J. Williams} ,
-    title = {Learning representations by back-propagating errors},
-    year = {1986}
+BIEN
+@inproceedings{mpnn,
+author = {Gilmer, Justin and Schoenholz, Samuel S. and Riley, Patrick F. and Vinyals, Oriol and Dahl, George E.},
+title = {Neural message passing for Quantum chemistry},
+year = {2017},
+publisher = {JMLR.org},
+abstract = {Supervised learning on molecules has incredible potential to be useful in chemistry, drug discovery, and materials science. Luckily, several promising and closely related neural network models invariant to molecular symmetries have already been described in the literature. These models learn a message passing algorithm and aggregation procedure to compute a function of their entire input graph. At this point, the next step is to find a particularly effective variant of this general approach and apply it to chemical prediction benchmarks until we either solve them or reach the limits of the approach. In this paper, we reformulate existing models into a single common framework we call Message Passing Neural Networks (MPNNs) and explore additional novel variations within this framework. Using MPNNs we demonstrate state of the art results on an important molecular property prediction benchmark; these results are strong enough that we believe future work should focus on datasets with larger molecules or more accurate ground truth labels.},
+booktitle = {Proceedings of the 34th International Conference on Machine Learning - Volume 70},
+pages = {1263-1272},
+numpages = {10},
+location = {Sydney, NSW, Australia},
+series = {ICML'17}
 }
 
-@article{activation-function,
-    author = {Nwankpa, C., W. Ijomah, A. Gachagan, S. Marshall},
-    title = {Activation Functions: Comparison of trends in Practice and Research for Deep Learning. },
-    year = {2018}
+BIEN
+@inproceedings{GCN,
+author = {Duvenaud, David and Maclaurin, Dougal and Aguilera-Iparraguirre, Jorge and G\'{o}mez-Bombarelli, Rafael and Hirzel, Timothy and Aspuru-Guzik, Al\'{a}n and Adams, Ryan P.},
+title = {Convolutional networks on graphs for learning molecular fingerprints},
+year = {2015},
+publisher = {MIT Press},
+address = {Cambridge, MA, USA},
+abstract = {We introduce a convolutional neural network that operates directly on graphs. These networks allow end-to-end learning of prediction pipelines whose inputs are graphs of arbitrary size and shape. The architecture we present generalizes standard molecular feature extraction methods based on circular fingerprints. We show that these data-driven features are more interpretable, and have better predictive performance on a variety of tasks.},
+booktitle = {Proceedings of the 29th International Conference on Neural Information Processing Systems - Volume 2},
+pages = {2224–2232},
+numpages = {9},
+location = {Montreal, Canada},
+series = {NIPS'15}
 }
 
-@book{deep-learning,
-    author = {I. Goodfellow, Y. Bengio, A. Courville},
-    title = {Deep Learning},
-    publisher = {MIT Press} ,
-    year = {2016,  http:
-//www.deeplearningbook.org.} ,   
-}
-I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning. MIT Press, 2016, http:
-//www.deeplearningbook.org.
-
-@article{mpnn,
-    author = {Justin Gilmer, Samuel S. Schoenholz, Patrick F. Riley, Oriol Vinyals, George E. Dahl },
-    title = {Neural Message Passing for Quantum Chemistry},
-    year = {2017}
-}
-
-@article{GCN,
-    author = {David Duvenaud, Dougal Maclaurin, Jorge Aguilera-Iparraguirre, Rafael Gomez-Bombarelli, Timothy Hirzel, Alan Aspuru-Guzik, Ryan P. Adams},
-    title = {Convolutional Networks on Graphs
-for Learning Molecular Fingerprints},
-    year = {2015}
-}
-
+BIEN
 @article{GCN-formula,
-    author = {Thomas N. Kipf, Max Welling},
-    title = {SEMI-SUPERVISED CLASSIFICATION WITH GRAPH CONVOLUTIONAL NETWORKS},
-    year = {2017}
+author = {Kipf, Thomas and Welling, Max},
+year = {2016},
+month = {09},
+pages = {},
+title = {Semi-Supervised Classification with Graph Convolutional Networks},
+doi = {10.48550/arXiv.1609.02907}
 }
 
+BIEN
 @article{GAT,
-    author = {Petar Velickovic, Guillem Cucurull, Arantxa Casanova, Adriana Romero, Pietro Lio, Yoshua Bengio},
-    title = {GRAPH ATTENTION NETWORKS},
-    journal = {International Conference on Learning Representations},
-    year = {2018}
+  title={Graph Attention Networks},
+  author={Petar Velickovic and Guillem Cucurull and Arantxa Casanova and Adriana Romero and Pietro Lio’ and Yoshua Bengio},
+  journal={ArXiv},
+  year={2017},
+  volume={abs/1710.10903},
+  url={https://api.semanticscholar.org/CorpusID:3292002}
 }
 
-@article{GraphSAGE,
-    author = {William L. Hamilton, Rex Ying and Jure Leskovec},
-    title = {Inductive Representation Learning on Large Graphs},
-    year = {2018}
+BIEN
+@inproceedings{GraphSAGE,
+author = {Hamilton, William L. and Ying, Rex and Leskovec, Jure},
+title = {Inductive representation learning on large graphs},
+year = {2017},
+isbn = {9781510860964},
+publisher = {Curran Associates Inc.},
+address = {Red Hook, NY, USA},
+abstract = {Low-dimensional embeddings of nodes in large graphs have proved extremely useful in a variety of prediction tasks, from content recommendation to identifying protein functions. However, most existing approaches require that all nodes in the graph are present during training of the embeddings; these previous approaches are inherently transductive and do not naturally generalize to unseen nodes. Here we present GraphSAGE, a general inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data. Instead of training individual embeddings for each node, we learn a function that generates embeddings by sampling and aggregating features from a node's local neighborhood. Our algorithm outperforms strong baselines on three inductive node-classification benchmarks: we classify the category of unseen nodes in evolving information graphs based on citation and Reddit post data, and we show that our algorithm generalizes to completely unseen graphs using a multi-graph dataset of protein-protein interactions.},
+booktitle = {Proceedings of the 31st International Conference on Neural Information Processing Systems},
+pages = {1025–1035},
+numpages = {11},
+location = {Long Beach, California, USA},
+series = {NIPS'17}
 }
 
 
 SAMPLING------------------------------------
 Random Node Sampling
 - GRaphSAGE
-@article{VRGCN,
-    author = {Jianfei Chen, Jun Zhu and Le Song},
-    title = {Stochastic Training of Graph Convolutional Networks with Variance Reduction},
-    year = {2017}
+
+@inproceedings{VRGCN,
+  title={Stochastic Training of Graph Convolutional Networks with Variance Reduction},
+  author={Jianfei Chen and Jun Zhu and Le Song},
+  booktitle={International Conference on Machine Learning},
+  year={2017},
+  url={https://api.semanticscholar.org/CorpusID:3636539}
 }
 @article{PinSAGE,
     author = {Rex Ying, Ruining He, Kaifeng Chen, Pong Eksombatchai, William L. Hamilton and Jure Leskovec},
@@ -472,13 +485,6 @@ tonomous Systems Relationships Inference},
 AlessioMobilia/AS-ToR-Inference (visitada: TODO: 2022)},
 }
 
-
-Dropout------------------------------------
-@article{DropGNN,
-    author = {Pál András Papp, Karolis Martinkus, Lukas Faber and Roger Wattenhofer},
-    title = {DropGNN: Random Dropouts Increase the Expressiveness of Graph Neural Networks},
-    year = {2021} 
-}
 
 LIBRERIAS
 @mics{bgpstream,
@@ -561,3 +567,146 @@ Routed ASes: Methods and Applications”},
 }
 
 
+
+GNN------------------------------------------
+
+@article{gnn-graph,
+    author = {J. Zhou, G. Cui, S. Hu, Z. Zhang, C. Yang, Z. Liu, L. Wang, C. Li, M. Sun},
+    title = {Graph neural networks: A review of methods and applications,},
+    journal = {AI Open} ,
+    year = {2020}
+}
+%https://arxiv.org/ftp/arxiv/papers/1812/1812.08434.pdf
+ 
+
+
+Dropout
+@article{DropGNN,
+    author = {Pál András Papp, Karolis Martinkus, Lukas Faber and Roger Wattenhofer},
+    title = {DropGNN: Random Dropouts Increase the Expressiveness of Graph Neural Networks},
+    year = {2021} 
+}
+
+
+@article{EuclideanGNN,
+    author = {Michael M. Bronstein and Joan Bruna and Yann LeCun and Arthur Szlam and Pierre Vandergheynst} ,
+    journal={IEEE Signal Processing Magazine}, 
+    title={Geometric Deep Learning: Going beyond Euclidean data}, 
+    year={2017},
+    volume={34},
+    number={4},
+    pages={18-42},
+    doi={10.1109/MSP.2017.2693418}
+}
+
+BIEN
+@article{back-propagation,
+  title={Learning representations by back-propagating errors},
+  author={David E. Rumelhart and Geoffrey E. Hinton and Ronald J. Williams},
+  journal={Nature},
+  year={1986},
+  volume={323},
+  pages={533-536},
+  url={https://api.semanticscholar.org/CorpusID:205001834}
+}
+
+BIEN
+@unknown{activation-function,
+author = {Nwankpa, Chigozie and Ijomah, W. and Gachagan, Anthony and Marshall, Stephen},
+year = {2020},
+month = {12},
+title = {Activation Functions: Comparison of trends in Practice and Research for Deep Learning},
+doi = {10.48550/arXiv.1811.03378}
+}
+
+BIEN
+@book{deep-learning,
+    author = {Ian Goodfellow and Yoshua Bengio and Aaron Courville},
+    title = {Deep Learning},
+    publisher = {MIT Press} ,
+    url = {https://www.deeplearningbook.org/},
+    year = {2016}    
+}
+
+BIEN
+@unknown{gnnReviewMethods,
+author = {Zhou, Jie and Cui, Ganqu and Zhang, Zhengyan and Yang, Cheng and Liu, Zhiyuan and Sun, Maosong},
+year = {2018},
+month = {12},
+pages = {},
+title = {Graph Neural Networks: A Review of Methods and Applications},
+doi = {10.48550/arXiv.1812.08434}
+}
+
+% GNN + REDES ----------------------
+
+BIEN
+@inproceedings{BenchmarkingGNN,
+author = {Giakatos, Dimitrios P. and Kostoglou, Sofia and Sermpezis, Pavlos and Vakali, Athena},
+title = {Benchmarking graph neural networks for internet routing data},
+year = {2022},
+isbn = {9781450399333},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3565473.3569187},
+doi = {10.1145/3565473.3569187},
+abstract = {The Internet is composed of networks, called Autonomous Systems (or, ASes), interconnected to each other, thus forming a large graph. While both the AS-graph is known and there is a multitude of data available for the ASes (i.e., node attributes), the research on applying graph machine learning (ML) methods on Internet data has not attracted a lot of attention. In this work, we provide a benchmarking framework aiming to facilitate research on Internet data using graph-ML and graph neural network (GNN) methods. Specifically, we compile a dataset with heterogeneous node/AS attributes by collecting data from multiple online sources, and preprocessing them so that they can be easily used as input in GNN architectures. Then, we create a framework/pipeline for applying GNNs on the compiled data. For a set of tasks, we perform a benchmarking of different GNN models (as well as, non-GNN ML models) to test their efficiency; our results can serve as a common baseline for future research and provide initial insights for the application of GNNs on Internet data.},
+booktitle = {Proceedings of the 1st International Workshop on Graph Neural Networking},
+pages = {1-6},
+numpages = {6},
+location = {Rome, Italy},
+series = {GNNet '22}
+}
+
+BIEN
+@inproceedings{ModelingTCPPerformanceGNN,
+author = {Jaeger, Benedikt and Helm, Max and Schwegmann, Lars and Carle, Georg},
+title = {Modeling TCP performance using graph neural networks},
+year = {2022},
+isbn = {9781450399333},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3565473.3569190},
+doi = {10.1145/3565473.3569190},
+abstract = {TCP throughput and RTT prediction are essential to model TCP behavior and optimize network configurations. Flows adapt their sending rate to network parameters like link capacity or buffer size and interact with parallel flows. Especially the elastic behavior of TCP congestion control can vary, even when only slight changes in the network occur. Thus, existing analytical models for TCP behavior reach their limits due to the number and complexity of different algorithms. Machine learning approaches, in contrast, are often fixed to specific network topologies.This paper presents a TCP bandwidth and RTT prediction approach that can handle different algorithms and topologies. For this, we utilize Gated Graph Neural Networks and simulated network traffic. We evaluate different encodings of the input data into graphs and how network size, number of flows, and TCP algorithms influence prediction accuracy. Additionally, we quantify the impact of different input features on our models. We show that Graph Neural Networks can be used to model TCP behavior. The resulting models can predict RTT with a median relative error of 2.29\% and throughput with an error of 13.31\%.},
+booktitle = {Proceedings of the 1st International Workshop on Graph Neural Networking},
+pages = {18-23},
+numpages = {6},
+keywords = {throughput, round-trip time, graph neural networks, congestion control, TCP modeling},
+location = {Rome, Italy},
+series = {GNNet '22}
+}
+
+BIEN
+@inproceedings{UnveilingPotentialGNNBGP,
+author = {Latif, Hamid and Pailliss\'{e}, Jordi and Yang, Jinze and Cabellos-Aparicio, Albert and Barlet-Ros, Pere},
+title = {Unveiling the potential of graph neural networks for BGP anomaly detection},
+year = {2022},
+isbn = {9781450399333},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3565473.3569188},
+doi = {10.1145/3565473.3569188},
+abstract = {The Border Gateway Protocol (BGP) is central to the global connectivity of the Internet, enabling fast and efficient dissemination of routing information. Hence, detecting any anomaly concerning BGP announcements is of critical importance to ensure the continuous operation of Internet services.Typically, BGP anomaly detection algorithms have relied on features of the BGP messages, such as the average length of the AS_PATH attribute, the volume of messages, or the type of message (announcement or withdrawal). Even though these algorithms provide good performance, they do not take into account the BGP topology, that is, the graph of ASes created by the BGP announcements.In this paper we investigate if such topology can be useful to predict BGP anomalies. We leverage Graph Neural Networks (GNN), a subset of the Neural Network (NN) family that is designed to process graph-structured data. We propose a GNN model to detect BGP anomalies and study its generalization capability. We compare its performance with two baseline models: a Support Vector Machine (SVM) and a Multilayer Perceptron (MLP), two Machine Learning (ML) techniques used in state-of-the-art solutions. Our GNN model achieves an accuracy of 79.6\% using a weakly supervised dataset of 300 anomalies and is able to outperform the two baseline models.},
+booktitle = {Proceedings of the 1st International Workshop on Graph Neural Networking},
+pages = {7-12},
+numpages = {6},
+keywords = {anomaly detection, border gateway protocol, cybersecurity, graph neural networks, machine learning},
+location = {Rome, Italy},
+series = {GNNet '22}
+}
+
+
+WEB----------------------------------------
+FIXME: fecha en que se visito sitio web
+
+
+@misc{ASRank-web,
+    title = {CAIDA AS Rank},
+    url = {https://asrank.caida.org/asns}
+}
+
+@misc{IETF,
+    title = {Internet Engineering Task Force (IETF)},
+    url = {https://www.ietf.org/}
+}
