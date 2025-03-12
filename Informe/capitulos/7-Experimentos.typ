@@ -1,8 +1,99 @@
-= Experimentos
+= Benchamark
+
+TODO: Agregar porque se fueron tomando algunas desiciones
+TODO: Agregar parte de codigo y formato en el anexo
+
+== Proceso de Ejecución del Benchmark
+
+
+Este apartado describe el procedimiento seguido para ejecutar el benchmark comparativo de métodos de inferencia de relaciones entre Sistemas Autónomos (ASes). El objetivo principal es evaluar el rendimiento de diferentes enfoques tradicionales en comparación con una arquitectura de Redes Neuronales en Grafos (GNN). Los métodos evaluados incluyen: Gao, Ruan, ProbLink y BGP2Vec.
+
+
+
+=== Organización del Repositorio
+
+El repositorio del benchmark está organizado en carpetas correspondientes a los distintos métodos evaluados:
+
+#list(
+   [`Data/`],
+   [`gao/`],
+   [`ruan/`],
+   [`problink/`],
+   [`bgp2vec/`],
+   [`create_bgp_routes.py`],
+   [`create_tor_dataset.py`],
+   [`tor_results.py`],
+   [`utils.py`]
+)
+
+Cada carpeta contiene un archivo .ipynb que se ejecuta para obtener los resultados de cada método en función de los datasets generados. La estructura modular del repositorio permite la fácil incorporación de nuevos métodos para futuras comparaciones.
+
+=== Descarga y Procesamiento de Rutas BGP
+
+El primer paso consiste en la recopilación y limpieza de rutas BGP. Para ello, se utilizó el script create_bgp_routes.py, que se ejecuta de la siguiente manera:
+
+```bash
+python3 create_bgp_routes.py
+```
+
+Este script se encarga de:
+
++ *Descarga de Rutas BGP:* Se utiliza la librería BGPStream para obtener las rutas BGP en función de una fecha determinada. En este caso sonsitio en el dia 1/07/2022. // FIXME: Agregar fecha correcta.
++ *Obtención de Información Complementaria:* Se descargan el archivo AS to Organization y un archivo .json de Peering DB. Este archivo es ocupado luego en el porceso de inferencia del metodo problink.
++ *Procesamiento y Limpieza de Datos:* Se aplican los siguientes filtros para asegurar la calidad de las rutas:
+      - Eliminación de ASes duplicados en los paths.
+      - Eliminación de paths con loops para evitar inconsistencias.
+      - Eliminación de paths con ASN reservados que no representan entidades públicas.
+
+
+=== Generación del Dataset de Relaciones de Tor
+
+El segundo paso consiste en la creación del dataset de relaciones entre ASes, utilizando el script  `create_tor_dataset.py`, que se ejecuta de la siguiente manera:
+
+```bash
+python3 create_tor_dataset.py
+```
+
+Este script:
++ Descarga el archivo AS Relationship de CAIDA, el cual proporciona información sobre las relaciones entre ASes del metod AS Rank @ASRank.
++ Construye una lista de relaciones en forma de pares de ASN junto con sus respectivas etiquetas (labels), clasificándolas en relaciones de tipo cliente-proveedor, pares horizontales o conexiones internas.
+
+Este dataset es utilizado posteriormente en la evaluación de los métodos de inferencia de relaciones.
+
+=== Ejecución de los Métodos de Inferencia
+
+
+Cada archivo .ipynb correspondiente a un método específico realiza los siguientes pasos:
+
+  + Importación de los datasets procesados de Tor y rutas BGP.
+  + Aplicación del método de inferencia para determinar relaciones AS.
+  + Generación de un archivo de resultados en el formato:
+
+```bash
+<nombre_metodo>_results.txt
+```
+Este archivo contiene las relaciones inferidas junto con las probabilidades o etiquetas asignadas por el modelo.
+
+
+
+=== Análisis de Resultados
+
+Una vez obtenidos los resultados de todos los métodos, se ejecuta un archivo .ipynb dedicado al análisis comparativo. Este archivo:
+  + Importa los resultados generados por cada método.
+  + Genera gráficos comparativos para visualizar el desempeño de los métodos en términos de precisión, recall, F1-score y otras métricas relevantes.
+  + Evalúa el rendimiento de los métodos utilizando métricas clave para determinar su efectividad en la inferencia de relaciones AS.
+
+Este análisis proporciona información valiosa sobre las fortalezas y debilidades de cada enfoque, así como su viabilidad en entornos de producción.
+
+
+
+
+TODO: Mostrar resultados con gragos y tablas
+
 
 // == Creación de grafos.
 
-// PAra trabajar con un grafo de la libreria DGL, los nodos deben tener una representación vectorial. Por lo tanto no nos sobra unicamente con tener la topología de los SA que como se vio en la parte de DATOS puede ser sacada de esas 3 fuentes, siendo la principal y mas RAW la de RIPE NCC y RouteVIews, ya que CAIDA contiene estos datoso pero ya en datsets creados por otros investigadores. 
+// PAra trabajar con un grafo de la libreria DGL, los nodos deben tener una representación vectorial. Por lo tanto no nos sobra unicamente con tener la topología de los SA que como se vio en la parte de DATOS puede ser sacada de esas 3 fuentes, siendo la principal y mas RAW la de RIPE NCC y RouteVIews, ya que CAIDA contiene estos datoso pero ya en datsets creados por otros investigadores.
 // Es por esto que tenemos que ver como agregarles las featiures. a lo que se tomaren diferentes enfoques a est e problema:
 // - Ocupar features ya creadas por el paper [AGREGAR], elc ual tiene diferentes caracteristicas indicadas en el anex [poenr que parte del anexo] a la fecha de Julio de  2022, sin embargo este dataset contiene muchos valores no conocidos para los SA, además de que hace que solo nos podamos trabajar en esa fecha.
 
@@ -50,7 +141,7 @@
 // Para esto se probaron los siguientes metodos anteriores:
 // 1. Gao [sacado de BGP2VEC] Paper - @InferringASRelatioships2001
 // 2. Ruan [sacado de BGP2VEC]: ntroduced by Ruan
-// and Susan Varghese @computing-observed-autonomous-system-relationships-in-the-internet 
+// and Susan Varghese @computing-observed-autonomous-system-relationships-in-the-internet
 // // 3. Sark [sacado de BGP2VEC]: Es el algortimo presentado por Subramanian et al.@CharacterizingIAS  "Characterizing the Internet Hierarchy from Multiple Vantage Points"
 // // 4. AS Rank @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
 // // 5. TopoScope @BGP-Data-Analysis - codigo: @Code-BGP-Data-Analysis-Code
@@ -59,7 +150,7 @@
 
 
 
-// == Datos 
+// == Datos
 
 // - Se uso x durante lso X displaying
 // - ¿Cuanto se demoró?
@@ -98,7 +189,7 @@
 
 
 
-// == Experimento 1: 
+// == Experimento 1:
 
 
 // - GNN -> GCN
@@ -137,7 +228,7 @@
 // - ¿Por que ocupamos GraphSAGE y no GCN?
 
 
-// Como estamos entreando de forma transductive, es decir ocupando un mismo grafo para entrenar y validar, puede ocurrir que se este overfiteando el grafo y por eso obteniendo buenos resultados, estod ebdo a que al probar con epoch muuuy grandes los valores de loss todo el rato eran muy similares, y lo que se espera obtener  en este caso es q llegase a un punto dond ela loss era similar , pero luego empezaran adiverger, que seria el punto en donde el modelo se esta empezando a aprender los datos de memoria, pero esto no paso???. 
+// Como estamos entreando de forma transductive, es decir ocupando un mismo grafo para entrenar y validar, puede ocurrir que se este overfiteando el grafo y por eso obteniendo buenos resultados, estod ebdo a que al probar con epoch muuuy grandes los valores de loss todo el rato eran muy similares, y lo que se espera obtener  en este caso es q llegase a un punto dond ela loss era similar , pero luego empezaran adiverger, que seria el punto en donde el modelo se esta empezando a aprender los datos de memoria, pero esto no paso???.
 // Para evitar esto se decidio ocupar otras forma sd eentrenamiento para majear que el modelo pudeese generalizar y no se estuviese validando mal (porq al final mas q na es problema de q noe stamos validando con datos diferentes ). Entrena runasdo ampling.
 
 // == Experimento 3:
@@ -216,11 +307,11 @@
 // IDEAS FALLIDAS
 // - Dentrro de otras ideas que se intentaron pero no funcionaron fue crear grafos a partir de los recolectores RRC, de sta forma tener diferentes grafos a partri d elos cuales algunos se elijan para training y otro diferente para testeo. Sin embargo falle, no se si retomar o no.
 
-// - otra idea fue que RIPEstat tineen una API de la cual se puede obtener información, sin embrago se demora demasiado para la cantidad de nodos ques e tienen por grafos. 
+// - otra idea fue que RIPEstat tineen una API de la cual se puede obtener información, sin embrago se demora demasiado para la cantidad de nodos ques e tienen por grafos.
 
 // -----------------------------------------------------------
 
-// Continuando con los experimentos una de los problemas que mas miedo tenia era que se entrenara y se esttuviera overfitteoando el grafo, porque no tenemso mas grafo que el de esa fechaa, pues esos datos (los atributos corresponden a sacados por otro paper) . Es decir estabamos tomando un enfoque inductivo. 
+// Continuando con los experimentos una de los problemas que mas miedo tenia era que se entrenara y se esttuviera overfitteoando el grafo, porque no tenemso mas grafo que el de esa fechaa, pues esos datos (los atributos corresponden a sacados por otro paper) . Es decir estabamos tomando un enfoque inductivo.
 // Es por esto que una podible solución que se nos ocurrio fue proabr diferentes tecnicas de samplingm¿, area que aun sigue en investigación e inovacion en el area de GNN.
 
 // Para esto se partio con random neighbour sampling[explicado en XXX marco teorico] y se obtuvo una accuracy de 0.9414 , lo que no mejoro mucho los resultados obtenidos anteriormente. ya desde el segundo epoch hay overfitiing.
@@ -229,7 +320,7 @@
 
 
 
-// Luego para comparar GNN con otros metods para resolver dicha tarea, se probo resolver la atrae de clasificación con PAgeRank, DeepWalk y BGP2Vec. 
+// Luego para comparar GNN con otros metods para resolver dicha tarea, se probo resolver la atrae de clasificación con PAgeRank, DeepWalk y BGP2Vec.
 // Obteniendo Resultados XX, 0.9270 (entrenando ) y XX respectivamente.
 
 // La idea es ver que tan bien se comporta el modelo en comparación con otros metodos que se han ocupado para resolver la misma tarea.
@@ -243,7 +334,7 @@
 //   inset: 10pt,
 //   align: horizon,
 //   table.header(
-//     [Caso], [Accuracy], 
+//     [Caso], [Accuracy],
 //   ),
 //   "GCN + DotProductPredictor",$0.81$,
 //   "GraphSAGE + DotProductPredictor", $0.9$,
@@ -260,6 +351,6 @@
 // )
 
 
-// Con GCN el overfitting es más facil que con GraphSAGE, es de esperarxe por la formula de cada una. 
+// Con GCN el overfitting es más facil que con GraphSAGE, es de esperarxe por la formula de cada una.
 // GraphSAGE para que se vea overfitting % de train debe ser más bajo a diferencia de GCN que puede ser alto .
 
