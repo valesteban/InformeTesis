@@ -5,11 +5,11 @@
 (también conocido como nodos) y aristas las cuales son las uniones entre estas @gnnReviewMethods. 
 De forma
 más sencilla un grafo es una representación visual de una relación binaria.
-Un gráfo $G$ se caracteriza mediante la pareja de conjuntos $(V, E)$ donde $V$ es el conjunto
+Un grafo $G$ se caracteriza mediante la pareja de conjuntos $(V, E)$ donde $V$ es el conjunto
 no vacío de vértices y $E$ denota el conjunto de aristas, este último es, a su vez, es un conjunto
 de pares de nodos. Así, la definición de un grafo está dada por $G = (V, E)$.
 Usamos $v_i in V $para denotar que un nodo forma parte del grafo y $e_(i j) = (v_i, v_j ) in E$ para
-indicar que existe una arista entre el nodo $v_i$ y $v_j$ . Cada nodo $v_i$ tiene vecinos con los cuales comparte una arista, estos se representan de la forma $N (v_i) = {v_j in V : (i, j) in E}$. El número de vertices y aristas en un grafo se representan mediante $n = |V|$ y $m = |E|$.
+indicar que existe una arista entre el nodo $v_i$ y $v_j$ . Cada nodo $v_i$ tiene vecinos con los cuales comparte una arista, estos se representan de la forma $N (v_i) = {v_j in V : (i, j) in E}$. El número de vértices y aristas en un grafo se representan mediante $n = |V|$ y $m = |E|$.
 
 #figure(
   image("../imagenes/grafoVale.png", width: 40%),
@@ -17,7 +17,7 @@ indicar que existe una arista entre el nodo $v_i$ y $v_j$ . Cada nodo $v_i$ tien
 ) <imagen-grafo>
 
 
-#h(0.5cm)Una forma de representar un grafo es mediante una matriz de adyacencia denotada $A in.small RR^(n times n)$, donde un el valor $A_(i j) = 1$ si $e_(i j) in E$ y $A_(i j) = 0$ si $e_(i j) in.not E$.  Si la matriz es simétrica, el grafo es no dirigido; de lo contrario, se trata de un grafo dirigido.
+#h(0.5cm)Una forma de representar un grafo es mediante una matriz de adyacencia denotada $A in.small RR^(n times n)$, donde el valor $A_(i j) = 1$ si $e_(i j) in E$ y $A_(i j) = 0$ si $e_(i j) in.not E$.  Si la matriz es simétrica, el grafo es no dirigido; de lo contrario, se trata de un grafo dirigido.
 
 
 Nodos y Aristas de un grafo pueden contener atributos. De esta manera, los atributos de los nodos pueden ser representados mediante una matriz $H_n in RR^(n times d)$ donde cada fila representa un vector de características de un nodo. En el caso de los atributos de las aristas, estos pueden ser representados por la matriz de adyacencia, en la cual, en lugar de contener 1 y 0, contiene dichos atributos.
@@ -26,7 +26,7 @@ Además, los grafos pueden clasificarse en diferentes categorías que ofrecen in
 
     - Grafos dirigidos/no dirigidos: En un grafo dirigido, cada arista tiene una dirección específica, indicando un flujo unidireccional entre los nodos conectados. A diferencia de un grafo no dirigido, donde las aristas no tienen una orientación definida, lo que representa conexiones bidireccionales entre nodos.
     
-    - Grafos homogéneos/heterogéneos: En un grafo homogéneo, tanto nodos como aristas son del mismo tipo, en contraste de grafos heterogéneos donde los nodos y aristas pueden ser diferentes y por tanto representar cosas diferentes.
+    - Grafos homogéneos/heterogéneos: En un grafo homogéneo, tanto nodos como aristas son del mismo tipo, en contraste con grafos heterogéneos donde los nodos y aristas pueden ser diferentes y por tanto representar cosas diferentes.
 
     - Grafos estáticos/dinámicos: Un grafo dinámico experimenta cambios en su estructura a medida que transcurre el tiempo, a diferencia de un grafo estático, que mantiene una topología constante en función del tiempo.
        
@@ -34,17 +34,17 @@ Además, los grafos pueden clasificarse en diferentes categorías que ofrecen in
 == Inteligencia Artificial
 
 
-#h(0.5cm)Inteligencia Artifial (IA) es un campo de la informatica que busca simular el comportamiento de la inteligencia humanana, es decir, intenta replicar y automatizar la capacidad del ser humano para tomar desiciones. 
+#h(0.5cm)Inteligencia Artificial (IA) es un campo de la informática que busca simular el comportamiento de la inteligencia humana, es decir, intenta replicar y automatizar la capacidad del ser humano para tomar decisiones. 
 
-Dentro del área de la Inteligencia Artificial, nos encontramos con el Machine Learning, diciplina que a través del desarrollo de algoritmos y modelos busca que las máquinas aprendan patrones por medio de la experiencia, la cual incluye datos de entrenamiento y retroalimentación. El objetivo es entrenar una máquina para una tarea especifica sin la necesidad de programar explícitamente un algoritmo.
+Dentro del área de la Inteligencia Artificial, nos encontramos con el Machine Learning, disciplina que a través del desarrollo de algoritmos y modelos busca que las máquinas aprendan patrones por medio de la experiencia, la cual incluye datos de entrenamiento y retroalimentación. El objetivo es entrenar una máquina para una tarea específica sin la necesidad de programar explícitamente un algoritmo.
 
 Finalmente, dentro de Machine Learning se encuentra el campo de Deep Learning, un área que se centra en el uso de arquitecturas de Redes Neuronales profundas para aprender representaciones de datos de manera jerárquica. A diferencia de Machine Learning convencional, donde las características se extraen manualmente de los datos y se proporcionan al modelo, en Deep Learning, estas representaciones se aprenden de forma automática mientras el modelo lleva a cabo la tarea asignada.
- Una característica distintiva de esta disciplina es el uso de Redes Neuronales, estructuras compuestas por múltiples capas  entre la entrada y la salida. Cada capa procesa la información y extrae características cada vez más abstractas a medida que se profundiza en la Red. Permitiéndole al modelo así capturar patrones y características complejas en los datos.
+ Una característica distintiva de esta disciplina es el uso de Redes Neuronales, estructuras compuestas por múltiples capas  entre la entrada y la salida. Cada capa procesa la información y extrae características cada vez más abstractas a medida que se profundiza en la Red. Permitiendo así al modelo capturar patrones y características complejas en los datos.
 
 
 #figure(
   image("../imagenes/Inteligencia Artificial.jpg", width: 40%),
-  caption: [jerarquía conceptual entre Inteligencia Artifial, Machine Learning y Deep Learning.],
+  caption: [jerarquía conceptual entre Inteligencia Artificial, Machine Learning y Deep Learning.],
 ) <jerarquiaIAMLDL>
 
 
@@ -55,7 +55,7 @@ Finalmente, dentro de Machine Learning se encuentra el campo de Deep Learning, u
 
 == Redes Neuronales 
 
-#h(0.5cm)Una Red Neuronal es un modelo computacional compuesto de neuronas (perceptrones), dispuestas en capas y conectadas entre si con el fin de aprender patrones mediante el intercambio de información ponderada por pesos. Estos pesos se ajustan en base a los datos de entrada, asignando valores en función del reconocimiento de patrones, que permiten una salida esperada.
+#h(0.5cm)Una Red Neuronal es un modelo computacional compuesto de neuronas (perceptrones), dispuestas en capas y conectadas entre sí con el fin de aprender patrones mediante el intercambio de información ponderada por pesos. Estos pesos se ajustan en base a los datos de entrada, asignando valores en función del reconocimiento de patrones, que permiten una salida esperada.
 
 
 #figure(
@@ -321,7 +321,7 @@ A continuación tenemos @graphsage, el cual ilustra el proceso de creacion de la
 
 // ==== Optimización
 
-// #h(0.5cm)Un modelo de Deep Learning consiste en multiples capas de neuronas, las cuales se conectan entre si  y organizadas en capas, estas son parametrizadas por pesos y sesgos. Estos parámetros son ajustados durante la etapa de entrenamiento de la Red, con el fin de minimizar una función de perdida, ed decir la diferencia entre la salida del doelo y los valores reales.
+// #h(0.5cm)Un modelo de Deep Learning consiste en multiples capas de neuronas, las cuales se conectan entre sí  y organizadas en capas, estas son parametrizadas por pesos y sesgos. Estos parámetros son ajustados durante la etapa de entrenamiento de la Red, con el fin de minimizar una función de perdida, ed decir la diferencia entre la salida del doelo y los valores reales.
 // En @opt-grad-loss se muestra un esquema del proceso de entrenamiento de una Red donde tenemos nuestra Red , la cual arroja $attach(y, tr:')$ correspondiente a las predicciones realizadas por el modelo. Luego estos valores son pasados en conjunto con los valores reales/esperados a la funcion de perdida, la que calcula la diferencia entre estos vallores. Con est error se realiza el _backpropagation_ calculando el gradiente de la función de perdida con respecto a los pesos de la Red. 
 
 // #figure(
@@ -535,7 +535,7 @@ A continuación tenemos @graphsage, el cual ilustra el proceso de creacion de la
 
 
 
-// + *Cluster Sampling:* Tecnica usada cuando el conjunto de datos es muy grande y naturalemnet está separado por grupos, donde luego se seleccionan algunso de estos conglomerados completos de manera aleatoria. A diferencia de stratified sampling donde los estratos son homogeneos dentro de un grupo, en cluster sampling estos son más heterogeneos , es decir pueden ser diferentes entre si , no se seleccionan induvidualemnte las muestras, sino que se selecciona un grupo completo.
+// + *Cluster Sampling:* Tecnica usada cuando el conjunto de datos es muy grande y naturalemnet está separado por grupos, donde luego se seleccionan algunso de estos conglomerados completos de manera aleatoria. A diferencia de stratified sampling donde los estratos son homogeneos dentro de un grupo, en cluster sampling estos son más heterogeneos , es decir pueden ser diferentes entre sí , no se seleccionan induvidualemnte las muestras, sino que se selecciona un grupo completo.
 // Es util cuando naturalmente las muetras estan divididas en conglomerados y son representativas del global.
 // Por ejemplo: queremos obtener un sampling de poblacion, y donde cada cluster supone un grupo de personas que viven en una misma area. Se seleccionan algunos de estos clusters de manera aleatoria y se toman todas las muestras de este grupo para el estudio.
 

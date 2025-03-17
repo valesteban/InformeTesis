@@ -18,6 +18,15 @@ como un grafo, explorar el uso de GNNs podría proporcionar una mejor comprensi�
 de su topología, mejorar la seguridad del enrutamiento y optimizar la eficiencia 
 de la red.
 
+
+
+// Conocer las relaciones entre los ASes es de vital importancia, ya que permite entender el 
+// comportamiento del tráfico de Internet, detectar posibles ataques y fallos en la red, 
+// y optimizar el ruteo de los paquetes. Sin embargo estas no son de acceso público, por 
+// lo que inferir estas relaciones es un problema de gran relevancia en la actualidad. A 
+// través de las rutas anunciadas mediante BGP, es posible inferir el tipo de relación 
+// entre los ASes. 
+
 == Hipótesis
 Las Redes Neuronales de Grafos (GNNs) pueden ofrecer un rendimiento superior en 
 comparación con las metodologías del estado del arte @UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning para la 
