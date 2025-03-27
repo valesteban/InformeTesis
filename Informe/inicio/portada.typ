@@ -51,11 +51,11 @@
     // Variables portada
     let _tesis = [TESIS PARA OPTAR AL GRADO DE \ MAGÍSTER EN COMPUTACIÓN]
     let _memoria = [MEMORIA PARA OPTAR AL TÍTULO DE \ INGENIERO EN COMPUTACIÓN]
-    let _nombre_comision = [NOMBRE UNO \ NOMBRE DOS \ NOMBRE TRES]
+    // let _nombre_comision = [NOMBRE UNO \ NOMBRE DOS \ NOMBRE TRES]
 
     let _guia = "PROFESORA GUÍA:"
     let _coguia = "PROFESOR CO-GUÍA:"
-    let _comision = "MIEMBROS DE LA COMISIÓN:"
+    // let _comision = "MIEMBROS DE LA COMISIÓN:"
 
     let _ciudad = "SANTIAGO DE CHILE"
     let _anno = [#datetime.today().year()]
@@ -74,7 +74,7 @@
             [#_guia \ #profe],
             [#_coguia \ #profe2],
             1fr,
-            [#_comision \ #_nombre_comision],
+            // [#_comision \ #_nombre_comision],
             2fr,
             [#_ciudad \ #_anno]
             ),

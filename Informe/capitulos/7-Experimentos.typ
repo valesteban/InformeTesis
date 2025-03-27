@@ -1,7 +1,7 @@
-= Benchamark
+= Benchmark
 
-TODO: Agregar porque se fueron tomando algunas desiciones
-TODO: Agregar parte de codigo y formato en el anexo
+// TODO: Agregar porque se fueron tomando algunas desiciones
+// TODO: Agregar parte de codigo y formato en el anexo
 
 == Proceso de Ejecución del Benchmark
 
