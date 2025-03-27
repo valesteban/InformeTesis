@@ -60,38 +60,39 @@
 #include "capitulos/1-Introduccion.typ"
 #pagebreak()
 
-// Capitulo 2: Internet
-#include "capitulos/2-Internet.typ"
+// Capitulo 2: Preliminares
+#include "capitulos/2-Preliminares.typ"
+
 // #pagebreak()
 
-// Capitulo 3: BGP
-#include "capitulos/3-BGP.typ"
+// Capitulo 3: Trabajo Relacionado
+#include "capitulos/3-Trabajo-Relacionado.typ"
 // #pagebreak()
 
-// Capitulo 4: AS Inference
-#include "capitulos/4-AS-Inference.typ"
+// Capitulo 4: Metodologia
+#include "capitulos/4-Metodologia.typ"
 // #pagebreak()
 
-// Capitulo 5: Redes Neuronales
-#include "capitulos/5-Redes-Neuronales.typ"
+// Capitulo 5: Resultados
+#include "capitulos/5-Resultados.typ"
 // #pagebreak()
 
-// Capitulo 6: Datos
-#include "capitulos/6-Datos.typ"
+// Capitulo 6: Conclusion y trabajo futuro
+#include "capitulos/6-Conclusion.typ"
 // #pagebreak()
 
 // Capitulo 7: Experimentos
-#include "capitulos/7-Experimentos.typ"
+// #include "capit/ulos/7-Experimentos.typ"
 // #pagebreak()
 
 // Capitulo 8: Análisis
-#include "capitulos/8-Analisis.typ"
+// #include "capitulos/8-Analisis.typ"
 // #pagebreak()
 
-#figure(
-  image("imagenes/puma.jpg", width: 90%),
-  caption: [El gatito más bello del mundo.],
-) <puma>
+// #figure(
+//   image("imagenes/puma.jpg", width: 90%),
+//   caption: [El gatito más bello del mundo.],
+// ) <puma>
 
 #pagebreak()
 
