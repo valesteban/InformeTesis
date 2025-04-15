@@ -50,6 +50,10 @@ TODO: poner graficos y resultados.
 
 TODO: debo poner commo se corren las cosas?
 
+
+TODO: Decir que tmboejn en nuestro codigo dejamos que se pueda aceptar archivos oix
+
+TODO: DEcir que la implementaciones de estos algoritmos fueron sacados de sus mismas implementacion od e donde fueron sacadas pero modificadas para aceptar las routes q yo saque
 == GNN
 
 
@@ -95,3 +99,66 @@ Las snapshots diarias de la informacion de peeringDB se encuentran en formato sq
 
 para esto primero se descargo los archivos diarios de peeringDB, luego se exploraron estos , viendo los potenciales atributos que se podrian usar para los nodos. 
 
+
+= Modelos 
+
+
+
+Priemro se creo con GNN un modelo para crear los emebddings de los nodos/AS con un modelo encode Encode-Decoder
+para predecir laa existencia o no de links
+
+
+La idea asi en cada forward se incluyen tanto los parametros de SAGEConv como los
+de la MLPPredictor.
+       
+
+```python
+
+class GraphSAGE(nn.Module):
+    def __init__(self, in_feats, hidden_feats, out_feats):
+        super().__init__()  # ✅ Esto es lo correcto
+        self.conv1 = SAGEConv(in_feats, hidden_feats, 'mean')
+        self.conv2 = SAGEConv(hidden_feats, out_feats, 'mean')
+
+        self.decoder = MLPPredictor(out_feats)
+
+    def encode(self, g, in_feat):
+        h = self.conv1(g, in_feat)
+        h = F.relu(h)
+        h = self.conv2(g, h)
+        return h
+    
+    def decodeDotProduct(self, g, h):
+        with g.local_scope():
+            g.ndata["h"] = h
+            # Compute a new edge feature named 'score' by a dot-product between the
+            # source node feature 'h' and destination node feature 'h'.
+            g.apply_edges(fn.u_dot_v("h", "h", "score"))
+            # u_dot_v returns a 1-element vector for each edge so you need to squeeze it.
+            return g.edata["score"][:, 0]
+        
+    def decodeMLP(self, g, h):
+        return self.decoder(g, h)  
+
+class MLPPredictor(nn.Module):
+    def __init__(self, h_feats):
+        super().__init__()
+        self.W1 = nn.Linear(h_feats * 2, h_feats)
+        self.W2 = nn.Linear(h_feats, 1)
+
+    def apply_edges(self, edges):
+        h = torch.cat([edges.src["h"], edges.dst["h"]], 1)
+        return {"score": self.W2(F.relu(self.W1(h))).squeeze(1)}
+
+    def forward(self, g, h):
+        with g.local_scope():
+            g.ndata["h"] = h
+            g.apply_edges(self.apply_edges)
+            return g.edata["score"]
+
+```
+Probamos diferentes casos, donde se empezaba con attr iniclaes lo atributos sacados de PeeringDB,
+luego unicamnete in y out degree, luego tambien iniciando con puros 1s.
+
+
+Vamos a probar crear los embeddings a partr de node2vec, randomwalk 
