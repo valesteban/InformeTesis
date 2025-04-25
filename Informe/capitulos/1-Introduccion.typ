@@ -1,22 +1,17 @@
 = Introducción
-En la sociedad actual, Internet juega un papel esencial en la vida cotidiana, 
+En la sociedad actual, Internet juega un rol esencial en la vida cotidiana, 
 facilitando la comunicación, la colaboración y el intercambio de información.
 
 Internet se compone de múltiples subredes interconectadas. A través del protocolo 
 BGP, estas subredes comparten información sobre su topología de red, permitiendo 
-que los paquetes de datos enviados por un usuario lleguen correctamente a su 
-destino final. Sin embargo, no siempre son accesibles públicamente la información 
-administrativa, los detalles sobre políticas de enrutamiento o las relaciones con 
-otras subredes. Esta información es crucial para comprender la topología de Internet 
+que los paquetes de datos enviados por un usuario lleguen a su 
+destino final. Conocer las politicas administrativas y otros aspectos relacionados a estas subredes —mejor conocidas como Sistemas Autónomos (ASes)— es crucial para comprender la topología de Internet 
 y, a su vez, tomar mejores decisiones para mejorar la eficiencia y seguridad de la 
-red.
+red. Sin embargo, esta informacion no es de acceso público.
 
-En este contexto, las Redes Neuronales de Grafos (GNNs) han surgido como una 
-herramienta poderosa dentro del aprendizaje automático para modelar datos 
-estructurados en grafos. Dado que Internet puede representarse naturalmente 
-como un grafo, explorar el uso de GNNs podría proporcionar una mejor comprensión 
-de su topología, mejorar la seguridad del enrutamiento y optimizar la eficiencia 
-de la red.
+En este contexto, el uso de Redes Neuronales de Grafos (GNNs) surge como una herramienta poderosa para realizar tareas de aprendizaje sobre datos de Internet, ya que este puede representarse de forma natural como un grafo.
+En particular, el uso de GNNs para la tarea de inferencia de relaciones comerciales entre Sistemas Autónomos podría darnos una mirada diferente a cómo se ha resuelto previamente dicha tarea y darnos una mejor comprensión de cómo la topología del Internet se relaciona con los acuerdos comerciales entre Sistemas Autónomos, además de características importantes a la hora de inferir las relaciones, para luego tomar luego mejores decisiones para mejorar la seguridad y eficiencia de la red.
+
 
 
 
@@ -44,22 +39,29 @@ Sistema Autónomo junto con la topología de la red.
 
 === Objetivos específicos
 
-+ *Obtención de datos:* Recopilar datos de fuentes confiables que correspondan a Sistemas Autónomos representativos de la red de Internet. Esto implica obtener datos sobre la topología entre Sistemas Autónomos, características y relaciones entre ellos.
-+ *Preparación de datos:* Mejorar la calidad de los datos mediante el uso de técnicas de normalización, conversión de atributos categóricos a numéricos, manejo de desequilibrio de clases, entre otros. Además, construir el grafo y definir cómo se proporcionarán los datos de entrada a nuestros modelos GNN.
++ *Obtención de datos:* Recolectar información de fuentes confiables, correspondiente a Sistemas Autónomos representativos de la red de Internet. Esto incluye datos sobre la topología entre Sistemas Autónomos, sus características y relaciones que comparten entre ellos.
+
++ *Preparación de datos:* Construir un grafo a partir de los datos recolectados, definiendo un formato de entrada específico para nuestros modelos GNN, incluyendo la mejora de calidad de los datos mediante el uso de diferentes técnicas de preprocesamiento, como normalización, conversión de atributos categóricos a numéricos, entre otros.
+  
 + *Diseño e implementación de modelos:* Diseñar e implementar modelos GNN y frameworks específicos que permitan la inferencia del tipo de relación que dos Sistemas Autónomos comparten.
+  
 + *Evaluación de desempeño:* Comparar el rendimiento de diferentes arquitecturas de GNN y técnicas utilizadas anteriormente para esta inferencia, identificando los parámetros de mayor relevancia.
+  
 + *Análisis de resultados:* Interpretar los resultados obtenidos mediante el estudio y su comparación con los valores esperados y el estado del arte@UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning.
 
 == Metodología
 El plan de trabajo que se llevó a cabo durante esta investigación constó de cuatro etapas:
 
-/ Investigación y familiarización: En esta primera etapa, se llevó a cabo la lectura de artículos académicos relacionados con el uso de GNNs, así como de artículos relevantes sobre la representación de datos de Internet y el problema de inferencia de relaciones entre Sistemas Autónomos. En paralelo, se llevó a cabo una búsqueda de datasets públicos disponibles y el desarrollo de modelos básicos de GNNs para familiarizarse con la herramienta.
+/ Investigación y familiarización: En esta primera etapa, se llevó a cabo la lectura de artículos académicos relacionados con el uso de GNNs, así como de artículos relevantes sobre la representación de datos de Internet y el problema de inferencia. En paralelo, se realizó una búsqueda de datasets públicos disponibles y el desarrollo de modelos básicos de GNNs para familiarizarse con la herramienta.
 
-/ Preparación de datos: Una vez seleccionado el dataset, los datos fueron procesados y transformados para adaptarlos a la representación de entrada requerida por nuestro modelo.
+/ Preparación de datos: Una vez estudiados y recolectado los datos sobre Internet, estos fueron pre-procesados y adaptados a un formato especifico a la entrada requerida por el modelo.
 
-/ Construcción de modelos y entrenamiento: Una vez se tuvo más claridad sobre el problema y las herramientas a utilizar, se procedió a la implementación de diversos modelos de GNNs con el conjunto de datos. Además, se llevó a cabo el entrenamiento de estos modelos y el ajuste de hiperparámetros para optimizar su desempeño.
+/ Construcción de modelos y entrenamiento: Una vez se tuvo más claridad sobre la tarea y las herramientas a utilizar, se continuó con la implementación de diversos modelos de GNNs utilizando el conjunto de datos. Además, se llevó a cabo el entrenamiento de estos modelos, ajustando hiperparámetros y realizando modificaciones en los datos de entrada a medida que se aprendía y se realizaban pruebas.
 
-/ Análisis de resultados:  Luego de la construcción y el entrenamiento de los modelos, se diseñó un pequeño benchmark para comparar el rendimiento de las GNNs con técnicas previas y evaluar sus resultados.
+// FIXME: Arrgelar el comienzo
+/ Contrucción de un benchmark: Luego de desarrolladas diversas implementaciones y frameworks de GNNs para la tarea específica, se diseñó un pequeño benchmark para comparar el rendimiento del uso de GNNs con técnicas previas y evaluar sus resultados.
+
+/ Análisis de resultados:Con las implementaciones ya creadas y los resultados obtenidos tanto de GNNs como de los otros métodos, se pasó al análisis de los resultados y a la comparación de los desempeños de las diferentes técnicas.
 
 == Contribuciones
 
@@ -80,16 +82,28 @@ El plan de trabajo que se llevó a cabo durante esta investigación constó de c
 //FIXME: Arreglar secciones individuales
 Este documento se organiza de la siguiente manera:
 
-- *Capítulo 2:* Se presenta una visión general de la infraestructura de Internet y sus conceptos clave, incluyendo los Sistemas Autónomos (AS), los IXPs, el ruteo, entre otros.
+// PRELIMINARES
+- *Capítulo 2:* Explicación de los principales conceptos tratados en esta tesis: Internet, Sistemas Autónomos, BGP y GNNs.
 
-- *Capítulo 3:* Explicación del protocolo BGP, sus componentes esenciales y su funcionamiento.
+// TRABAJO RELACIONADO
+- *Capítulo 2:* Se aborda el problema de inferencia de relaciones entre Sistemas Autónomos y metodos previos que han sido utilizados para resolverlo.
 
-- *Capítulo 4:* Se abordan las relaciones entre los AS, determinadas por políticas de ruteo, y se describen algunos métodos de inferencia de relaciones utilizados para construir un benchmark.
+// METODOLOGIA
+// - *Capítulo 3:* Se explica la metodología utilizada para resolver la tarea.Se presentan una visión general de la infraestructura de Internet y sus conceptos clave, incluyendo los Sistemas Autónomos (AS), los IXPs, el ruteo, entre otros.
 
-- *Capítulo 5:* Introducción a las Redes Neuronales y las GNN.
 
-- *Capítulo 6:* Se cubren las fuentes de información públicas disponibles sobre la infraestructura de Internet, con un enfoque específico en las utilizadas en este trabajo.
+// // RESULTADOS
 
-- *Capítulo 7:* Se detallan el diseño de los experimentos y los resultados obtenidos.
+// - *Capítulo 2:* Se presentan una visión general de la infraestructura de Internet y sus conceptos clave, incluyendo los Sistemas Autónomos (AS), los IXPs, el ruteo, entre otros.
 
-- *Capítulo 8:* Análisis de los resultados y conclusiones.
+// - *Capítulo 3:* Explicación del protocolo BGP, sus componentes esenciales y su funcionamiento.
+
+// - *Capítulo 4:* Se abordan las relaciones entre los AS, determinadas por políticas de ruteo, y se describen algunos métodos de inferencia de relaciones utilizados para construir un benchmark.
+
+// - *Capítulo 5:* Introducción a las Redes Neuronales y las GNN.
+
+// - *Capítulo 6:* Se cubren las fuentes de información públicas disponibles sobre la infraestructura de Internet, con un enfoque específico en las utilizadas en este trabajo.
+
+// - *Capítulo 7:* Se detallan el diseño de los experimentos y los resultados obtenidos.
+
+// - *Capítulo 8:* Análisis de los resultados y conclusiones.

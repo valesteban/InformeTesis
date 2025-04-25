@@ -79,6 +79,14 @@ Se tomaron 3 enfooques GNN al momento de crear lso embeddings d elso nodos:
 
 
 
+La idea del uso de GNN es preentrenara un modelo con a large dataset y luego 
+fine tuned en un datset (labeled) mas chico.
+a la task siguiente se le llama downstream task.
+
+Puede que no siempre endra sentido preentrenar representaciones de los nodos.
+[https://arxiv.org/pdf/2207.06010] todo encaja para q en este caso no sea super mejor. 
+Su conclusion fue q no hubo/encontro un significant improvemnet en downstream tasks, pape rtmb dosciusses potenciales causas 
+
 = Contrucción grafo Interbet
 
 Para esta parte se decidio contruir  un grafo de la topologia donde cada nodo consta de los Sistemas Autonomos , las aristas las conecciones BGP existenete sentre ellas.Ademas se le suma atributos a cada SA. 

@@ -54,7 +54,7 @@
 // Configuración para documento principal
 #show: conf
 //----------------------------------------------------------
-// Inicio documento
+// Inicio documentojs
 
 // Capitulo 1: Introducción
 #include "capitulos/1-Introduccion.typ"
