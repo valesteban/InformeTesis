@@ -1,0 +1,305 @@
+﻿% Template:     Tesis LaTeX
+% Documento:    Archivo principal
+% Versión:      3.4.2 (07/02/2025)
+% Codificación: UTF-8
+%
+% Autor: Pablo Pizarro R.
+%        pablo@ppizarror.com
+%
+% Manual template: [https://latex.ppizarror.com/tesis]
+% Licencia MIT:    [https://opensource.org/licenses/MIT]
+
+% CREACIÓN DEL DOCUMENTO
+\documentclass[
+	spanish, % Idioma: spanish, english, etc.	
+	letterpaper, oneside
+]{book}
+
+\usepackage[table]{xcolor}  % permite colores en tablas
+\definecolor{grayA}{gray}{0.92}  % gris más claro
+\definecolor{grayB}{gray}{0.86}  % gris más oscuro
+
+\usepackage{url}
+
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{algpseudocode}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\newcommand{\seba}[1]{\textcolor{red}{S.: #1}}
+
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\documenttitle {Explorando el Potencial de las Redes Neuronales de Grafos para Extraer Información de BGP}
+\def\documentsubtitle {aaaaa}
+\def\degreetitle {
+	Tesis para optar al grado de magíster en ciencias, Mención Computación
+	\bigbreak\vspace{0.3cm}
+	Memoria para optar al título de ingeniera EN COMPUTACIÓN
+}
+
+
+
+
+\def\universityname {Universidad de Chile}
+\def\universityfaculty {Facultad de Ciencias Físicas y Matemáticas}
+\def\universitydepartment {Departamento de Ciencias de la Computación}
+\def\universitydepartmentimage {departamentos/uchile2}
+\def\universitydepartmentimagecfg {height=3cm}
+\def\universitylocation {Santiago de Chile}
+
+% INTEGRANTES, PROFESORES Y FECHAS
+\def\documentauthor {Valentina Francisca Esteban Lagos}
+\def\documentdate {\the\year}
+
+\def\portrait {
+	\begin{center}
+	\vspace{1.5cm} ~ \\
+	\MakeUppercase{\textbf{\documenttitle}} ~ \\
+	\vspace{1.5cm}
+	\MakeUppercase{\degreetitle} ~ \\
+	\vfill
+	\begin{tabular}{c}
+		\MakeUppercase{\textbf{\documentauthor}} \\ \\
+		\vspace{1.0cm} \\
+		PROFESOR GUÍA: IVANA BACHMANN ESPINOZA \\
+		PROFESOR GUÍA: SEBASTIÁN FERRADA ALIAGA \\
+		\vspace{0.5cm} \\
+		MIEMBROS DE LA COMISIÓN: \\
+		PROFESOR 2 \\
+		PROFESOR 3 \\
+		\vspace{0.5cm} \\
+        % ← AQUÍ LA LÍNEA DE FINANCIAMIENTO
+        Este trabajo ha sido financiado por NIC Chile Research Labs \\
+        \vspace{0.8cm} \\
+		\MakeUppercase{\universitylocation} \\
+		\MakeUppercase{\documentdate}
+	\end{tabular}
+	\end{center}
+}
+%\def\abstracttable {
+%	\begin{tabular}{l}
+%		RESUMEN DE LA MEMORIA PARA OPTAR \\
+%		AL TÍTULO DE MAGÍSTER EN CIENCIAS \\
+%		DE LA INGENIERÍA \\
+%		POR: \MakeUppercase{\documentauthor} \\
+%		FECHA: \MakeUppercase{\documentdate} \\
+%		PROF. GUÍA: IVANA BACHMANN ESPINOZA
+%	\end{tabular}
+%}
+
+% IMPORTACIÓN DEL TEMPLATE
+\input{template}
+
+% INICIO DE LAS PÁGINAS
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+% RESUMEN O ABSTRACT
+\begin{abstractd}
+
+	El Internet hoy en día es una herramienta fundamental para la vida diaria de las personas, este está formado por de miles de Sistemas Autónomos (AS) interconectados entre sí y intercambian información de ruteo por medio del protocolo BGP (Border Gateway Protocol). Las relaciones comerciales entre estos determinan por qué ASes y camino toma un paquete para llegar a su destino final, sin embargo esta información (relaciones económicas entre ASes) no es observable directamente y por tanto debe inferirse a partir de fuentes indirectas como rutas BGP, bases de datos públicas. Conocer y comprender las relaciones entre Sistemas Autónomos es esencial para analizar la estructura, comportamiento y eficiencia de Internet, así como para detectar comportamientos anómalos.\\
+
+    Este trabajo explora el uso de Redes Neuronales de Grafos (GNNs) para la inferencia de relaciones económicas entre Sistemas Autónomos, aprovechando la naturaleza inherente de los datos de Internet para ser representados como un grafo. Para esto se construyó un grafo a partir de la extracción de las tablas de enrutamiento (RIBs) extraídas de datasets públicos CAIDA, RouteViews, RIPE RIS y PeeringDB, representando la topología de Internet y los atributos asociados a cada AS.\\
+
+    Se implementaron y evaluaron distintos modelos GNN como GCN, GraphSAGE y GAT bajo dos enfoques de entrenamiento: (i) un enfoque por etapas, donde los embeddings se generan mediante tareas auxiliares; y (ii) un enfoque end-to-end, donde la GNN y el decodificador se entrenan conjuntamente para clasificar el tipo de relación entre pares de AS. Además, se desarrolló un benchmark comparativo con métodos heurísticos y de Machine Learning.\\
+
+    Los resultados obtenidos muestran que las GNNs son capaces de capturar información estructural del grafo de Internet y alcanzar un buen rendimiento comparable a métodos más precisos del benchmark, como ProbLink (94,83 \%) y BGP2Vec (94,51 \%). En particular, el enfoque end-to-end logró una Accuracy de 93,44 \%. Además, la incorporación de atributos provenientes de PeeringDB mejoró las representaciones aprendidas (de 89,01 \% a 93,44 \%). Por otro lado, el enfoque por etapas mostró mejoras al preentrenar los embeddings con tareas auxiliares relacionadas con nociones estructurales del grafo, como la predicción del valor de PageRank por nodo, lo que sugiere que incorporar nociones de centralidad y relevancia topológica favorece la inferencia de relaciones. Por último, los experimentos con atributos aleatorios mostraron que GCN mantiene un rendimiento estable (~85 \%), mientras que GraphSAGE y GAT tienden a colapsar, clasificando la mayoría de los enlaces como P2P. Estos resultados confirman que la estructura del grafo por sí sola contiene información suficiente para aproximar las relaciones entre ASes.
+
+    
+
+\end{abstractd}
+
+% DEDICATORIA
+\begin{dedicatory}
+	Una frase de dedicatoria, \\
+	pueden ser dos líneas. \\
+	~ \\
+	\textbf{Saludos}
+\end{dedicatory}
+
+% AGRADECIMIENTOS
+\begin{acknowledgments}
+    
+\end{acknowledgments}
+
+% TABLA DE CONTENIDOS - ÍNDICE
+\templateIndex
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+%\input{example} % Ejee%mplo, se puede borrar
+% FIN DEL DOCUMENTO
+
+\input{Capitulos/1-Introduccion}
+\input{Capitulos/2-Preliminares}
+\input{Capitulos/3-TrabajoRelacionado}
+\input{Capitulos/4-Metodologia}
+
+
+\input{Capitulos/5-Resultados}
+\input{Capitulos/6-Conclusiones}
+%\input{Capitulos/7-Experimentos}
+% \chapter{Resultados}][_]
+% \chapter{Conclusiones}
+
+% REFERENCIA
+\bibliography{library}
+
+% ANEXOS
+
+\begin{appendixs}
+	% \input{Anexos/01Anexo_Fundamentos_Internet_BGP.tex}
+	% \input{Anexos/02Anexo_Inferencia_Relaciones_ASes.tex}
+	% \input{Anexos/03Anexo_Fundamentos_ML_GNNs.tex}
+	% \input{Anexos/04Anexo_Analisis_Exploratorio.tex}
+	% \input{Anexos/05Anexo_Configuracion_Experimentos.tex}
+
+\appendix
+
+% \section{Fundamentos de Internet y BGP}
+% \subsection{Internet}
+% \subsection{Sistemas Autónomos}
+% \subsection{Internet Exchange Points}
+% \subsection{Ruteo en Internet}
+% \subsubsection{Ruteo interno}
+% \subsubsection{Ruteo externo}
+% \subsection{Protocolo BGP}
+% \subsubsection{Funcionamiento general}
+% \subsubsection{Mensajes BGP}
+% \subsubsection{Atributos BGP}
+% \subsubsection{Routing Information Base (RIB)}
+% \subsubsection{Colectores y vantage points}
+% \subsection{Topología de Internet}
+% \subsubsection{Topología de Internet a diferentes niveles}
+% \subsubsection{Topología de Internet a nivel de Sistemas Autónomos}
+% \subsection{Recolección de datos de Internet}
+% \subsubsection{CAIDA}
+% \subsubsection{RouteViews Project}
+% \subsubsection{RIPE RIS}
+% \subsubsection{PeeringDB}
+% \subsection{Construcción del grafo a partir de datos BGP}
+
+% \subsection{Inferencia de relaciones entre Sistemas Autónomos}
+% \subsection{Relaciones económicas entre Sistemas Autónomos}
+% \subsection{Tipos de relaciones entre AS}
+% \subsection{Valley-Free Routing}
+% \subsection{Problema de inferencia de relaciones}
+% \subsection{Métodos de inferencia basados en heurísticas}
+% \subsubsection{Gao}
+% \subsubsection{LU Rank}
+% \subsection{Métodos basados en aprendizaje automático}
+% \subsubsection{BGP2Vec}
+% \subsubsection{ProbLink}
+% \subsubsection{TopoScope}
+
+% \subsection{Fundamentos de aprendizaje automático}
+% \subsection{Inteligencia Artificial}
+% \subsection{Machine Learning}
+% \subsection{Representaciones y embeddings}
+% \subsection{Evaluación de modelos}
+
+% \subsection{Redes neuronales}
+% \subsection{Redes neuronales artificiales}
+% \subsection{Perceptrón o neurona artificial}
+% \subsection{Redes neuronales feed-forward}
+% \subsection{Funciones de activación}
+% \subsection{Entrenamiento de redes neuronales}
+% \subsection{Backpropagation}
+% \subsection{Redes neuronales convolucionales}
+
+% \section{Redes neuronales de grafos}
+% \section{Teoría de grafos}
+% \subsection{Definición de grafo}
+% \subsection{Representación de grafos}
+% \subsection{Tipos de grafos}
+% \section{Aprendizaje en grafos}
+% \section{Redes neuronales de grafos}
+% \section{Message Passing}
+% \section{Embeddings de nodos}
+% \section{Tareas de aprendizaje sobre grafos}
+% \section{Arquitecturas de GNN}
+% \subsection{Message Passing Neural Networks (MPNN)}
+% \subsection{Graph Convolutional Networks (GCN)}
+% \subsection{Graph Attention Networks (GAT)}
+% \subsection{GraphSAGE}
+
+% \section{Análisis exploratorio y características del dataset}
+% \subsection{Exploración de datos de PeeringDB}
+% \subsection{Exploración de la tabla \texttt{net}}
+% \subsection{Exploración de Internet Exchange Points}
+% \subsection{Atributos utilizados para los Sistemas Autónomos}
+% \subsection{Análisis de atributos de PeeringDB}
+% \subsubsection{Atributos numéricos}
+% \subsubsection{Atributos categóricos}
+% \subsubsection{Implicancias para el preprocesamiento y el modelado}
+% \subsection{Análisis del grafo construido}
+% \subsection{Distribución del grado de los AS}
+% \subsection{Comparación temporal de rutas BGP}
+% \subsection{Lista de Sistemas Autónomos Tier-1 considerados}
+% \subsection{Tablas de colectores disponibles}
+
+% \section{Configuración experimental}
+% \subsection{Arquitecturas evaluadas}
+% \subsection{Hiperparámetros}
+% \subsection{Configuración de entrenamiento}
+% \subsection{Métricas de evaluación}
+% \subsection{Hardware y entorno de ejecución}
+
+
+
+
+
+	\input{Anexos/A_anexo_Anexo_Fundamentos_Internet_BGP.tex}
+	% \input{Anexos/B_anexo_Inferencia_Relaciones_ASes.tex}
+	% \input{Anexos/C_anexo_Fundamentos_ML.tex}
+	% \input{Anexos/D_anexo_Redes_Neuronales.tex}
+	% \input{Anexos/E_anexo_GNNs.tex}
+	% \input{Anexos/F_anexo_Analisis_Exploratorio.tex}
+	% \input{Anexos/G_anexo_Configuracion_Experimentos.tex}
+
+
+
+
+\end{appendixs}
+
+
+\end{document}
+
+

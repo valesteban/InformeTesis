@@ -1,1 +1,30 @@
 preguntas*
+
+# LaTeX temporary/build files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex
+*.synctex.gz
+*.synctex(busy)
+*.toc
+*.xdv
+
+# Intermediate/temporary PDFs generated during builds
+build_tmp.pdf
+main_tmp.bbl
+pdflatex*.fls
+
+# Generated main output PDF (remove this line if you want to version it)
+main.pdf

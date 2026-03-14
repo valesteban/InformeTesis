@@ -1,0 +1,193 @@
+﻿\chapter{Introducción}
+
+En la sociedad actual, \textbf{Internet} juega un rol esencial en la vida cotidiana, facilitando la comunicación, la colaboración y el intercambio de información. Internet se compone de múltiples subredes interconectadas~\cite{Computer-Networking}. A través del protocolo \textbf{BGP} (\textit{Border Gateway Protocol}), estas subredes comparten información sobre su topología de red, permitiendo que los paquetes de datos enviados por un usuario lleguen a su destino final~\cite{Computer-Networking}.\\
+
+% Esta chatgpteado
+Estas subredes, conocidas como \textbf{Sistemas Autónomos (ASes)}, representan entidades administrativas independientes que intercambian tráfico entre sí mediante acuerdos comerciales y políticas de enrutamiento propias. La interacción entre estos sistemas da lugar a una compleja estructura de interconexión que puede representarse naturalmente como un \textbf{grafo}, donde los nodos corresponden a Sistemas Autónomos y las aristas representan relaciones de interconexión entre ellos.\\
+
+En los últimos años ha cobrado creciente relevancia el uso de \textbf{Redes Neuronales de Grafos (Graph Neural Networks, GNNs)} para el análisis de datos estructurados provenientes de Internet. Estas técnicas permiten modelar sistemas complejos representados como grafos, capturando dependencias estructurales entre los distintos componentes de la red.\\
+
+Diversos trabajos recientes han explorado la aplicación de GNNs a problemas relacionados con la infraestructura de Internet. Por ejemplo, Giakatos et al.~\cite{BenchmarkingGNN} proponen un marco de benchmarking para evaluar distintos modelos de GNN sobre datos de enrutamiento a nivel de Sistemas Autónomos. De manera similar, Jaeger et al.~\cite{ModelingTCPPerformanceGNN} utilizan GNNs para modelar el desempeño de protocolos de transporte como TCP en distintas topologías de red. Asimismo, Latif et al.~\cite{UnveilingPotentialGNNBGP} exploran el uso de GNNs para detectar anomalías en anuncios BGP aprovechando la estructura topológica de la red.\\
+
+
+% Esta chatgpteado
+Uno de los problemas clásicos en el análisis de la topología de Internet consiste en inferir 
+el tipo de relación económica existente entre pares de Sistemas Autónomos. El tráfico de 
+Internet no fluye libremente entre todos los ASes, sino que está condicionado por 
+\textbf{acuerdos comerciales} que las organizaciones establecen entre sí, tales como 
+relaciones de cliente-proveedor o acuerdos de peering. Sin embargo, esta información 
+no suele ser pública, por lo que debe inferirse a partir de fuentes indirectas, como 
+las rutas observadas en BGP o repositorios comunitarios de interconexión.\\
+
+Diversos estudios han abordado la inferencia de relaciones entre Sistemas Autónomos 
+utilizando \textbf{enfoques heurísticos}~\cite{ASRank,Inferring-Multilateral-Peering,ProbLink,topoScopePaper}. 
+Estos métodos han permitido construir vistas aproximadas de las \textbf{relaciones económicas} 
+de Internet, a partir de reglas, observaciones de rutas BGP y supuestos. 
+Más recientemente, algunos trabajos han incorporado técnicas de 
+\textbf{aprendizaje automático (Machine Learning)} para automatizar este 
+proceso~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning}, 
+logrando mejoras en la clasificación de relaciones, aunque sin aprovechar plenamente la 
+estructura de grafo inherente a los datos de Internet.\\
+
+
+% Esta chatgpteado
+En este contexto, la inferencia de relaciones entre Sistemas Autónomos constituye 
+un escenario adecuado para evaluar el potencial de las \textbf{Redes Neuronales de Grafos} 
+como herramienta para modelar dependencias estructurales complejas. Esta tesis explora en 
+qué medida distintas arquitecturas de GNN pueden aprender representaciones útiles de la 
+topología AS-level de Internet y contribuir a la inferencia de relaciones entre Sistemas 
+Autónomos, comparando su desempeño con métodos existentes del estado del arte.\\
+
+% En este contexto, el uso de \textbf{Redes Neuronales de Grafos (GNNs)}~\cite{scarselli_graph_2009} 
+% surge como una herramienta poderosa para realizar tareas de aprendizaje sobre datos de Internet, ya 
+% que éste puede representarse de forma natural como un grafo. 
+% En particular, la aplicación de GNNs a la tarea de inferencia de relaciones comerciales entre 
+% Sistemas Autónomos podría ofrecer una perspectiva diferente a la empleada en métodos anteriores y 
+% proporcionar una comprensión más profunda de cómo la \textbf{topología de Internet} se relaciona 
+% con los \textbf{acuerdos comerciales} entre ASes. 
+% Además, permite identificar qué características estructurales son más relevantes para la inferencia 
+% de dichas relaciones, contribuyendo a mejorar la eficiencia y seguridad del enrutamiento global.\\
+
+% A pesar de la gran cantidad de \textbf{datos públicos} disponibles sobre el enrutamiento 
+% global~\cite{ASRank,PeeringDB,Internet-resiliency-to-attacks-and-failures-under-BGP-policy-routing,CAIDA,RIPE-RIS}, 
+% aún existe una importante falta de información respecto de las \textbf{relaciones comerciales} 
+% entre Sistemas Autónomos, ya que esta información no es directamente observable y debe inferirse a 
+% partir de \textbf{fuentes indirectas}, como rutas BGP o bases de datos comunitarias. 
+% Resolver el problema de identificar los tipos de relaciones que los AS comparten permite 
+% comprender con mayor profundidad la \textbf{estructura} y \textbf{evolución de Internet}, así 
+% como las decisiones de enrutamiento que toman las distintas organizaciones que la conforman. 
+% Una mejor comprensión de estas relaciones permite, por ejemplo, detectar la aparición de \textbf{ASes maliciosos}, 
+% identificar \textbf{congestión} o \textbf{ineficiencias} en la red y evaluar la \textbf{resiliencia del ecosistema de interconexión} 
+% frente a cambios en las políticas o fallas en la infraestructura. 
+% Por ello, resulta fundamental explorar nuevas metodologías que permitan inferir estas relaciones de manera más precisa y 
+% automatizada, aprovechando las técnicas de \textbf{aprendizaje profundo (Deep Learning)} y las 
+% \textbf{representaciones basadas en grafos}, que capturan tanto las propiedades estructurales de 
+% la red como las características particulares de cada AS.\\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Conocer las relaciones entre los ASes es de vital importancia, ya que permite entender el  comportamiento del tráfico de Internet, detectar posibles ataques y fallos en la red, y optimizar el ruteo de los paquetes. Sin embargo estas no son de acceso público, por lo que inferir estas relaciones es un problema de gran relevancia en la actualidad. A través de las rutas anunciadas mediante BGP, es posible inferir el tipo de relación  entre los ASes. 
+\section{Hipótesis}
+
+Las \textbf{Redes Neuronales de Grafos (GNNs)} son capaces de capturar patrones estructurales presentes en la topología AS-level de Internet, representada  a partir de información de enrutamiento BGP, permitiendo obtener una \textit{Accuracy} superior  a las metodologías del estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank} en la tarea de inferencia de relaciones económicas entre Sistemas Autónomos”.\\
+
+% Las \textbf{Redes Neuronales de Grafos (GNNs)} pueden ofrecer una \textit{Accuracy} superior a las metodologías del estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank} en la tarea de \textbf{inferencia del tipo de relación económica entre Sistemas Autónomos}. Además, las representaciones aprendidas por las GNNs pueden proporcionar \textbf{información estructural} y \textbf{semántica} sobre la topología de Internet, permitiendo identificar patrones de interconexión, características de los ASes y dinámicas subyacentes en las \textbf{relaciones comerciales}, lo cual resulta relevante para \textbf{investigadores} y \textbf{operadores} de red interesados en mejorar la \textbf{visibilidad}, \textbf{seguridad} y \textbf{resiliencia} del ecosistema de interconexión global.\\
+
+
+
+
+%El modelo no solo aprende cómo se conectan los ASes entre sí (estructura), sino también qué significado o tipo de relación existe entre ellos (semántica).
+\section{Objetivos}
+
+\subsection{Objetivo general}
+
+% El objetivo de esta tesis es \textbf{evaluar el desempeño de diversas arquitecturas de Redes 
+% Neuronales de Grafos (GNNs)} en la tarea de inferir los tipos de relación económica entre Sistemas Autónomos, comparándola con métodos heurísticos y de Machine Learning del estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank}.
+% Desarrollando un \textbf{\textit{benchmark}} que permita analizar en qué condiciones y cuáles son atributos relevantes de los Sistemas Autónomos que ofrecen una mejor performance.
+
+
+El objetivo de esta tesis es analizar el comportamiento de distintas arquitecturas de \textbf{Redes Neuronales de Grafos (GNNs)} sobre la topología de Internet a nivel de Sistemas Autónomos, representada como un grafo construido a partir de información de enrutamiento BGP.\\
+
+En particular, se estudia si estos modelos son capaces de capturar patrones estructurales del grafo AS-level y mejorar la inferencia de relaciones económicas entre Sistemas Autónomos. Para ello, se desarrolla un \textbf{benchmark experimental} que permite comparar distintas arquitecturas de GNN con métodos heurísticos y de aprendizaje automático del estado del arte.
+
+
+
+
+%Para ello, se analizarán características específicas de cada Sistema Autónomo junto con la topología de la red.
+
+
+
+
+
+ 
+
+
+
+
+
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+  \item \textbf{Obtención de datos:} Recolectar información de Internet de fuentes confiables, correspondiente al protocolo BGP y los Sistemas Autónomos. Esto incluye datos sobre la topología entre Sistemas Autónomos, sus características y relaciones que comparten entre ellos.
+  
+  \item \textbf{Preparación de datos:} Construir un grafo a partir de los datos recolectados, definiendo un formato de entrada específico para nuestros modelos GNN, incluyendo la mejora de calidad de los datos mediante el uso de diferentes técnicas de preprocesamiento, como normalización, conversión de atributos categóricos a numéricos, entre otros.
+  
+  \item \textbf{Diseño e implementación de modelos:} Diseñar e implementar modelos GNN y \textit{frameworks} específicos que permitan la inferencia del tipo de relación que dos Sistemas Autónomos comparten.
+  
+  \item \textbf{Creación de un \textit{benchmark} con métodos previos:} Implementar un \textit{benchmark} con métodos heurísticos y de Deep Learning propuestos previamente, con el fin de establecer una base comparativa.
+
+  \item \textbf{Evaluación de desempeño:} Comparar el rendimiento de diferentes arquitecturas de GNN y técnicas utilizadas anteriormente para esta inferencia, identificando los parámetros de mayor relevancia.
+  
+  \item \textbf{Análisis de resultados:} Interpretar los resultados obtenidos mediante el estudio y su comparación con los valores esperados y el estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning}.
+
+\end{itemize}
+
+
+  
+\section{Metodología}
+
+El plan de trabajo que se llevó a cabo durante esta investigación constó de cuatro etapas:
+
+\begin{enumerate}
+
+    \item \textbf{Investigación y familiarización:} En esta primera etapa, se llevó a cabo la lectura de artículos académicos relacionados con el uso de GNNs, así como de artículos relevantes sobre la representación de datos de Internet y el problema de inferencia. En paralelo, se realizó una búsqueda de \textit{datasets} públicos disponibles y el desarrollo de modelos básicos de GNNs para familiarizarse con la herramienta.
+    
+    \item \textbf{Recolección y preparación de datos:} Una vez familiarizados con el problema y las diferentes herramientas, se pasó a la selección y recolección de datos de Internet a utilizar, los cuales fueron pre-procesados y adaptados a un formato específico a la entrada requerida por los diferentes métodos.
+    
+    \item \textbf{Construcción de modelos y entrenamiento:} Una vez se tuvo más claridad sobre la tarea y las herramientas a utilizar, se continuó con la implementación de diversos modelos de GNNs utilizando el conjunto de datos. Además, se llevó a cabo el entrenamiento de estos modelos, ajustando hiperparámetros y realizando modificaciones en los datos de entrada a medida que se aprendía y se realizaban pruebas.
+    
+    \item \textbf{Construcción de un \textit{benchmark}:} Luego de desarrolladas diversas implementaciones y \textit{frameworks} de GNNs para la tarea específica, se diseñó un \textit{benchmark} para comparar el rendimiento del uso de GNNs con técnicas previas y evaluar comparativamente sus resultados.
+    
+    \item \textbf{Análisis de resultados:} Con las implementaciones ya creadas y resultados obtenidos tanto de GNNs como de los métodos del \textit{benchmark}, se pasó al análisis de los resultados y a la comparación de los desempeños de las diferentes técnicas.
+
+\end{enumerate}
+
+
+\section{Contribuciones}
+
+Las contribuciones de este trabajo son:
+\begin{enumerate}
+
+    \item \textbf{Construcción de un dataset del grafo de Internet}, correspondiente a los primeros meses de 2024, acompañado de información proveniente de diferentes fuentes: \textbf{CAIDA}~\cite{CAIDAS-relationship} (para las relaciones AS-AS), \textbf{RouteViews}~\cite{RouteViewsProject} y \textbf{RIPE RIS}~\cite{RIPE-RIS} (para la topología obtenida desde las RIBs, es decir, las \textit{Routing Information Bases} que almacenan las rutas activas en BGP), y \textbf{PeeringDB}~\cite{PeeringDB} (para los atributos de los Sistemas Autónomos).
+
+    \item \textbf{Diseño e implementación de un \textit{benchmark}} experimental para la tarea de inferencia de relaciones entre Sistemas Autónomos, que estandariza datos de entrada, formato de salida, protocolo de evaluación y métricas de comparación entre métodos heurísticos, de Machine Learning.
+    \item \textbf{Análisis exploratorio de las RIBs extraídas}, reforzando estructura conocida de Internet, donde existe un núcleo (\textit{core}) fuertemente conectado y una periferia.
+
+    \item \textbf{Implementación de arquitecturas GNN} bajo dos esquemas de entrenamiento: (i) enfoque \textit{por etapas}, donde los \textit{embeddings} se preentrenan mediante tareas auxiliares (predicción de aristas, grado o PageRank); y (ii) enfoque \textit{end-to-end}, donde la GNN y el decodificador se entrenan conjuntamente para la tarea final de clasificación.
+
+    \item \textbf{Análisis comparativo de métricas}, identificando los factores que influyen en el rendimiento de los modelos GNN y la tarea.
+    
+\end{enumerate}
+
+\section{Estructura del trabajo}
+Este documento se organiza de la siguiente manera:
+
+\begin{itemize}
+    \item \textbf{Capítulo 1: Introducción.} Se presentan la hipótesis, los objetivos, la metodología general, las principales contribuciones y la estructura del trabajo.
+    
+    \item \textbf{Capítulo 2: Preliminares.} Se explican conceptos importantes para la comprensión de esta tesis, como el funcionamiento de Internet, los Sistemas Autónomos, el protocolo BGP y las Redes Neuronales de Grafos (GNNs).
+    
+    \item \textbf{Capítulo 3: Trabajo relacionado.} Se aborda el problema de la inferencia de relaciones entre Sistemas Autónomos, describiendo los tipos de relaciones y algunos de los métodos previos propuestos más importantes en la literatura.
+    
+    \item \textbf{Capítulo 4: Metodología.} Se detalla el plan de trabajo seguido, que incluye la obtención y preparación de datos, la construcción del grafo de Internet, la creación del \textit{benchmark} y la implementación de modelos GNN bajo diferentes enfoques.
+    
+    \item \textbf{Capítulo 5: Resultados.} Se presentan un análisis de los datos recolectados así como de los resultados obtenidos de los métodos tradicionales en la tarea de inferencia de relaciones económicas entre los Sistemas Autónomos como de los modelos de GNN, incluyendo métricas de desempeño, análisis de los datos y comparación entre enfoques. 
+    
+    \item \textbf{Capítulo 6: Conclusiones y trabajo futuro.} Se discuten las conclusiones principales del estudio, sus limitaciones y posibles líneas de investigación a futuro.
+    
+\end{itemize}
+
+

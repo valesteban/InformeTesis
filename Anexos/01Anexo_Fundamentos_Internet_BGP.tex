@@ -1,0 +1,735 @@
+﻿\section{Fundamentos de Internet y BGP} \label{sec:anexo_fundamentos_internet_bgp}
+
+\subsection{Internet} \label{sec:anexo_internet}
+Entidades y Jerarquías de Internet
+La IANA (Internet Assigned Numbers Authority) es el stock central de bloques IP y ASN. Gestiona globalmente los bloques de direcciones IP y los ASN.
+
+RIRs (Regional Internet Registries)
+Las Autoridades Regionales de Registro de Internet (RIR) son organizaciones que gestionan la distribución de recursos de Internet (Ej: direcciones IP y ASN).
+
+ARIN (América del Norte, parte del Caribe y algunas islas del Pacífico)
+RIPE NCC (Europa, Oriente Medio y Asia Central)
+APNIC (Asia y la región del Pacífico)
+LACNIC (América Latina y el Caribe)
+AFRINIC (África)
+
+IETF (Internet Engineering Task Force)
+Define los estándares técnicos (protocolos como BGP, TCP/IP, DNS, etc.).
+No gobierna, sino que coordina cómo debe funcionar Internet.
+ICANN (Internet Corporation for Assigned Names and Numbers)
+Administra los nombres de dominio (.com, .org, .cl) y las direcciones IP.
+A través de organizaciones regionales, delega bloques de IP y autonomía.
+ISPs (Internet Service Providers)
+Proveen conectividad a usuarios, empresas o a otros ISPs.
+Van desde grandes proveedores globales hasta pequeños locales.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Sistemas Autónomos} \label{sec:anexo_sistemas_autonomos}
+
+
+Como se habló previamente en la Sección~\ref{sec:sistemas_autonomos}, los \textbf{Sistemas Autónomos (AS)} son un conjunto de dispositivos que comparten un mismo protocolo de ruteo y están administrados por una misma entidad, cuya interconexión forma \textbf{Internet}.\\
+
+Los \textbf{AS} se identifican mediante un número de \textbf{Sistema Autónomo (ASN)} de 16 bits y controlan un conjunto de direcciones \textbf{IP}. 
+Esta asignación es llevada a cabo por los \textbf{Registros Regionales de Internet} (\textit{Regional Internet Registries}, \textbf{RIRs}), quienes reciben bloques de direcciones IP desde la \textbf{Autoridad Asignadora de Números de Internet} (\textit{Internet Assigned Numbers Authority}, \textbf{IANA}) y los distribuyen a los \textbf{Registros Locales de Internet} (\textit{Local Internet Registries}, \textbf{LIRs}) y a los usuarios finales.\\
+
+Los \textbf{Proveedores de Servicios de Internet} (\textit{Internet Service Providers}, \textbf{ISP}), que pueden estar conformados por uno o varios Sistemas Autónomos, se dividen comúnmente en tres niveles de jerarquía:  
+el \textbf{Tier-1}, donde se encuentran los AS que conforman el \textit{backbone} de Internet y que intercambian paquetes entre sí sin costo asociado;  
+los \textbf{Tier-2}, generalmente operadores nacionales que compran tránsito a los Tier-1 y venden tránsito a los Tier-3;  
+y finalmente los \textbf{Tier-3}, operadores locales que pagan por el tránsito para proporcionar acceso a Internet a los usuarios finales~\cite{InterconnectionPeeringSettlements}.  
+Además, Luckie \textit{et al.}~\cite{ASRank} analizó los AS y propuso una métrica para indicar qué tan global es un AS:  
+si el \textit{customer cone} es mayor o igual a 200, se considera Tier-1;  
+si es mayor a 2,000, se considera Tier-2;  
+y si es menor a 200, se considera Tier-3.\\
+
+Una última clasificación que puede hacerse entre AS depende de sus conexiones a otros Sistemas Autónomos, dividiéndolos en \textbf{\textit{single-homed}} y \textbf{\textit{multi-homed}}.  
+Los AS \textit{single-homed} tienen solo una conexión a otro AS, mientras que los \textit{multi-homed} poseen conexiones a más de un AS.\\
+
+
+
+En la estructura de Internet, un Sistema Autónomo (AS) consiste en un conjunto de routers y enlaces de comunicación que comparten una política de enrutamiento común. Estos son operados independientemente por una organización (Ej: ISPs , universidades, empresas, entre otras). Definen/Utilizan uno o más bloques de direcciones IP que le han sido asignados por un RIR (Regional Internet Registry) o NIR. 
+
+Existen 3 tipos de Sistemas Autónomos:
+Stub: se conecta únicamente con un sistema autónomo.
+Tránsito o proxy: se conecta con varios sistemas autónomos y además permite que se comuniquen entre ellos.
+Multihomed: se conecta con varios sistemas autónomos, pero no soporta el tráfico de tránsito entre ellos.
+
+
+Multi-origin AS : (MOAS) Algunos prefijos se originan desde múltiples Sistemas Autónomos (pueden ser siblings o ASes de diferentes organizaciones)
+En BGP , el ORIGIN se ve al final del AS PATH.
+Por que ocurre?
+Anycast: El mismo prefijo anuncia desde varios AS/POPs para acercar el servicio al usuario.
+Migración/transición de proveedor: Una red cambia de ASN o de Upstream y durante el cambio se ve el prefijo en dos orígenes.
+Multihoming o mala configuración: Un cliente y su proveedor (o dos proveedores) terminan anunciando el mismo prefijo como origin por error.
+MOAS conflict/secuestro o route leaks: Alguien anuncia un prefijo que no le corresponde, y BGP lo acepta si no hay filtros/ROV.
+
+
+¿Qué es un Upstream?
+Tu proveedor hacia Internet . Es hacia arriba en la cadena.
+¿Qué es un Downstream?
+Tus clientes o redes que dependen de ti para salir de Internet. Es hacia abajo en la cadena.
+
+ASN privados y públicos.
+
+Números de Sistemas Autónomos (ASN)
+
+Es un identificador único para los Sistemas Autónomos, consisten en 16 o 32 bits  que definen identificadores números entre 0 a 65535 (definidos en la RFC 1930) y entre 0 y  4294967295 (definidos en la RFC 4893). Son asignados por un RIR o un NIR.
+
+La Autoridad de Asignación de Números de Internet (IANA) ha reservado 1.023 de ellos (de 64.512 a 65.534) para uso privado. 
+
+Existen dos tipos de ASN:
+
+ASN Públicos:  Asignados por los  RIRs, son únicos a nivel mundial. Se utilizan para el enrutamiento en Internet y son visibles en las tablas de enrutamiento globales.
+Son únicos en todo el mundo.
+Se usan cuando tu red anuncia prefijos por BGP al resto de Internet.
+Permiten que otros AS sepan quién eres y cómo llegar a ti.
+
+ASN Privados: Son utilizados dentro de redes privadas y no son visibles en las tablas de enrutamiento globales. Los rangos de ASN privados son 64.512 a 65.534 y 4.200.000.000 a 4.294.967.294.
+Sirven para:
+Pruebas de BGP.
+Conexiones internas entre routers.
+Simulaciones o entornos cerrados.
+	Si un router con ASN privado intenta anunciar un prefijo al Internet público, los 
+demás routers lo filtran automáticamente (no lo propagan).
+
+
+Ejemplos:
+AS15169 → Google
+AS3356 → Lumen (Level3)
+AS65001 → Red privada (empresa o laboratorio)
+
+
+
+
+
+
+\subsection{Internet Exchange Points} \label{sec:anexo_internet_exchange_points}
+Los \textit{Internet Exchange Points} (IXPs) son puntos de interconexión donde múltiples ASes pueden establecer relaciones de peering con otros ASes \cite{Computer-Networking}.\\
+
+Un IXP consiste generalmente en un switch  o router de alta velocidad y capacidad que conecta routers de diferentes ASes, permitiendo el intercambio directo de tráfico sin necesidad de atravesar redes intermedias. Mejorando así el intercambio de tráfico, haciéndolo más eficiente y de bajo costo.\\
+
+% FIXME: arregalr redaccion
+Las relaciones de tráfico en un IXP se establecen mediante el protocolo BGP, y el IXP solo actua como un intermediario. De esta forma por ejemplo un ISP en vez de estar conectados a multiples ASes  en una coneccion punto a punto, puede conectarse unicamente al IXP y como estos otros ASess tambien estaran conectados al IXP se ahorra recuersos fisicos y de administracion.\\
+
+Al igual que los ASes, los IXPs tienen un ASN. Sin embargo, de forma generalizada, este ASN se extrae de los AS PATH en BGP. Algunos IXPs lo mantienen visible como método de debugging \cite{InferringASRelatioships2001}. 
+
+
+\subsection{Ruteo} \label{sec:anexo_ruteo}
+\subsubsection{Ruteo interno} \label{sec:anexo_ruteo_interno}
+\subsubsection{Ruteo externo} \label{sec:anexo_ruteo_externo}
+
+
+
+
+
+\subsection{BGP} \label{sec:anexo_bgp}
+
+BGP es un Protocolo PATH Vector
+
+
+Prefijos IP y su propagación en BGP
+
+
+¿Qué es un prefijo IP?
+
+Un prefijo IP o un bloque de IPs es una forma compacta de representar un conjunto continuo de direcciones IPs.
+Se escrib con notación CIDR (Classless Inter-Domain Routing):
+
+192.0.2.0/24 → representa 256 direcciones (desde 192.0.2.0 hasta 192.0.2.255)
+2001:db8::/32 → prefijo IPv6 (bloque muy grande, miles de subredes posibles)
+
+La parte /24 indica cuántos bits son la porción de red, y el resto son los bits disponibles para hosts.
+Mientras más grande el número (por ejemplo /30 o /31), más pequeño el bloque.
+
+¿Qué hace BGP con estos prefijos?
+
+El Border Gateway Protocol (BGP) es el protocolo que permite a los Sistemas Autónomos (AS) intercambiar información de ruteo en Internet.
+Cada AS anuncia los prefijos que posee o puede alcanzar, y esos anuncios se propagan a través de sus vecinos BGP.
+
+
+AS
+Prefijo que anuncia
+Vecino
+AS64500
+203.0.113.0/24
+AS64501
+AS64501
+203.0.113.0/24
+AS64502
+AS64502
+203.0.113.0/24
+Internet
+
+
+
+Así, el bloque 203.0.113.0/24 “se propaga” por la red global BGP hasta que todos los routers del mundo saben que ese prefijo se alcanza a través de AS64500 (con su respectivo camino \texttt{AS\_PATH}).
+
+Propagación de prefijos: el mecanismo
+
+Cuando un router BGP recibe un anuncio de prefijo, no reenvía todo automáticamente. 
+Sigue una serie de reglas y políticas:
+Recibe un anuncio (por ejemplo: 200.7.4.0/22 via AS1234).
+Guarda en su tabla BGP el prefijo junto con atributos:
+\texttt{AS\_PATH}: secuencia de AS atravesados.
+\texttt{NEXT\_HOP}: IP del siguiente router.
+\texttt{LOCAL\_PREF}, MED, etc.
+Evalúa políticas locales (ej. preferir clientes sobre peers).
+Anuncia a otros vecinos según sus políticas (por ejemplo, a sus clientes, pero no siempre a otros peers).
+
+
+
+
+
+
+
+Tabla de enrutamiento global vs. tabla local
+
+
+tabla de enrutamiento global (BGP global routing table) y la tabla de enrutamiento local.
+Cuando hablamos de enrutamiento en Internet, los routers mantienen tablas donde guardan información sobre cómo alcanzar diferentes redes (prefijos IP).
+Hay una tabla global, que contiene todas las rutas anunciadas públicamente en Internet (a nivel BGP).
+
+
+Y cada router o AS mantiene su tabla local, que refleja solo las rutas relevantes según sus políticas y acuerdos de interconexión.
+
+
+\subsubsection{Mensajes BGP}  \label{sec:anexo_mensajes_bgp}
+
+BGP utiliza TCP \cite{RFC793-TCP} como su protocolo de transporte, lo que significa que no necesita preocuparse por la fragmentación de paquetes, la confirmación de recepción (ACK), la retransmisión de datos, entre otros aspectos de confiabilidad.\\
+
+Los mensajes BGP solo son procesados una vez que han sido completamente recibidos. Su tamaño mínimo es de 19 octetos, correspondiente al HEADER, mientras que el tamaño máximo es de 4096 octetos. Existen 4 tipos de mensajes en BGP: OPEN, UPDATE, KEEPALIVE y NOTIFICATION.\\
+
+
+\paragraph{Mensaje OPEN}
+
+
+Luego de establecida la conexión TCP entre los pares BGP, el primer mensaje que se envía en un mensaje OPEN ,mediante el cual ambos lados confirman los parámetros de la conexión.
+En este mensaje se especifica la versión de BGP a utilizar, el número de Sistema Autónomo (AS) del emisor, el Hold Time, el BGP identifier y los parámetros opcionales.
+El Hold Time define el tiempo máximo que puede pasar sin recibir un mensaje KEEPALIVE o UPDATE en una sesión antes de que la conexión sea cerrada.\\
+
+
+
+\paragraph{Mensaje UPDATE}
+
+Se utiliza para transferir información de enrutamiento entre los pares BGP. A través de este mensaje se anuncian nuevas rutas y se notifican los withdrawals de aquellas que ya no son válidas.
+Además, estos mensajes incluyen path attributes, los cuales proporcionan información sobre las rutas que se están anunciando para que luego cada AS pueda decidir la mejor ruta a los diferentes destinos. Algunos ejemplos de estos atributos son ORIGIN, AS\_PATH, NEXT\_HOP, MULTI\_EXIT\_DISC, LOCAL\_PREF, ATOMIC\_AGGREGATE y AGGREGATOR.\\
+
+
+
+\paragraph{Mensaje KEEPALIVE} 
+
+El intercambio de mensajes KEEPALIVE dentro del protocolo BGP se utiliza para confirmar que la conexión entre ambos pares sigue activa, evitando que el Hold Time expire.
+Este mensaje consta únicamente del HEADER de un mensaje BGP, donde se indica que corresponde a un KEEPALIVE por medio del campo \textit{type}, cuyo valor es 2, el cual corresponde al valor 2. Dicho mensaje tiene un tamaño de 19 octetos.\\
+
+
+\paragraph{Mensaje NOTIFICATION}
+
+El mensaje \textit{NOTIFICATION} se envía cuando se detecta un error en la comunicación BGP. Una vez enviado, la conexión se cierra.
+Este mensaje incluye un código de error y un subcódigo de error, los cuales indican en qué tipo de mensaje se produjo el error y la zona específica del problema. Además, contiene un campo de datos que proporciona información adicional sobre el error detectado.\\
+
+\subsection{Topología de Internet a diferentes niveles}\label{}
+% Nivel AS
+% Nivel router
+% Nivel IP Nivel PoP
+\subsection{Topologia de Internet a nível AS} \label{sec:anexo_topologia_internet_as}
+
+Como se ha mencionado a lo largo de esta tesis, el Internet está compuesto por miles de Sistemas Autónomos, los cuales utilizan BGP para intercambiar infomración de ruteo, es decir de alcance entre ello.
+Así, el Intrnt puede modelarse como un grafo a nivel de AS, donde cada nodo representa un AS, y cada enlace una relacion de conexión dada por BGP (\textit{peering}) entre dos ASes.
+
+Zhang et al.~\cite{AS-topology-2004} proponen un método para recolectar la topología de Internet a nivel AS.
+
+
+
+
+\subsection{Recolección de datos de Internet} \label{sec:anexo_recoleccion_datos_internet}
+
+
+% https:%www.pacnog.org/pacnog17/presentations/MappingTheInternet.pdf
+
+La recopilación de datos de Internet es fundamental para comprender su funcionamiento, identificar áreas de mejora y optimizar su infraestructura. La información sobre tráfico, rutas y otros permite detectar anomalías, prevenir amenazas y mejorar el rendimiento global. Además, estos datos son clave para la investigación y el desarrollo de nuevas tecnologías que mejoren la conectividad y la eficiencia de la red.\\
+
+A continuación, se presentan algunas fuentes clave que proporcionan datos públicos sobre Internet:\\
+
+
+
+Existen plataformas como RV, RIPE RIS, RIPE Atlas, PCH, PeeringDB. que tienen sondas y  colectores que hacen posible obtener información sobre Internet, su topología, métricas e información de ASes.
+Luego, existen otras plataformas que utilizan estas fuentes de información de forma integrada para generar sus propias estadísticas, visualizaciones o servicios web. Algunos empleos son:
+bgp.tool: https://bgp.tools/
+bgpview: https://bgpview.io/
+RIPEstat:  https://stat.ripe.net/
+Hurricane Electric BGP Toolkit: https://bgp.he.net/
+CAIDA AS Rank: https://asrank.caida.org/
+
+
+\subsubsection{CAIDA} \label{sec:anexo_caida} 
+
+
+El Centro de Análisis de Datos de Internet Aplicados o CAIDA por sus siglas en inglés \cite{CAIDA} es una organización de investigación cuyo principal objetivo es la recopilación y análisis de datos relacionados a la infrestructura, rendimiento y tráfico del Internet. Este funciona como un canal de difusión donde se publican y comparten tanto herramientas como investigaciones relacionado con las redes de Internet.\\
+
+En el contexto de nuestro problema de *inferencia de Relaciones entre Sistemas Autonomos*, CAIDA ofrece el dataset *CAIDA AS Relationships* \cite{CAIDAS-relationship}. Este clasifica las relaciones entre Sistemas Autonomos en dos principales tipos: Customer-to-provider (C2P) y Peer-to-peer (P2P). Estas relaciones son inferidas a partir de datos públicos de ruteoBGP ofrecidos por RouteViews \cite{RouteViewsProject} y RIPE RIS \cite{RIPE-RIS}.\\
+
+El dataset CAIDA AS Relationships está compuesto por dos subdatasets:
+\begin{itemize}
+
+    \item \textbf{serial-1:} Contiene las relaciones inferidas utilizando un método similar al descrito en el estudio de M. Lukie et al. \cite{ASRank} .Esta disponible desde 1998 hasta la actualidad, con un archivo mensual. Cada archivo incluye un grafo completo derivado de instantáneas de las tablas BGP de RouteViews y RIPE RIS, tomadas cada 2 horas durante un período de 5 días.\\
+    
+    \item \textbf{serial-2:} Basado en el dataset Serial-1, este agrega enlaces inferidos mediante BGP communities, utilizando el método descrito por Vasileios et al. \cite{Inferring-Multilateral-Peering} . Está disponible desde octubre de 2015 hasta el presente, con archivos generados mensualmente.\\
+    
+\end{itemize}
+
+Otro proyecto relevante de CAIDA es Archipelago (Ark) Measurement Infrastructure, una plataforma de medición distribuida a nivel global. Esta cuenta con nodos de medición ubicados en diversas zonas geográficas y topológicas para proporcionar una visión integral del estado y funcionamiento de Internet. Entre las mediciones realizadas a través de Ark se encuentran proyectos como The Spoofer Project, Scamper, Internet Topology Discovery, entre otros.\\
+
+
+Además, CAIDA ofrece BGPStream \cite{BGPStream}, una biblioteca de código abierto diseñada para manejar grandes volumenes de datos BGP. Esta herramienta permite acceder tanto a datos BGP en tiempo real como a históricos, obtenidos de los colectores de RouteViews y RIPE NCC. Esto facilita la investigación y el análisis de eventos relacionados con el enrutamiento, como interrupciones, fugas de rutas o ataques BGP, de manera eficiente y rápida.\\
+
+
+CAIDA (Centro de Análisis de Datos de Internet Aplicados)
+Qué es: Organización de investigación, su principal objetivo es la recopilación y análisis de datos relacionados a la infraestructura, rendimiento y tráfico del Internet.
+url: https://www.caida.org/
+url de dataset ofrecidos por CAIDA: https://publicdata.caida.org/datasets/
+Otros proyectos dentro de CAIDA:
+Archipelago (Ark) Measurement Infrastructure
+
+
+
+
+
+
+
+
+\subsubsection{RouteViews Project} \label{sec:anexo_routeviews_project}
+
+
+
+El proyecto RouteViews \cite{RouteViewsProject} de la Universidad de Oregon nació en un principio como una herramienta los operadores de Internet, con el fin de que estos pudiesen obtener información BGP en tiempo real sobre el sistema de enrutamiento global desde las perspectivas de varios backbones y ubicaciones en Internet. \\
+
+Sin embargo hoy en dia, su uso se ha extendido a multiples tareas, tales como la visualización de rutas AS, el estudio de la utilización del espacio de direcciones IPv4 y  otros aspectos relacionados a la infraestructura y enrutamiento de Internet. \\
+
+% Hoy en día, RouteViews es ampliamente utilizado en investigaciones sobre la infraestructura y el comportamiento del enrutamiento global.
+
+% TODO: Arreglar ANexo
+El proyecto cuenta con alrededor de 41  recolectores de enrutamiento  (ver en ANEXO)  ubicados en puntos clave alrededor del mundo, como Ámsterdam, Londres, Sídney, Singapur, São Paulo, Santiago, Nairobi, Sudáfrica, Chicago, California y otras ubicaciones, especialmente en Internet Exchange Points (IXP). Estos recolectores obtienen información de enrutamiento de más de 260 organizaciones diferentes que comparten sus datos  con RouteViews, incluyendo muchos de los ISP más grandes del mundo.\\
+
+Los recolectores establecen sesiones de peering BGP con diferentes sistemas autónomos, a través de estas conexiones, los recolectores reciben actualizaciones de las tablas BGP (RIS) y UPDATES del protocolo BGP, obteniendo así información sobre las rutas globales y las conexiones entre AS.
+En estas actualizaciones incluyen información como:
+\begin{itemize}
+    \item \textbf{AS Path:} Camino de Sistemas Autonomos que un paquete debe seguir para llegar a una red destino.
+    \item \textbf{Prefijos IP:} Rangos de direcciones IP que están siendo anunciados por los AS.
+    \item \textbf{Next Hop:} Siguiente salto (router o red) que los paquetes deben tomar para continuar hacia su destino.
+\end{itemize}
+
+
+El proyecto también cuenta con una compilación de archivos en dos formatos, los obtenidos por Cisco y por el software de enrutamiento FRR. El primero recopila información en intervalos de 2 horas, comenzando a las 00:00 UTC. El segundo obtiene RIBs y actualizaciones, los RIBs corresponden a snapshots recogidas cada 2 horas, mientras que los Updates son archivos continuos que se actualizan cada 15 minutos. Estos archivos históricos están en formato MRT y están disponibles para cada recolector.\\
+
+
+% + http:%www.routeviews.org/
+% + PAPERS: https:%www.routeviews.org/routeviews/index.php/papers/
+
+TODO: Agregar imagen 
+
+
+
+
+
+Qué es: El proyecto RouteViews de la Universidad de Oregon nació como herramienta para los operadores de Internet.
+url : https://www.routeviews.org/routeviews/
+Cuenta con 41 recolectores de enrutamiento.
+Colectores: https://www.routeviews.org/routeviews/collectors/	
+Se cuentan con 2 formatos. Los recolectados por el software Cisco y FRR  
+CISCO:
+Salida del comando "show ip bgp"
+
+Formato Cisco
+FRR:
+El software tiene integrado un mecanismo de dump BGP
+Puede hace dump de:
+BGP RIB:
+RIBS son snapshots collected every 2 hours.
+Full BGP data stream (de cada peer)
+UPDATES:
+Archivos that are rotated every 15 minutes. 
+Formato: MRT
+Archivos MRT: https://archive.routeviews.org/
+
+
+Formato FRR (human readable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{RIPE NCC} \label{sec:anexo_ripe_ncc}
+
+RIPE (Reseaux IP Européens) Network Coordination Centre es uno de los cinco Registros Regionales de Internet (RIRs) que proporciona servicios de registro de Internet y coordinación de recursos de Internet para Europa, Oriente Medio y partes de Asia Central.
+RIPE NCC opera el Routing Information Service (RIS) \cite{RIPE-RIS}, una plataforma de recopilación de datos de enrutamiento, que tiene como objetivo mejorar la comprensión y visibilidad del sistema global de enrutamiento de Internet.\\
+
+Al igual que RouteViews, RIS recopila datos a través de un conjunto de más de 26 colectores (ANEXO) remotos de rutas (RRCs) distribuidos globalmente, generalmente ubicados en Puntos de Intercambio de Internet (IXPs).  Voluntarios se conectan con los RRCs mediante BGP, y RIS almacena los mensajes que recibe de estos peering.\\
+
+Para acceder a los datos, existen dos formas: directamente a través de archivos en formato MRT, RIS Live y RISwhois, o mediante herramientas que utilizan los datos de RIS, como RIPEstat, donde se puede encontrar información ya organizada, como la exploración del enrutamiento por país y la localización de información de contacto sobre abusos.\\
+
+
+
+Qué es: Es el RIR de Europa, medio oriente y partes de Asia Central. 
+RIPE NCC ofrece Internet masurement tools y servicios:
+Routing Information Service (RIS)
+RIPEstat
+RIPE Atlas
+Cuenta con 41 recolectores de enrutamiento.
+url video util: https://www.youtube.com/watch?v=MTTNhFKRhB0
+https://www.youtube.com/watch?v=Vu2qrA9kNR4
+
+Routing Information Service (RIS):
+Red de colectores BGP (41 RRc)
+Ofrece datasets históricos y tiempo real (RIS Live)
+Formato: MRT
+Archivos: 
+Lista colectores: https://ris.ripe.net/docs/route-collectors/
+Colectores se conectan via BGP peering sessions, donde RIPE RIS usa AS12654
+
+
+RIPEstat:
+Plataforma de visualización y consultas.
+Permite buscar por ASN, IP, prefijo o dominio y obtener:
+Info de asignación (RIR, organización).
+Tráfico BGP (rutas visibles).
+Geolocalización, reputación, estadísticas.
+Accesible vía web y API.
+
+RIPE Atlas:
+Red de sondas distribuidas en todo el mundo 
+Permite lanzar pings, traceroute, DNS queries, HTTP test desde diferentes partes.
+
+
+
+
+
+\subsubsection{The peeringDB} \label{sec:anexo_the_peeringDB}
+
+
+PeeringDB (\cite{PeeringDB}) es una base de datos pública y de acceso libre, gestionada y promovida por voluntarios. Su objetivo principal es facilitar la interconexión entre redes, proporcionando información detallada sobre operadores de red, proveedores de tránsito, centros de datos y Puntos de Intercambio de Internet (IXPs). Gracias a su contenido, es una fuente valiosa para la comunidad de Internet y para investigaciones relacionadas con el enrutamiento y la interconexión de redes. \\
+
+PeeringDB contiene una amplia variedad de información, incluyendo los números de Sistema Autónomo (ASN), las políticas de peering, las ubicaciones de redes y los detalles de los IXPs, como la cantidad de participantes y las entidades que los operan. \\
+
+
+Qué es: Base de datos pública y de acceso libre, gestionada y promovida por voluntarios.
+Url: https://www.peeringdb.com/
+RIPE RIS dice que mantiene actualizados sus ASes.
+Información que ofrece:
+Organizaciones y redes (ASNs):
+Nombre, ASN, contactos técnicos.
+Políticas de peering (open, selective, restrictive).
+Tráfico estimado, ratio in/out.
+IXPs (Internet Exchange Points):
+Listado de participantes (ASNs).
+Capacidad de puertos, localización geográfica.
+URLs de looking glasses, route servers, etc.
+Facilities (datacenters):
+Información de ubicación.
+Conectividad disponible.
+Cross-referencias:
+Relación entre redes, IXPs y facilities.
+Acceso datos: https://publicdata.caida.org/datasets/peeringdb/
+API pública (REST): https://www.peeringdb.com/apidocs/
+Extras:
+Para conectarse a RV piden como requisito tener sus datos en PeeringDB
+
+
+
+
+\subsubsection{Hurricane electric} \label{sec:anexo_hurricane_lectric}
+Qué es:  Uno de los mayores proveedores de tránsito IP (Tier-2/Tier-3) , opera como red backbone global. 
+Además, ofrece en su sitio web reportes, looking glass, estadísticas de prefijos/peers y herramientas de diagnóstico; útil para consultas rápidas por ASN/prefijo/IXP
+Url: https://he.net/
+BGP Toolkit (bgp.he.net):
+Consulta de ASNs: peers, rutas, prefijos, tránsito.
+Consulta de prefijos: qué AS los origina, rutas vistas.
+Información de IXPs: quién participa y cómo.
+Looking Glass:	
+Permite ejecutar consultas en routers de HE para ver cómo se enrutan prefijos desde su backbone.
+Comandos típicos: show ip bgp, traceroute, ping.
+Url: https://lg.he.net/
+Estadísticas:
+Listados de AS con más peers.
+Rankings de prefijos IPv4/IPv6.
+Estadísticas de crecimiento de Internet.
+Ejemplos
+https://bgp.he.net/report/prefixes
+
+
+
+
+
+
+\subsubsection{Packet clearinghouse} \label{sec:anexo_packet_clearinghouse}
+
+
+Qué es: Es una organización que opera sus propios route collectors en 300+ IXP.
+A diferencia de RV o RIPE RIS, PCH se centra en IXPs.
+Url: https://www.pch.net/
+Route Collectors en 300+ IXPs:
+Daily routing snapshots ( show ip bgp)
+Archivos MRT de updates por colector. 
+Directorio de IXPs:
+Información sobre ubicación, operadores y miembros de cada IXP.
+url : https://www.pch.net/ixp/dir
+Datos públicos:
+Archivos MRT y snapshots.
+MRT: \url{https://www.pch.net/resources/Raw_Routing_Data/}
+Snapshots: \url{https://www.pch.net/resources/Routing_Data/}
+
+
+
+\subsection{Construcción Grafo a partir de datos BGP}
+Construcción Grafo Internet
+
+
+Infomación BGP:
+Ventajas:
+No contiene información obsoleta o “incorrecta” como puede ocurrir con la información de los IRR, que a veces está desactualizada.
+Permite observar el comportamiento dinámico del ruteo en Internet y detectar enlaces de respaldo (backup links) a través de los updates, en caso de fallas.
+Se pueden usar BGP beacons para mejorar la visibilidad de la topología.
+Refleja rutas reales del plano de control.
+BGP no ve todas las relaciones, especialmente p2p.
+Desventajas:
+Es un protocolo que muestra alcanzabilidad (reachability) pero no necesariamente conectividad real.
+Como protocolo path vector, no anuncia información de todos los caminos disponibles (los backup paths pueden nunca aparecer en los BGP dumps). Esto puede causar sesgos en las rutas observadas, haciendo que la topología quede más completa en algunas regiones que en otras.
+Las relaciones P2P entre ASes son en general mucho más difíciles de descubrir que las relaciones C2P.
+Oculta información (solo best path), ignora rutas backup, sesgos regionales
+
+
+Limitaciones: 
+Solo muestra las rutas visibles desde los collectors y no necesariamente todos los enlaces existentes.
+La probabilidad de descubrir una relación entre Sistemas Autónomos (AS) es proporcional al número de ASes que utilizan ese enlace.
+
+Traceroute:
+Ventajas:
+Revela enlaces que no siempre aparecen en BGP
+Permite ver conexiones físicas entre ASes y múltiples enlaces.
+Desventajas:
+IP-to-AS mapping es complejo, susceptible a errores de respuesta o NAT.
+Traceroute depende del número y ubicación de vantage points.
+
+
+
+Limitaciones:
+problemas de aliasing (aliasing = varias IPs de un mismo router), rutas asimétricas, y sesgo de vantage points.
+
+IRR
+Ventajas: 
+Fácil de consultar.
+
+Desventajas:
+Información incompleta o desactualizada (voluntaria).
+
+
+
+
+El consenso general es que las mediciones del data plane (traceroute) producen una visión más completa y precisa del Internet que las del control plane (BGP)
+
+Traceroute complementa a BGP, especialmente revelando enlaces faltantes en la periferia.
+PUNTOS IMPORTANTES
+
+El consenso general es que la topología a nivel de AS inferida a partir de mediciones en el data plane (traceroute, pings ) resulta en una visión más precisa y completa en comparación con depender solo de mediciones en el control plane (tablas RIBs, mensaje BGP). [véase aquí la explicación sobre la diferencia entre ambos tipos de datos]
+
+
+!
+Estudios sobre la completitud del mapa de ASes:
+Estudio “The Lord of the Links”: compara tablas de ruteo BGP, IRR y traceroute, realizando validación cruzada de la topología y capturando así una visión más completa de la topología de ASes.
+
+Estudio sobre la incompletitud del mapa de ASes:
+“The (in) completeness of the observed Internet AS-level structure” (2010)
+“Quantifying the completeness of the observed Internet AS-level structure” (2008):
+utilizaron ground truth (datos reales) provistos por un gran ISP Tier-1 para validar la precisión de sus mapas de AS en algunos ASes seleccionados. 
+Categorizaron los enlaces faltantes en:
+Enlaces invisibles (Invisible links): ausentes debido a las limitaciones impuestas por la ubicación de los vantage points.
+Enlaces ocultos (Hidden links): pueden descubrirse con mediciones adicionales.
+Estudio sobre la importancia de la distribución de los vantage points de traceroute:
+“Quantifying the importance of vantage points distribution in Internet topology measurements,” (2009)[link]:
+El estudio muestra que, si bien aumentar el número de vantage points contribuye a reducir el sesgo de muestreo, esto no elimina el sesgo originado por su ubicación. 
+Concluyen que realizar mediciones desde dentro de las propias redes resulta fundamental para descubrir más enlaces, en especial en los ASes de menor nivel (low-tier).
+
+—------------------------------------------
+
+Para la recolección: Diferentes infraestructuras de medición activa de traceroute: RIPE Atlas, CAIDA Ark, DIMES, mediciones locales PC/universidad, etc. La idea es tener diferentes puntos de partida de la consulta (Vantage points).
+Validación/Fusión con otras fuentes: 
+Comparar con grafos derivados de BGP (routes AS paths recolectada de tablas BGP/RIBs) o registros de relaciones (CAIDA AS Relationships)
+Caso donde traceroute revela la existencia de enlace entre dos ASes que no apareciese en datos BGP es una enlace ‘potencial’.
+En mapeo IP a ASN:
+Si hay saltos no mapeables (IP no puede ser asignada a un ASN) se marca como ‘desconocido’ o se omite el tramo.
+Longest Prefix Match: Asigna cada IP al ASN del prefijo BGP más específico. Con las tablas de prefijos extraídas de RIBs BGP (RouteView RIPE RIS) se busca el prefijo más específico que contiene la IP y se le asigna el ASN correspondiente. 
+Libreria pyasn (Estudiar que tan buena o mala es)
+Usar APIs publicas: RIPEstat, Team Cymru, IPtoASN
+Construcción del grafo:
+Asignar peso a las aristas según cuantas veces fueron observadas.
+Traceroute basado en ICMP recolecta de forma exitosa más destinos y links entre IPs de forma exitosa que basados en UDP y TCP. [paper]
+
+
+Control Plane y  Data Plane 
+
+
+% TODO: Agrgar imagen de nombre control_plan_vs_data_plane lugo construir tabal n late
+
+
+
+A diferencia del control plane, las mediciones del data plane buscan descubrir los caminos reales que recorren los paquetes.
+
+En el data plane no estamos mirando la "teoría de rutas" que los routers anuncian (eso es control plane).
+\section{Nose}
+
+\subsection{Colectores BGP}
+
+
+
+¿Qué son los colectores?
+
+Son infraestructuras  públicas de recolección  de información BGP diseñadas para observar cómo se enruta Internet a nivel de Sistemas Autónomos.
+En primera instancia fue 
+
+Actual se cuenta con los siguiente proyectos que tienen de forma pública los datos:
+RIPE RIS (RIPE NCC, Europa)
+RouteViews (Univ. de Oregon)
+PCH
+Isolario ???
+
+
+Colectores tienen 2 formas de trabajar: 
+Como un hub/switch
+Como un router
+
+Los Colectores tienen asociado una IP y una ASN. Sin so no pueden establecer una ssion BGP.  Este es l caso que ytrabajn como un router
+The original purpose of these projects was to help network operators with troubleshooting and debugging tasks [survay of techniques for internet] topology discovring *
+Archivos:
+Whiñe BGP dudmps show the best path to reach other ASes, the backup links and the dynamic nature of BGP routes are more likely capture by “route updates” [link]
+Looking glass: web interface to a BGP router which often allows basic BGP data querying (ping)
+
+¿Qué proyectos actualmente trabajan con colectores?
+
+
+¿Qué colectores tiene Chile?
+RouteViews
+Para conectarse a RV piden como requisito tener sus datos en PeeringDB.
+Hay dos colectores de RV en Chile (NIC Chile y PIT Chile)
+
+
+
+
+
+
+
+route-views.chile
+
+
+Link data
+pit.scl
+
+
+Link data
+
+
+
+PCH (Packet Clearing House) Lista 
+
+Ciudad
+IXP
+Participants
+Santiago
+PIT Chile - Santiago
+182
+Santiago
+NAP Chile
+21
+Punta Arenas
+Patagonia IX
+2
+Osorno
+PIT Chile Osorno
+0
+Concepcion
+PITChile Concepcion
+11
+Arica
+PIT Chile Arica
+0
+Santiago 
+Santiago Internet Exchange
+11
+Santiago
+Chile Network Access Point
+0
+Temuco
+PIT Chile Temuco
+5
+
+
+
+
+¿Cómo funciona qué un colector se conecte a un IXP?
+Normalmente los colectores se conectan a IXP o zonas neutras, en ves de directamente con ASes o organizaciones. No le conviene, no es eficiente .
+Sin embargo, NIC Chile tiene un colector (no me acuerdo de RV o RIPE) de forma directa pero no es común.
+Los Colectores se conectan a un IXP, no con el IXP. Es decir, por medio del IXP inician sesiones BGP con otros ASes (organizaciones).
+
+
+¿Qué significa el concepto de Multi-hop en los colectores de BGP?
+Normalmente para establecer sesión BGP ASes están directamente conectados/son vecinos directos. El parámetro multi hop indica a cuantos saltos/hop de distancia se encontrará el vecino BGP para establecer la sesión. Si el número de hops es superior al indicado por su parámetro no se establece la conexión.
+
+
+
+¿Cómo funcionan los Vantage Point?
+
+
+
+¿Cómo era esa legislacion/normativa en Chile donde ISP o nos e q tienne q star interconctados?garndes ISP o algo asi s dbn conectar a ?
+
+
+
+Looking Glass
+Normalmente todos los colectores tienen un looking glass. 
+Esta herramienta se utiliza más para uso tcnico. Por ejemplo:
+Estas dan acceso limitado a cortos comandos, no son consultas amplias.
+Porqu para lo que realmente se RV y sos proyecto fu para que otros pudin ver las rutas de las otras organizaciones.
+No se utiliza para extracción de rutas, sino que más a nivel técnico. Ejemplo: Si yo como NIC Chile veo que no llegan consultas de X país, voy a un colector conectado por allá, me meto a su looking glass y consultó sobre mi IP y así ver si hay algún error.
+
+
+CONFUSIONES
+
+
+P: Si el colector se conecta a un AS específico, ese AS es el vantage point. ¿Y si se conecta a un IXP? (por lo que entiendo se ignora el ASN de un IXP)
+R: Un colector se conecta a un IXP pero no con el IXP. Es decir, utiliza al IXP para conectarse a otros ASes, no es que se conecte con el IXP y este tenga de alguna manera un almacenamiento de las rutas de todos los ASes que están conectados a él. 
+El IXP es solo un medio para establecer sesiones BGP con otras organizaciones de forma más eficiente, en vez de conectarse directamente con múltiples ASes, se conecta solo con el IXP y a través de él a las organizaciones (siempre y cuando estas organizaciones también se encuentren conectadas al IXP). 
+
+¿Qué formatos ofrecen (MRT, snapshots, streaming live)? 
+¿Qué tan actualizados están los dumps de cada fuente (minutos, horas, días)?
+¿Existen gaps de cobertura geográfica?
+
+
