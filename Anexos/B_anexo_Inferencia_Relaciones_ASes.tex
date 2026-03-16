@@ -5,29 +5,23 @@
 
 
 
-Tránsito (Provider–Customer)
+La interconexión entre Sistemas Autónomos (AS) está determinada por acuerdos económicos y por políticas de ruteo. Estos acuerdos influyen en qué rutas se anuncian y cómo se propagan en BGP, por lo que parte de esta estructura puede inferirse desde los AS\_PATH observados.
 
-Es una relación comercial donde un AS (cliente) paga a otro AS (proveedor) para tener acceso a Internet completo (todas las rutas).
+En términos generales, las relaciones más comunes entre ASes son:
+\begin{itemize}
+    \item \textbf{Proveedor--cliente (tránsito)}: un AS \emph{cliente} paga a un AS \emph{proveedor} para obtener conectividad hacia el resto de Internet. El proveedor ofrece tránsito para el tráfico del cliente y puede anunciar al cliente rutas externas.
+    \item \textbf{Peer--peer (peering)}: dos AS acuerdan intercambiar tráfico directamente (típicamente sin pagos directos), con el objetivo de reducir costos y latencia. Usualmente se intercambia tráfico para prefijos propios y de clientes, pero no se ofrece tránsito hacia terceros.
+    \item \textbf{Sibling--sibling}: relación entre ASes administrados por la misma organización o bajo acuerdos especiales, donde las políticas pueden permitir intercambio amplio de rutas.
+\end{itemize}
 
-AS123 (cliente) → paga → AS3356 (proveedor)
+Estas relaciones inducen \textbf{políticas de exportación} que, bajo supuestos clásicos, generan caminos que cumplen la propiedad \textit{valley-free} \cite{InferringASRelatioships2001}. Intuitivamente, al recorrer un AS\_PATH, primero se observa una secuencia de enlaces de tipo cliente$\rightarrow$proveedor (``subida'' jerárquica), opcionalmente un enlace peer--peer, y finalmente una secuencia de enlaces proveedor$\rightarrow$cliente (``bajada''). En la práctica, pueden aparecer violaciones a esta propiedad por filtrado incompleto, políticas no estándar, fugas de rutas, o sesgos de observación.
 
-AS123 anuncia sus propios prefijos a AS3356y AS3356 le reenvía el tráfico hacia todo el mundo.
+Con ello, el \textbf{problema de inferencia de relaciones entre AS} puede formularse como:
+\begin{quote}
+    Dado un conjunto de rutas BGP observadas (RIBs/updates) desde múltiples \textit{vantage points}, inferir para cada par de ASes adyacentes $(u,v)$ un tipo de relación $r(u,v)$ en un conjunto finito de etiquetas (por ejemplo, \{P2C, C2P, P2P, S2S\}), de modo que la asignación sea lo más consistente posible con las rutas observadas y con supuestos de política.
+\end{quote}
 
-Peering
-Dos AS acuerdan intercambiar tráfico directamente, sin pago (generalmente equilibrado en volumen o beneficio mutuo). El objetivo es ahorrar costos y reducir la latencia.
-Tipos:
-Peering bilateral: Conexión directa entre dos AS (uno a uno).
- Suelen establecerse mediante acuerdos privados (Private Peering).
-AS123 ↔ AS456 	Ambos intercambian tráfico sólo para sus clientes, no para terceros.
-Peering en IXP: En los IXPs, muchos AS se conectan a un switch compartido y establece peering entre ellos fácilmente. 
-IXP Santiago → conecta a AS de ISPs, universidades y CDNs.
-Cada red puede acordar peering con varias otras usando una infraestructura común (reduciendo costos y aumentando eficiencia).
-
-Características del Peering:
-Sin pagos (o acuerdos de beneficio mutuo).
-No incluye tránsito hacia terceros.
-Solo intercambian tráfico de sus clientes.
-Se puede terminar fácilmente si deja de ser conveniente.
+Entre las principales dificultades del problema se encuentran: (i) \textbf{visibilidad parcial} del enrutamiento global (dependencia de los \textit{vantage points}), (ii) \textbf{ruido en los AS\_PATH} (AS-SET, \textit{prepending}, rutas alternativas no visibles), (iii) \textbf{dinámica temporal} y coexistencia de acuerdos múltiples, y (iv) \textbf{ausencia de verdad terreno} completa. En la práctica, las inferencias suelen evaluarse contra conjuntos de referencia como CAIDA AS Relationships \cite{CAIDAS-relationship}, considerando que también son productos de inferencia y presentan limitaciones.
 
 
 
@@ -95,7 +89,7 @@ El algoritmo propuesto consta de tres fases principales:
 
 
 
-\subsection{Métodos basados en aprendizaje automático} \label{sec:anexo_inferencia_relaciones_as_aprendizaje_automatico}
+\subsection{Métodos basados en Machine Learning} \label{sec:anexo_inferencia_relaciones_as_aprendizaje_automatico}
 
 
 

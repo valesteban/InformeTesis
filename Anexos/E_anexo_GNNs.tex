@@ -1,0 +1,69 @@
+\section{Redes Neuronales de Grafos (GNNs)} \label{sec:anexo_gnns}
+
+Las Redes Neuronales de Grafos (GNNs, \textit{Graph Neural Networks}) son una familia de modelos de aprendizaje profundo diseñada para realizar predicciones a partir de datos representados como grafos. A diferencia de redes neuronales convencionales (por ejemplo, FFNN o CNN), que asumen estructuras euclidianas (vectores o grillas), las GNNs combinan explícitamente atributos de nodos/aristas con la conectividad del grafo \cite{gnnReviewMethods}.
+
+\subsection{Niveles de aprendizaje sobre grafos}
+
+Dependiendo de la tarea, una GNN puede entrenarse para producir salidas a distintos niveles:
+\begin{itemize}
+    \item \textbf{Nivel de nodo}: clasificación o regresión por nodo, utilizando tanto sus atributos como la información de su vecindad.
+    \item \textbf{Nivel de arista}: clasificación o predicción de enlaces (por ejemplo, inferir si existe una relación entre dos nodos y de qué tipo).
+    \item \textbf{Nivel de grafo}: clasificación o regresión de grafos completos, aprendiendo una representación global del grafo.
+\end{itemize}
+
+\subsection{Motivación y propiedades}
+
+El uso de GNNs se justifica por propiedades propias de los grafos:
+\begin{itemize}
+    \item \textbf{Relaciones explícitas}: las aristas codifican dependencias, jerarquías o interacciones que un modelo sobre vectores no captura directamente.
+    \item \textbf{Tamaño variable}: los grafos pueden tener distinto número de nodos/aristas, sin requerir \textit{padding} a un tamaño fijo.
+    \item \textbf{Invarianza a permutaciones}: el modelo debe producir representaciones consistentes ante re-etiquetados de nodos (isomorfismos), evitando depender del orden de la matriz de adyacencia.
+    \item \textbf{Estructura no euclidiana}: la noción de ``cercanía'' no se reduce a distancias en una grilla; la conectividad y vecindad definen el contexto relevante.
+\end{itemize}
+
+\subsection{Idea general: propagación de mensajes (\textit{message passing})}
+
+La base de muchas GNNs modernas es la \textbf{propagación de mensajes}, donde en cada capa $l$ se actualiza la representación de cada nodo agregando información desde su vecindad. Sea $\mathbf{h}_i^{(l)}$ el \textit{embedding} del nodo $i$ en la capa $l$ y $\mathcal{N}(i)$ su conjunto de vecinos. Una formulación general consiste en:
+\[
+\mathbf{m}_i^{(l)}=\mathrm{AGG}^{(l)}\Big(\big\{\phi^{(l)}(\mathbf{h}_i^{(l)},\mathbf{h}_j^{(l)},\mathbf{e}_{ij}) : j\in\mathcal{N}(i)\big\}\Big),
+\]
+\[
+\mathbf{h}_i^{(l+1)}=\psi^{(l)}(\mathbf{h}_i^{(l)},\mathbf{m}_i^{(l)}),
+\]
+donde $\phi^{(l)}$ define el mensaje, $\mathrm{AGG}^{(l)}$ es una función de agregación (por ejemplo, suma/promedio/máximo) y $\psi^{(l)}$ es la función de actualización (típicamente una transformación lineal seguida de una no linealidad).
+
+Para tareas a nivel de grafo, se utiliza además una operación de \textit{readout} que agrega representaciones de nodos en una representación global (por ejemplo, suma o promedio sobre todos los nodos).
+
+\subsection{Message Passing Neural Networks (MPNN)}
+
+Las \textit{Message Passing Neural Networks} (MPNN) proponen un marco unificado para arquitecturas basadas en propagación de mensajes, separando una fase de agregación local y una fase de lectura global cuando corresponde \cite{mpnn}. Este marco resulta útil para entender GCN y GAT como casos particulares de la misma idea: combinar información de vecinos para refinar representaciones nodo a nodo.
+
+\subsection{Graph Convolutional Networks (GCN)}
+
+Las \textit{Graph Convolutional Networks} (GCN) implementan un esquema de agregación por promedio normalizado de vecinos. Una formulación ampliamente utilizada es \cite{GCN-formula}:
+\[
+H^{(l+1)}=\sigma\left(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}}H^{(l)}W^{(l)}\right),
+\]
+donde $H^{(l)}\in\mathbb{R}^{n\times d_l}$ es la matriz de representaciones de nodos en la capa $l$, $W^{(l)}$ es una matriz de pesos entrenables, $\sigma$ es una función de activación, $\tilde{A}=A+I$ agrega auto-conexiones, y $\tilde{D}$ es la matriz diagonal con $\tilde{D}_{ii}=\sum_j \tilde{A}_{ij}$.
+
+\subsection{Graph Attention Networks (GAT)}
+
+Las \textit{Graph Attention Networks} (GAT) incorporan un mecanismo de atención para ponderar de forma diferenciada la contribución de cada vecino al actualizar un nodo \cite{GAT}. Una formulación típica por capa es:
+\[
+\mathbf{z}_i^{(l)}=W^{(l)}\mathbf{h}_i^{(l)},
+\]
+\[
+e_{ij}^{(l)}=\mathrm{LeakyReLU}\left(\mathbf{a}^{(l)\top}[\mathbf{z}_i^{(l)} \Vert \mathbf{z}_j^{(l)}]\right),
+\]
+\[
+\alpha_{ij}^{(l)}=\frac{\exp(e_{ij}^{(l)})}{\sum_{k\in\mathcal{N}(i)}\exp(e_{ik}^{(l)})},
+\]
+\[
+\mathbf{h}_i^{(l+1)}=\sigma\left(\sum_{j\in\mathcal{N}(i)}\alpha_{ij}^{(l)}\mathbf{z}_j^{(l)}\right),
+\]
+donde $\Vert$ denota concatenación, $\mathbf{a}^{(l)}$ es un vector de parámetros entrenables y $\alpha_{ij}^{(l)}$ representa el peso de atención asociado a la arista $(i,j)$. En la práctica se utilizan variantes como \textit{multi-head attention} para estabilizar y enriquecer la agregación.
+
+\subsection{Consideraciones prácticas en grafos grandes}
+
+En grafos de gran escala, el costo de agregar sobre todos los vecinos puede ser alto. Por ello, muchas implementaciones incorporan \textbf{muestreo de vecindad} y entrenamiento por mini-batches, lo cual permite aproximar la agregación manteniendo escalabilidad. Modelos como GraphSAGE formalizan esta idea mediante muestreo y agregación inductiva \cite{GraphSAGE}.
+

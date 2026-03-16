@@ -80,7 +80,7 @@ En esta tesis, RouteViews y RIPE RIS se utilizan como fuentes principales de rut
 
 Sin embargo, estas fuentes no entregan una visión completa de la topología real de Internet. Los datos BGP dependen de la ubicación y cantidad de colectores disponibles, y reflejan únicamente las rutas visibles desde esos puntos de observación. Por ello, la topología inferida a partir de estas fuentes debe entenderse como una aproximación observada y parcial del Internet interdominio.\\
 
-\paragraph{Cobertura limitada de los \textit{vantage points}.}
+\paragraph{Cobertura limitada de los \textit{vantage points}}
 Una limitación central de los repositorios públicos de rutas BGP es su cobertura incompleta. Cada colector observa únicamente una fracción de las rutas globales, determinada por los \textit{vantage points} o vecinos desde los cuales recibe información. En consecuencia, muchas conexiones entre ASes pueden no aparecer en los datos recolectados, especialmente enlaces de peering privado y relaciones \textit{peer-to-peer}, que suelen ser más difíciles de observar que las relaciones cliente--proveedor. Además, como BGP anuncia principalmente la mejor ruta disponible, enlaces alternativos o de respaldo pueden permanecer ocultos en las RIBs públicas. Por esta razón, el grafo construido a partir de estas fuentes no representa toda la conectividad real de Internet, sino solo la porción visible desde los puntos de observación disponibles.\\
 
 

@@ -118,6 +118,7 @@
 
 % IMPORTACIÓN DEL TEMPLATE
 \input{template}
+\usepackage{algorithm}  % cargado luego del template para evitar conflicto float/floatrow
 
 % INICIO DE LAS PÁGINAS
 \begin{document}
@@ -131,13 +132,38 @@
 % RESUMEN O ABSTRACT
 \begin{abstractd}
 
-	El Internet hoy en día es una herramienta fundamental para la vida diaria de las personas, este está formado por de miles de Sistemas Autónomos (AS) interconectados entre sí y intercambian información de ruteo por medio del protocolo BGP (Border Gateway Protocol). Las relaciones comerciales entre estos determinan por qué ASes y camino toma un paquete para llegar a su destino final, sin embargo esta información (relaciones económicas entre ASes) no es observable directamente y por tanto debe inferirse a partir de fuentes indirectas como rutas BGP, bases de datos públicas. Conocer y comprender las relaciones entre Sistemas Autónomos es esencial para analizar la estructura, comportamiento y eficiencia de Internet, así como para detectar comportamientos anómalos.\\
+	El Internet hoy en día es una herramienta fundamental para la vida diaria de las personas, este está formado 
+	por de miles de Sistemas Autónomos (AS) interconectados entre sí y intercambian información de ruteo por medio 
+	del protocolo BGP (Border Gateway Protocol). Las relaciones comerciales entre estos determinan por qué ASes y 
+	camino toma un paquete para llegar a su destino final, sin embargo esta información (relaciones económicas entre 
+	ASes) no es observable directamente y por tanto debe inferirse a partir de fuentes indirectas como rutas BGP, 
+	bases de datos públicas. Conocer y comprender las relaciones entre Sistemas Autónomos es esencial para 
+	analizar la estructura, comportamiento y eficiencia de Internet, así como para detectar comportamientos 
+	anómalos.\\
 
-    Este trabajo explora el uso de Redes Neuronales de Grafos (GNNs) para la inferencia de relaciones económicas entre Sistemas Autónomos, aprovechando la naturaleza inherente de los datos de Internet para ser representados como un grafo. Para esto se construyó un grafo a partir de la extracción de las tablas de enrutamiento (RIBs) extraídas de datasets públicos CAIDA, RouteViews, RIPE RIS y PeeringDB, representando la topología de Internet y los atributos asociados a cada AS.\\
 
-    Se implementaron y evaluaron distintos modelos GNN como GCN, GraphSAGE y GAT bajo dos enfoques de entrenamiento: (i) un enfoque por etapas, donde los embeddings se generan mediante tareas auxiliares; y (ii) un enfoque end-to-end, donde la GNN y el decodificador se entrenan conjuntamente para clasificar el tipo de relación entre pares de AS. Además, se desarrolló un benchmark comparativo con métodos heurísticos y de Machine Learning.\\
+	Este trabajo estudia el potencial de las Redes Neuronales de Grafos (GNNs) para la inferencia de relaciones 
+	económicas entre Sistemas Autónomos, aprovechando que la topología AS-level de Internet puede representarse 
+	naturalmente como un grafo. Para ello, se construyó un grafo de Internet a partir de rutas BGP extraídas 
+	desde RIBs públicas de RouteViews y RIPE RIS, enriqueciendo posteriormente los nodos con atributos obtenidos 
+	desde PeeringDB. Además, se desarrolló un benchmark comparativo con métodos heurísticos y de aprendizaje 
+	automático previamente propuestos para esta tarea.\\
 
-    Los resultados obtenidos muestran que las GNNs son capaces de capturar información estructural del grafo de Internet y alcanzar un buen rendimiento comparable a métodos más precisos del benchmark, como ProbLink (94,83 \%) y BGP2Vec (94,51 \%). En particular, el enfoque end-to-end logró una Accuracy de 93,44 \%. Además, la incorporación de atributos provenientes de PeeringDB mejoró las representaciones aprendidas (de 89,01 \% a 93,44 \%). Por otro lado, el enfoque por etapas mostró mejoras al preentrenar los embeddings con tareas auxiliares relacionadas con nociones estructurales del grafo, como la predicción del valor de PageRank por nodo, lo que sugiere que incorporar nociones de centralidad y relevancia topológica favorece la inferencia de relaciones. Por último, los experimentos con atributos aleatorios mostraron que GCN mantiene un rendimiento estable (~85 \%), mientras que GraphSAGE y GAT tienden a colapsar, clasificando la mayoría de los enlaces como P2P. Estos resultados confirman que la estructura del grafo por sí sola contiene información suficiente para aproximar las relaciones entre ASes.
+    Se implementaron y evaluaron distintos modelos GNN como GCN, GraphSAGE y GAT bajo dos enfoques de entrenamiento: 
+	(i) un enfoque por etapas, donde los embeddings se generan mediante tareas auxiliares; 
+	y (ii) un enfoque end-to-end, donde la GNN y el decodificador se entrenan conjuntamente para clasificar 
+	el tipo de relación entre pares de AS.\\
+
+	Los resultados muestran que las GNNs son capaces de capturar información estructural relevante del grafo de 
+	Internet y alcanzar un desempeño competitivo frente a métodos del benchmark. En particular, el mejor resultado 
+	se obtuvo con un enfoque end-to-end basado en GraphSAGE + MLP y atributos extraídos de PeeringDB, alcanzando una 
+	Accuracy de 93,48\%. 
+	En el benchmark, los mejores desempeños correspondieron a ProbLink (94,83\%) y BGP2Vec (94,51\%), lo que sugiere 
+	que incorporar contexto estructural global es clave para inferir correctamente relaciones entre ASes. Asimismo, 
+	los experimentos muestran que los atributos de PeeringDB mejoran el desempeño de los modelos y que, incluso en 
+	ausencia de atributos informativos, la estructura topológica del grafo contiene señales suficientes para aproximar 
+	las relaciones económicas entre Sistemas Autónomos.\\
+
 
     
 
@@ -286,13 +312,22 @@
 
 
 
+	% 1) Fundamentos de Internet y contexto conceptual
 	\input{Anexos/A_anexo_Anexo_Fundamentos_Internet_BGP.tex}
-	% \input{Anexos/B_anexo_Inferencia_Relaciones_ASes.tex}
-	% \input{Anexos/C_anexo_Fundamentos_ML.tex}
-	% \input{Anexos/D_anexo_Redes_Neuronales.tex}
-	% \input{Anexos/E_anexo_GNNs.tex}
-	% \input{Anexos/F_anexo_Analisis_Exploratorio.tex}
-	% \input{Anexos/G_anexo_Configuracion_Experimentos.tex}
+	\input{Anexos/B_anexo_Construccion_Grafo_BGP.tex}
+
+	% 2) Marco de inferencia y aprendizaje
+	\input{Anexos/I_anexo_Complemento_Situacion_Actual.tex}
+	\input{Anexos/B_anexo_Inferencia_Relaciones_ASes.tex}
+	\input{Anexos/C_anexo_Fundamentos_ML.tex}
+	\input{Anexos/E_anexo_GNNs.tex}
+
+	% 3) Datos, analisis y configuracion experimental
+	\input{Anexos/F_anexo_Analisis_Exploratorio.tex}
+	\input{Anexos/G_anexo_Configuracion_Experimentos.tex}
+
+	% 4) Soporte de implementacion
+	\input{Anexos/H_anexo_Fragmentos_Codigo.tex}
 
 
 
@@ -301,5 +336,3 @@
 
 
 \end{document}
-
-

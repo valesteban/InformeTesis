@@ -1,4 +1,4 @@
-﻿\section{Fundamentos de Internet y BGP} \label{sec:anexo_fundamentos_internet_bgp}
+\section{Fundamentos de Internet y BGP} \label{sec:anexo_fundamentos_internet_bgp}
 
 
 \subsection{Internet} \label{sec:anexo_internet}
@@ -360,7 +360,7 @@ de manera eficiente y rápida.\\
 % \end{wrapfigure}
 
 El proyecto RouteViews \cite{RouteViewsProject} de la Universidad de Oregon nació en un principio como una herramienta los operadores de Internet, 
-con el fin de que estos pudiesen obtener información BGP en tiempo real sobre el sistema de enrutamiento global desde las perspectivas de varios 
+con el fin de que estos pudiesen obtener información BGP en tiempo real sobre el sistema de enrutamiiento global desde las perspectivas de varios 
 backbones y ubicaciones en Internet. Sin embargo, hoy en dia, su uso se ha extendido a multiples tareas, tales como la visualización de rutas AS, 
 el estudio de la utilización del espacio de direcciones IPv4 y  otros aspectos relacionados a la infraestructura y enrutamiento de Internet. \\
 
@@ -405,7 +405,7 @@ utilizan los datos de RIS, como RIPEstat, donde se puede encontrar información 
 localización de información de contacto sobre abusos.\\
 
 
-\subsubsection{The peeringDB} \label{sec:anexo_the_peeringDB}
+\subsubsection{PeeringDB} \label{sec:anexo_the_peeringDB}
 
 
 PeeringDB (\cite{PeeringDB}) es una base de datos pública y de acceso libre, gestionada y promovida por voluntarios. 
@@ -418,228 +418,4 @@ PeeringDB contiene una amplia variedad de información, incluyendo los números 
 políticas de peering, las ubicaciones de redes y los detalles de los IXPs, como la cantidad de participantes 
 y las entidades que los operan. \\
 
-\subsection{Construcción Grafo a partir de datos BGP}
-Construcción Grafo Internet
-
-
-Infomación BGP:
-Ventajas:
-No contiene información obsoleta o “incorrecta” como puede ocurrir con la información de los IRR, que a veces está desactualizada.
-Permite observar el comportamiento dinámico del ruteo en Internet y detectar enlaces de respaldo (backup links) a través de los updates, en caso de fallas.
-Se pueden usar BGP beacons para mejorar la visibilidad de la topología.
-Refleja rutas reales del plano de control.
-BGP no ve todas las relaciones, especialmente p2p.
-Desventajas:
-Es un protocolo que muestra alcanzabilidad (reachability) pero no necesariamente conectividad real.
-Como protocolo path vector, no anuncia información de todos los caminos disponibles (los backup paths pueden nunca aparecer en los BGP dumps). Esto puede causar sesgos en las rutas observadas, haciendo que la topología quede más completa en algunas regiones que en otras.
-Las relaciones P2P entre ASes son en general mucho más difíciles de descubrir que las relaciones C2P.
-Oculta información (solo best path), ignora rutas backup, sesgos regionales
-
-
-Limitaciones: 
-Solo muestra las rutas visibles desde los collectors y no necesariamente todos los enlaces existentes.
-La probabilidad de descubrir una relación entre Sistemas Autónomos (AS) es proporcional al número de ASes que utilizan ese enlace.
-
-Traceroute:
-Ventajas:
-Revela enlaces que no siempre aparecen en BGP
-Permite ver conexiones físicas entre ASes y múltiples enlaces.
-Desventajas:
-IP-to-AS mapping es complejo, susceptible a errores de respuesta o NAT.
-Traceroute depende del número y ubicación de vantage points.
-
-
-
-Limitaciones:
-problemas de aliasing (aliasing = varias IPs de un mismo router), rutas asimétricas, y sesgo de vantage points.
-
-IRR
-Ventajas: 
-Fácil de consultar.
-
-Desventajas:
-Información incompleta o desactualizada (voluntaria).
-
-
-
-
-El consenso general es que las mediciones del data plane (traceroute) producen una visión más completa y precisa del Internet que las del control plane (BGP)
-
-Traceroute complementa a BGP, especialmente revelando enlaces faltantes en la periferia.
-PUNTOS IMPORTANTES
-
-El consenso general es que la topología a nivel de AS inferida a partir de mediciones en el data plane (traceroute, pings ) resulta en una visión más precisa y completa en comparación con depender solo de mediciones en el control plane (tablas RIBs, mensaje BGP). [véase aquí la explicación sobre la diferencia entre ambos tipos de datos]
-
-
-!
-Estudios sobre la completitud del mapa de ASes:
-Estudio “The Lord of the Links”: compara tablas de ruteo BGP, IRR y traceroute, realizando validación cruzada de la topología y capturando así una visión más completa de la topología de ASes.
-
-Estudio sobre la incompletitud del mapa de ASes:
-“The (in) completeness of the observed Internet AS-level structure” (2010)
-“Quantifying the completeness of the observed Internet AS-level structure” (2008):
-utilizaron ground truth (datos reales) provistos por un gran ISP Tier-1 para validar la precisión de sus mapas de AS en algunos ASes seleccionados. 
-Categorizaron los enlaces faltantes en:
-Enlaces invisibles (Invisible links): ausentes debido a las limitaciones impuestas por la ubicación de los vantage points.
-Enlaces ocultos (Hidden links): pueden descubrirse con mediciones adicionales.
-Estudio sobre la importancia de la distribución de los vantage points de traceroute:
-“Quantifying the importance of vantage points distribution in Internet topology measurements,” (2009)[link]:
-El estudio muestra que, si bien aumentar el número de vantage points contribuye a reducir el sesgo de muestreo, esto no elimina el sesgo originado por su ubicación. 
-Concluyen que realizar mediciones desde dentro de las propias redes resulta fundamental para descubrir más enlaces, en especial en los ASes de menor nivel (low-tier).
-
-—------------------------------------------
-
-Para la recolección: Diferentes infraestructuras de medición activa de traceroute: RIPE Atlas, CAIDA Ark, DIMES, mediciones locales PC/universidad, etc. La idea es tener diferentes puntos de partida de la consulta (Vantage points).
-Validación/Fusión con otras fuentes: 
-Comparar con grafos derivados de BGP (routes AS paths recolectada de tablas BGP/RIBs) o registros de relaciones (CAIDA AS Relationships)
-Caso donde traceroute revela la existencia de enlace entre dos ASes que no apareciese en datos BGP es una enlace ‘potencial’.
-En mapeo IP a ASN:
-Si hay saltos no mapeables (IP no puede ser asignada a un ASN) se marca como ‘desconocido’ o se omite el tramo.
-Longest Prefix Match: Asigna cada IP al ASN del prefijo BGP más específico. Con las tablas de prefijos extraídas de RIBs BGP (RouteView RIPE RIS) se busca el prefijo más específico que contiene la IP y se le asigna el ASN correspondiente. 
-Libreria pyasn (Estudiar que tan buena o mala es)
-Usar APIs publicas: RIPEstat, Team Cymru, IPtoASN
-Construcción del grafo:
-Asignar peso a las aristas según cuantas veces fueron observadas.
-Traceroute basado en ICMP recolecta de forma exitosa más destinos y links entre IPs de forma exitosa que basados en UDP y TCP. [paper]
-
-
-Control Plane y  Data Plane 
-
-
-% TODO: Agrgar imagen de nombre control_plan_vs_data_plane lugo construir tabal n late
-
-
-
-A diferencia del control plane, las mediciones del data plane buscan descubrir los caminos reales que recorren los paquetes.
-
-En el data plane no estamos mirando la "teoría de rutas" que los routers anuncian (eso es control plane).
-\section{Nose}
-
-\subsection{Colectores BGP}
-
-
-
-¿Qué son los colectores?
-
-Son infraestructuras  públicas de recolección  de información BGP diseñadas para observar cómo se enruta Internet a nivel de Sistemas Autónomos.
-En primera instancia fue 
-
-Actual se cuenta con los siguiente proyectos que tienen de forma pública los datos:
-RIPE RIS (RIPE NCC, Europa)
-RouteViews (Univ. de Oregon)
-PCH
-Isolario ???
-
-
-Colectores tienen 2 formas de trabajar: 
-Como un hub/switch
-Como un router
-
-Los Colectores tienen asociado una IP y una ASN. Sin so no pueden establecer una ssion BGP.  Este es l caso que ytrabajn como un router
-The original purpose of these projects was to help network operators with troubleshooting and debugging tasks [survay of techniques for internet] topology discovring *
-Archivos:
-Whiñe BGP dudmps show the best path to reach other ASes, the backup links and the dynamic nature of BGP routes are more likely capture by “route updates” [link]
-Looking glass: web interface to a BGP router which often allows basic BGP data querying (ping)
-
-¿Qué proyectos actualmente trabajan con colectores?
-
-
-¿Qué colectores tiene Chile?
-RouteViews
-Para conectarse a RV piden como requisito tener sus datos en PeeringDB.
-Hay dos colectores de RV en Chile (NIC Chile y PIT Chile)
-
-
-
-
-
-
-
-route-views.chile
-
-
-Link data
-pit.scl
-
-
-Link data
-
-
-
-PCH (Packet Clearing House) Lista 
-
-Ciudad
-IXP
-Participants
-Santiago
-PIT Chile - Santiago
-182
-Santiago
-NAP Chile
-21
-Punta Arenas
-Patagonia IX
-2
-Osorno
-PIT Chile Osorno
-0
-Concepcion
-PITChile Concepcion
-11
-Arica
-PIT Chile Arica
-0
-Santiago 
-Santiago Internet Exchange
-11
-Santiago
-Chile Network Access Point
-0
-Temuco
-PIT Chile Temuco
-5
-
-
-
-
-¿Cómo funciona qué un colector se conecte a un IXP?
-Normalmente los colectores se conectan a IXP o zonas neutras, en ves de directamente con ASes o organizaciones. No le conviene, no es eficiente .
-Sin embargo, NIC Chile tiene un colector (no me acuerdo de RV o RIPE) de forma directa pero no es común.
-Los Colectores se conectan a un IXP, no con el IXP. Es decir, por medio del IXP inician sesiones BGP con otros ASes (organizaciones).
-
-
-¿Qué significa el concepto de Multi-hop en los colectores de BGP?
-Normalmente para establecer sesión BGP ASes están directamente conectados/son vecinos directos. El parámetro multi hop indica a cuantos saltos/hop de distancia se encontrará el vecino BGP para establecer la sesión. Si el número de hops es superior al indicado por su parámetro no se establece la conexión.
-
-
-
-¿Cómo funcionan los Vantage Point?
-
-
-
-¿Cómo era esa legislacion/normativa en Chile donde ISP o nos e q tienne q star interconctados?garndes ISP o algo asi s dbn conectar a ?
-
-
-
-Looking Glass
-Normalmente todos los colectores tienen un looking glass. 
-Esta herramienta se utiliza más para uso tcnico. Por ejemplo:
-Estas dan acceso limitado a cortos comandos, no son consultas amplias.
-Porqu para lo que realmente se RV y sos proyecto fu para que otros pudin ver las rutas de las otras organizaciones.
-No se utiliza para extracción de rutas, sino que más a nivel técnico. Ejemplo: Si yo como NIC Chile veo que no llegan consultas de X país, voy a un colector conectado por allá, me meto a su looking glass y consultó sobre mi IP y así ver si hay algún error.
-
-
-CONFUSIONES
-
-
-P: Si el colector se conecta a un AS específico, ese AS es el vantage point. ¿Y si se conecta a un IXP? (por lo que entiendo se ignora el ASN de un IXP)
-R: Un colector se conecta a un IXP pero no con el IXP. Es decir, utiliza al IXP para conectarse a otros ASes, no es que se conecte con el IXP y este tenga de alguna manera un almacenamiento de las rutas de todos los ASes que están conectados a él. 
-El IXP es solo un medio para establecer sesiones BGP con otras organizaciones de forma más eficiente, en vez de conectarse directamente con múltiples ASes, se conecta solo con el IXP y a través de él a las organizaciones (siempre y cuando estas organizaciones también se encuentren conectadas al IXP). 
-
-¿Qué formatos ofrecen (MRT, snapshots, streaming live)? 
-¿Qué tan actualizados están los dumps de cada fuente (minutos, horas, días)?
-¿Existen gaps de cobertura geográfica?
-
-
-
-
+Los detalles de recolección de datos y la construcción del grafo a partir de rutas BGP se presentan en el Anexo~\ref{sec:anexo_recoleccion_datos_construccion_grafo}.

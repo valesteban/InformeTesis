@@ -28,3 +28,7 @@ pdflatex*.fls
 
 # Generated main output PDF (remove this line if you want to version it)
 main.pdf
+
+# Local scratch exports
+build_tmp_informe_valentina.txt
+tmp_informe_otro.txt

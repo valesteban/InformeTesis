@@ -1,49 +1,93 @@
 ﻿\chapter{Análisis y Conclusiones}
 
-Este trabajo aborda el problema de la inferencia de relaciones comerciales entre Sistemas Autónomos (AS). Tarea fundamental para comprender el funcionamiento de Internet, optimizar su desempeño y detectar posibles anomalías. Se construyó un \textit{benchmark} que integra métodos previos (heurísticos y basados en Machine Learning), con el objetivo de establecer una línea base de comparación. Luego, se exploró la resolución de la tarea utilizando Redes Neuronales de Grafos (GNNs), evaluando su desempeño frente al \textit{benchmark}.\\
+Este trabajo abordó el problema de la inferencia de relaciones comerciales entre Sistemas Autónomos (AS), una tarea relevante para comprender la estructura y el funcionamiento de Internet, apoyar su modelado y analizar fenómenos asociados al enrutamiento interdominio. 
+Para ello, se construyó un \textit{benchmark} experimental que integra métodos previos, tanto heurísticos como basados en Machine Learning, con el fin de establecer una línea base de comparación. 
+Posteriormente, se exploró la resolución de esta tarea mediante Redes Neuronales de Grafos (GNNs), evaluando su desempeño frente a los métodos incluidos en dicho \textit{benchmark}.\\
 
-
+\section{Principales hallazgos}
 % RESULTADO BENCHMARK ------------------------------------
 
-En el \textit{benchmark}, los métodos con mejor Accuracy corresponden a los métodos \textbf{ProbLink} (94,83 \%) y \textbf{BGP2Vec} (94,51 \%). Esto nos da a entender que enfoques probabilísticos y de Machine Learning (incluso en dos etapas, como BGP2Vec) capturan de mejor forma las características de los caminos de BGP.
-Los métodos de BGP2Vec y Problink toman en cuenta tanto la información local (sus vecinos inmediatos) como la estructura global de la topología para etiquetar las relaciones; en cambio,  en contraste con los métodos de Gao\cite{InferringASRelatioships2001} y  Ruan\cite{Inferring-Multilateral-Peering}, realizan la inferencia basándose únicamente en la estructura observada en cada camino individual. 
-Esto nos podría decir que, para inferir correctamente los tipos de relaciones entre Sistemas Autónomos, es fundamental tener el contexto global del enlace dentro de la topología de Internet, no es suficiente con conocer solo su posición dentro de un camino BGP (\texttt{AS\_PATH}) para una mejor inferencia.\\
+% En el \textit{benchmark}, los métodos con mejor Accuracy corresponden a los métodos \textbf{ProbLink} (94,83 \%) y \textbf{BGP2Vec} (94,51 \%). Esto nos da a entender que enfoques probabilísticos y de Machine Learning (incluso en dos etapas, como BGP2Vec) capturan de mejor forma las características de los caminos de BGP.
+% Los métodos de BGP2Vec y Problink toman en cuenta tanto la información local (sus vecinos inmediatos) como la estructura global de la topología para etiquetar las relaciones; en cambio,  en contraste con los métodos de Gao\cite{InferringASRelatioships2001} y  Ruan\cite{Inferring-Multilateral-Peering}, realizan la inferencia basándose únicamente en la estructura observada en cada camino individual. 
+% Esto nos podría decir que, para inferir correctamente los tipos de relaciones entre Sistemas Autónomos, es fundamental tener el contexto global del enlace dentro de la topología de Internet, no es suficiente con conocer solo su posición dentro de un camino BGP (\texttt{AS\_PATH}) para una mejor inferencia.\\
 
+En el \textit{benchmark}, los métodos con mejor Accuracy correspondieron a \textbf{ProbLink} y \textbf{BGP2Vec}, con valores de 94,83\% y 94,51\%, respectivamente. Estos resultados sugieren que los enfoques probabilísticos y de Machine Learning que incorporan información más rica sobre los caminos BGP logran capturar de mejor manera las señales relevantes para esta tarea. En particular, tanto BGP2Vec como ProbLink utilizan no solo información local del enlace, sino también contexto estructural más amplio de la topología. En contraste, métodos como Gao~\cite{InferringASRelatioships2001} y Ruan~\cite{Inferring-Multilateral-Peering} dependen en mayor medida de reglas o supuestos aplicados sobre caminos individuales. Esto sugiere que, para inferir correctamente relaciones entre Sistemas Autónomos, no basta con conocer únicamente la posición de un enlace dentro de un camino BGP (\texttt{AS\_PATH}), sino que resulta importante incorporar contexto global de la topología de Internet.\\
 
 % GNN (por etapas) -------------------------------------
 
-Al pasar a las Redes Neuronales de Grafos (GNNs), específicamente \textit{por etapas} (donde primero se preentrenan los \textit{embeddings} y luego se utiliza un clasificador) se obtienen buenos resultados, con una Accuracy de alrededor de 85\%, superando a los métodos tradicionales de inferencia. Aquí también podemos notar que el uso de atributos de \textbf{PeeringDB}~\cite{PeeringDB}, en contraste con utilizar únicamente el grado, mejora la Accuracy (de 81.09\% a 85\%), dando a entender que las características asociadas de los ASes aportan información relevante para la inferencia. \\
+% Al pasar a las Redes Neuronales de Grafos (GNNs), específicamente \textit{por etapas} (donde primero se preentrenan los \textit{embeddings} y luego se utiliza un clasificador) se obtienen buenos resultados, con una Accuracy de alrededor de 85\%, superando a los métodos tradicionales de inferencia. Aquí también podemos notar que el uso de atributos de \textbf{PeeringDB}~\cite{PeeringDB}, en contraste con utilizar únicamente el grado, mejora la Accuracy (de 81.09\% a 85\%), dando a entender que las características asociadas de los ASes aportan información relevante para la inferencia. \\
+Al pasar a los modelos basados en \textbf{Redes Neuronales de Grafos}, específicamente en el enfoque \textit{por etapas}, donde primero se preentrenan embeddings y luego se utiliza un clasificador supervisado, se obtuvieron resultados competitivos, con una Accuracy del orden de 85\%. Dentro de este enfoque, se observó que el uso de atributos provenientes de \textbf{PeeringDB}~\cite{PeeringDB} mejora el rendimiento respecto a utilizar únicamente el grado, lo que indica que las características asociadas a los ASes aportan información útil para la inferencia.\\
 
-Sin embargo, al utilizar los \textit{embeddings} generados por \textbf{DeepWalk} y \textbf{BGP2Vec}, que se construyen exclusivamente a partir de la estructura topológica del grafo, se alcanzan los mejores resultados dentro de este enfoque. Esto indica que la posición estructural de los AS dentro de la topología global de Internet es una fuente de información determinante para inferir correctamente las relaciones entre Sistemas Autónomos.\\
 
-Finalmente, el mejor resultado dentro del enfoque por etapas con GNN se obtuvo al preentrenar los embeddings con la tarea auxiliar de predecir el valor de PageRank, lo que sugiere que incorporar nociones de centralidad y relevancia dentro de la topología ayuda a aprender representaciones más informativas para la clasificación, alineándose con lo dicho previamente.\\
+% Sin embargo, al utilizar los \textit{embeddings} generados por \textbf{DeepWalk} y \textbf{BGP2Vec}, que se construyen exclusivamente a partir de la estructura topológica del grafo, se alcanzan los mejores resultados dentro de este enfoque. Esto indica que la posición estructural de los AS dentro de la topología global de Internet es una fuente de información determinante para inferir correctamente las relaciones entre Sistemas Autónomos.\\
+Sin embargo, al utilizar embeddings generados por métodos como \textbf{DeepWalk} y \textbf{BGP2Vec}, que se construyen principalmente a partir de la estructura topológica del grafo, se alcanzaron los mejores resultados dentro del enfoque por etapas. Esto sugiere que la posición estructural de los AS dentro de la topología global de Internet constituye una fuente de información especialmente relevante para la inferencia de relaciones económicas. Asimismo, el mejor resultado dentro de este enfoque se obtuvo al preentrenar embeddings con la tarea auxiliar de predecir el valor de \textit{PageRank}, lo que sugiere que incorporar nociones de centralidad y relevancia topológica ayuda a aprender representaciones más informativas para la clasificación.\\
+
+% Finalmente, el mejor resultado dentro del enfoque por etapas con GNN se obtuvo al preentrenar los embeddings con la tarea auxiliar de predecir el valor de PageRank, lo que sugiere que incorporar nociones de centralidad y relevancia dentro de la topología ayuda a aprender representaciones más informativas para la clasificación, alineándose con lo dicho previamente.\\
 
 
 % GNN (end-to-end) ------------------------------------
-Al evaluar el enfoque \textit{end-to-end}, se obtuvieron los mejores resultados, alcanzando una Accuracy de 93.44\%, comparable con los métodos de mayor Accuracy del \textit{benchmark}.
-De manera consistente con el enfoque por etapas, la inclusión de los atributos de PeeringDB~\cite{PeeringDB} resultó beneficiosa, mejorando la Accuracy de 89.01\% a 93.44\%, lo que demuestra que las características asociadas a este dataset enriquecen las representaciones aprendidas por la GNN. 
-Por otra parte, en los experimentos diseñados se observó que, al usar atributos aleatorios, el modelo \textit{GCN} mantuvo un rendimiento aceptable (≈ 85\%), mientras que \textit{GraphSAGE} y \textit{GAT} colapsaron, clasificando la mayoría de los enlaces como P2P.\\
+
+Al evaluar el enfoque \textit{end-to-end}, se obtuvieron los mejores resultados entre las arquitecturas GNN consideradas, alcanzando una Accuracy de 93,48\%, valor comparable con los métodos de mejor desempeño del \textit{benchmark}. De manera consistente con lo observado en el enfoque por etapas, la inclusión de atributos provenientes de \textbf{PeeringDB}~\cite{PeeringDB} resultó beneficiosa, mejorando de forma importante el rendimiento del modelo. Esto refuerza la idea de que la información semántica o declarativa asociada a los ASes complementa de manera útil la estructura del grafo.\\
 
 
 
 
+Por otra parte, los experimentos también mostraron que, bajo atributos aleatorios, el modelo \textit{GCN} mantuvo un rendimiento aceptable, mientras que \textit{GraphSAGE} y \textit{GAT} tendieron a colapsar, clasificando gran parte de los enlaces como P2P. Este comportamiento sugiere que no todas las arquitecturas explotan de la misma forma la estructura topológica cuando la información atributiva es poco informativa o ruidosa.\\
 
+A partir de estos resultados, pueden extraerse dos conclusiones principales:
 
-
-Estos resultados respaldan dos conclusiones:
 \begin{itemize}
-    \item La estructura del grafo por sí sola contiene información suficiente para aproximar la topología y las relaciones entre AS.
-    \item La inclusión de atributos como PeeringDB nos permite alcanzar un mejor rendimiento en la inferencia de relaciones comerciales entre Sistemas Autónomos.
+    \item La estructura del grafo AS-level de Internet contiene información suficiente para aproximar la tarea de inferencia de relaciones económicas entre Sistemas Autónomos.
+    \item La incorporación de atributos como los obtenidos desde PeeringDB permite enriquecer las representaciones aprendidas por los modelos y mejorar el desempeño en la inferencia.
 \end{itemize}
 
-Además, los resultados obtenidos permiten observar ciertas propiedades estructurales de la topología de Internet y su impacto en el uso de GNNs. Internet muestra una distribución \textit{long-tail} en muchos de sus atributos (grado, centralidad, tráfico), donde pocos nodos (ASes grandes o Tier-1 que conforman el \textit{core}) concentran la mayoría de las conexiones, mientras que la gran mayoría posee una conectividad baja (periferia). Esto provoca que, al entrenar GNNs, los atributos (como el grado) no siempre generen \textit{embeddings} representativos o, en el enfoque \textit{por partes}, se tienda a generalizar. 
-Esto explica por qué arquitecturas como GraphSAGE y GAT, que enfatizan la agregación de información desde vecinos seleccionados o ponderados, presentan un rendimiento más inestable, mientras que GCN, al basarse en una agregación más homogénea y en la normalización de la matriz de adyacencia, logra capturar mejor la estructura global incluso en estos escenarios (Caso 3 y 4 del enfoque \textit{por etapas}). \\
-
-Por otro lado, los experimentos también evidencian la ``trampa de la Accuracy'' ya que dado que la clase P2P es la más frecuente en el dataset, un modelo que clasifica todos los enlaces como P2P puede alcanzar una Accuracy alta sin realizar una inferencia real, como en el caso~4 del enfoque \textit{end-to-end}. 
-Por ello, métricas como el recall resultan de gran importancia para evaluar esta tarea.\\
 
 
-Para cerrar, y en vista del trabajo realizado, se propone el siguiente trabajo futuro:
+% Además, los resultados obtenidos permiten observar ciertas propiedades estructurales de la topología de Internet y su impacto en el uso de GNNs. Internet muestra una distribución \textit{long-tail} en muchos de sus atributos (grado, centralidad, tráfico), donde pocos nodos (ASes grandes o Tier-1 que conforman el \textit{core}) concentran la mayoría de las conexiones, mientras que la gran mayoría posee una conectividad baja (periferia). Esto provoca que, al entrenar GNNs, los atributos (como el grado) no siempre generen \textit{embeddings} representativos o, en el enfoque \textit{por partes}, se tienda a generalizar. 
+% Esto explica por qué arquitecturas como GraphSAGE y GAT, que enfatizan la agregación de información desde vecinos seleccionados o ponderados, presentan un rendimiento más inestable, mientras que GCN, al basarse en una agregación más homogénea y en la normalización de la matriz de adyacencia, logra capturar mejor la estructura global incluso en estos escenarios (Caso 3 y 4 del enfoque \textit{por etapas}). \\
+
+% Por otro lado, los experimentos también evidencian la ``trampa de la Accuracy'' ya que dado que la clase P2P es la más frecuente en el dataset, un modelo que clasifica todos los enlaces como P2P puede alcanzar una Accuracy alta sin realizar una inferencia real, como en el caso~4 del enfoque \textit{end-to-end}. 
+% Por ello, métricas como el recall resultan de gran importancia para evaluar esta tarea.\\
+
+
+
+
+
+% Para cerrar, y en vista del trabajo realizado, se propone el siguiente trabajo futuro:
+% \begin{itemize}
+%     \item Incorporar atributos dinámicos o temporales, por ejemplo, información proveniente de mensajes \textit{BGP updates}, que permita capturar la evolución temporal de las relaciones entre Sistemas Autónomos.
+
+%     \item Ampliar el dataset mediante la integración de nuevas fuentes de datos, como mediciones de \textit{traceroute}, para complementar la visión obtenida desde BGP y construir una representación más completa de la topología de Internet.
+    
+%     \item Evaluar los resultados del modelo en escenarios de detección de anomalías como \textit{route leaks}, \textit{hijacks} u otros eventos anómalos, comparando su rendimiento con métodos existentes.
+    
+%     \item Analizar los \textit{embeddings} generados por las GNN, con el objetivo de estudiar qué propiedades topológicas o atributos capturan y cómo estas representaciones se relacionan con el rol y la posición de los AS dentro del grafo.
+    
+% \end{itemize}
+    
+
+
+
+
+Además, los resultados obtenidos permiten observar ciertas propiedades estructurales de la topología de Internet y su impacto en el uso de GNNs. Internet presenta distribuciones de tipo \textit{long-tail} en varios de sus atributos, tales como grado, centralidad y tráfico, donde unos pocos nodos altamente conectados concentran gran parte de la conectividad, mientras que la mayoría de los ASes poseen baja conectividad. Esta característica introduce desafíos para el entrenamiento de modelos GNN, ya que puede dificultar la generación de embeddings representativos o inducir a una fuerte generalización hacia patrones dominantes. En este contexto, arquitecturas como GraphSAGE y GAT, que dependen en mayor medida de vecinos muestreados o ponderados, mostraron un comportamiento más inestable, mientras que GCN logró capturar mejor ciertas propiedades globales del grafo en escenarios con atributos menos informativos.\\
+
+Por otro lado, los experimentos también evidencian la denominada ``trampa de la Accuracy''. Dado que la clase P2P es la más frecuente en el dataset, un modelo que clasifique sistemáticamente los enlaces como P2P puede obtener una Accuracy relativamente alta sin realizar una inferencia significativa de las relaciones reales. Esto se observó en algunos experimentos del enfoque \textit{end-to-end}, por lo que métricas como \textit{precision}, \textit{recall} y \textit{F1-score} resultan fundamentales para una evaluación más adecuada del problema.\\
+
+\section{Respuesta a la hipótesis}
+
+En relación con la hipótesis planteada, los resultados obtenidos permiten concluir que las Redes Neuronales de Grafos son efectivamente capaces de capturar patrones estructurales relevantes presentes en la topología AS-level de Internet, representada a partir de información de enrutamiento BGP. En este sentido, las representaciones aprendidas por estos modelos resultan útiles para la inferencia de relaciones económicas entre Sistemas Autónomos.\\
+
+No obstante, la hipótesis se considera \textbf{parcialmente confirmada}. Si bien los modelos GNN alcanzan un desempeño competitivo y comparable al de varios métodos existentes, no superan a los mejores métodos del \textit{benchmark}, particularmente ProbLink y BGP2Vec. Por lo tanto, los resultados respaldan el potencial de las GNN para esta tarea, pero también muestran que los enfoques especializados del estado del arte siguen capturando con mayor efectividad ciertas señales presentes en los datos BGP.\\
+
+\section{Limitaciones del estudio}
+
+Este trabajo presenta algunas limitaciones que deben ser consideradas al interpretar sus resultados. En primer lugar, el grafo construido a partir de rutas BGP constituye una aproximación parcial de la topología real de Internet, ya que su cobertura depende de la cantidad y ubicación de los colectores y \textit{vantage points} disponibles. En consecuencia, ciertas conexiones, particularmente enlaces \textit{peer-to-peer} o interconexiones privadas, pueden no estar representadas en los datos observados.\\
+
+En segundo lugar, la tarea de inferencia se apoya en etiquetas de referencia obtenidas desde datasets públicos, los cuales también constituyen aproximaciones y no observaciones directas de las relaciones comerciales reales entre ASes. Además, la distribución desbalanceada de clases condiciona la interpretación de métricas globales como Accuracy y obliga a complementar el análisis con otras métricas de clasificación. Finalmente, el estudio se concentró en un conjunto acotado de arquitecturas, configuraciones y atributos, por lo que aún existe espacio para explorar variantes metodológicas adicionales.\\
+
+\section{Trabajo futuro}
+
+En vista del trabajo realizado, se proponen las siguientes líneas de trabajo futuro:
 \begin{itemize}
     \item Incorporar atributos dinámicos o temporales, por ejemplo, información proveniente de mensajes \textit{BGP updates}, que permita capturar la evolución temporal de las relaciones entre Sistemas Autónomos.
 
@@ -52,14 +96,7 @@ Para cerrar, y en vista del trabajo realizado, se propone el siguiente trabajo f
     \item Evaluar los resultados del modelo en escenarios de detección de anomalías como \textit{route leaks}, \textit{hijacks} u otros eventos anómalos, comparando su rendimiento con métodos existentes.
     
     \item Analizar los \textit{embeddings} generados por las GNN, con el objetivo de estudiar qué propiedades topológicas o atributos capturan y cómo estas representaciones se relacionan con el rol y la posición de los AS dentro del grafo.
-    
 \end{itemize}
-    
-
-
-
-
-
 
 
 

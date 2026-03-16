@@ -1,0 +1,265 @@
+\section{Fragmentos de código de implementación} \label{sec:anexo_fragmentos_codigo}
+
+Este anexo reúne fragmentos representativos de la implementación utilizada durante el desarrollo de la metodología descrita en el Capítulo~\ref{sec:obtencion_datos_section}. En el cuerpo principal de la tesis se privilegia el uso de pseudocódigo y descripciones de alto nivel; en cambio, aquí se presentan extractos concretos del código para facilitar trazabilidad e interpretación técnica.\\
+
+La organización de este anexo sigue la misma estructura del capítulo de Metodología: obtención de datos, benchmark experimental, construcción del grafo y modelos basados en GNN.\\
+
+\subsection{Obtención de Datos}
+
+\subsubsection{Extracción de rutas BGP con BGPStream}
+
+\begin{lstlisting}[language=Python, caption=Implementación de descarga y filtrado de rutas BGP con BGPStream, label=anxcode:bgpstream_download]
+import datetime
+import pybgpstream
+
+def downloader(start_date, duration):
+    base = int(datetime.datetime.strptime(start_date, "%m/%d/%Y").strftime("%s"))
+
+    stream = pybgpstream.BGPStream()
+    stream.add_interval_filter(base, base + int(duration))
+    stream.add_filter("record-type", "ribs")
+    stream.start()
+
+    path_set = set()
+    f = open("data/rib.txt", "w")
+
+    rec = stream.get_next_record()
+    while rec:
+        elem = rec.get_next_elem()
+        while elem:
+            path = elem.fields["as-path"]
+            if "{" in path or "(" in path:
+                elem = rec.get_next_elem()
+                continue
+
+            prefix = elem.fields["prefix"]
+            if ":" not in prefix and path not in path_set:
+                f.write(path.replace(" ", "|") + "\\n")
+                path_set.add(path)
+
+            elem = rec.get_next_elem()
+
+        rec = stream.get_next_record()
+
+    f.close()
+\end{lstlisting}
+
+\subsubsection{Carga estandarizada de rutas BGP}
+
+\begin{lstlisting}[language=Python, caption=Implementación de importación de rutas BGP desde archivo, label=anxcode:importar_bgp_routes]
+bgp_routes = [] 
+
+with open(nombre_archivo, 'r') as archivo:
+    for i,linea in enumerate(archivo):
+        if i > MAX_NUM_ROUTES:
+            break
+        numeros = linea.strip().split('|')
+        bgp_routes.append(numeros) 
+
+print("[RUTAS BGP]:",bgp_routes[:10])
+print("[CANTIDAD PATHS]",len(bgp_routes))
+\end{lstlisting}
+
+\subsection{Benchmark Experimental}
+
+\subsubsection{Transformación y limpieza de predicciones}
+
+\begin{lstlisting}[language=Python, caption=Conversión de etiquetas de Gao al formato estándar, label=anxcode:transformacion_estandar_gao]
+y_test_prediction_new = []
+for i in range(len(y_test_prediction)):
+    if y_test_prediction[i] % 2 == 0:
+        y_test_prediction_new.append(0)
+    elif y_test_prediction[i] == 3:
+        y_test_prediction_new.append(2)
+    elif y_test_prediction[i] == 1:
+        y_test_prediction_new.append(1)
+    else:
+        y_test_prediction_new.append(-1)
+
+y_test_prediction_new = np.asarray(y_test_prediction_new)
+print(len(y_test_prediction_new))
+y_test_prediction = y_test_prediction_new
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Limpieza de relaciones sin ground truth válido, label=anxcode:limpieza_valores_no_encontrados]
+x_test_cleaned = np.asarray([np.asarray(x_test[i]) for i in range(len(x_test)) if y_test_prediction[i] != -1])
+y_test_cleaned = np.asarray([y_test[i] for i in range(len(y_test)) if y_test_prediction[i] != -1])
+
+y_test_prediction_cleaned = np.asarray([y_test_prediction[i] for i in range(len(y_test_prediction)) if y_test_prediction[i] != -1])
+\end{lstlisting}
+
+\subsubsection{Integración de BGP2Vec}
+
+\begin{lstlisting}[language=Python, caption=Inicialización del modelo BGP2Vec, label=anxcode:bgp2vec_init]
+bgp2vec = BGP2VEC(model_path = MODELS_PATH,
+                  bgp_routes = bgp_routes,
+                  rewrite = True,
+                  test_limit = test_limit,
+                  mode = mode,
+                  epochs = epochs)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Mapeo de ASN a índices para entrenamiento y prueba en BGP2Vec, label=anxcode:bgp2vec_mapping]
+x_training_mapped = []
+y_training_filtered = []
+
+for (a, b), y in zip(x_training, y_training):
+    a_index = asn_to_index.get(str(a), 0)
+    b_index = asn_to_index.get(str(b), 0)
+    if a_index == 0 or b_index == 0:
+        continue
+    x_training_mapped.append([a_index, b_index])
+    y_training_filtered.append(y)
+
+x_training_mapped = np.array(x_training_mapped)
+y_training_filtered = np.array(y_training_filtered)
+
+x_test_mapped = []
+y_test_filtered = []
+
+for (a, b), y in zip(x_test, y_test):
+    a_index = asn_to_index.get(str(a), 0)
+    b_index = asn_to_index.get(str(b), 0)
+    if a_index == 0 or b_index == 0:
+        continue
+    x_test_mapped.append([a_index, b_index])
+    y_test_filtered.append(y)
+
+x_test_mapped = np.array(x_test_mapped)
+y_test_filtered = np.array(y_test_filtered)
+\end{lstlisting}
+
+\subsection{Construcción del Grafo de Internet}
+
+\subsubsection{Construcción del grafo en formato DGL}
+
+\begin{lstlisting}[language=Python, caption=Clase base para construir el dataset del grafo, label=anxcode:graph_class]
+class Graph:
+    def __init__(self,dataset_graph_path ,max_paths,debug = False):
+        self.debug = debug
+        self.nx_graph = None
+        self.data_path = dataset_graph_path
+        
+    def create_topology_from_ribs(self, rib_filename:str,filename_out="edges.csv"):
+        ...
+
+    def features_nodes(self,features_filename,filename_out="nodes.csv"):
+        ...
+
+    def remove_nodes_degree(self, degree,filename_out="edges.csv"):
+        ...
+\end{lstlisting}
+
+\subsection{Modelos Basados en GNN}
+
+\subsubsection{Modelos para inferencia con GNN y CNN}
+
+\begin{lstlisting}[language=Python, caption=Implementación de un modelo GCN con distintos decodificadores, label=anxcode:modelo_gcn]
+class GCN(nn.Module):
+    def __init__(self, in_feats, hidden_feats, out_feats, out_feats_mlp=1, drop=0.3):
+        super().__init__()
+        self.conv1 = GraphConv(in_feats, hidden_feats)
+        self.conv2 = GraphConv(hidden_feats, out_feats)
+    
+        self.MLP = MLPPredictor(out_feats,out_feats_mlp)
+        self.BilinearDecoder = BilinearPredictor(out_feats, 3)
+        self.regressor = nn.Linear(out_feats, 1)
+        self.drop  = nn.Dropout(drop)
+
+    def encode(self, g, x):
+        g = dgl.add_self_loop(g)
+        h = self.drop(F.relu(self.conv1(g, x)))
+        h = self.conv2(g, h)
+        return h
+
+    def decodeDotProduct(self, g, h):
+        with g.local_scope():
+            g.ndata["h"] = h
+            g.apply_edges(fn.u_dot_v("h", "h", "score"))
+            return g.edata["score"][:, 0]
+
+    def decodeMLP(self, g, h):
+        return self.MLP(g, h)
+
+    def decodeBilinear(self, g, h):
+        return self.BilinearDecoder(g, h)
+
+    def forward(self, g, x):
+        h = self.encode(g, x)
+        out = self.regressor(h).squeeze(-1)
+        return out
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, basicstyle=\ttfamily\footnotesize, caption=Mapeo final de ASN a índices para la etapa supervisada, label=anxcode:mapeo_asn_id]
+x_training_mapped = []
+y_training_filtered = []
+
+for (a, b), y in zip(x_training, y_training):
+    a_index = asn_to_index.get(str(a), 0)
+    b_index = asn_to_index.get(str(b), 0)
+
+    if a_index == 0 or b_index == 0:
+        continue
+
+    x_training_mapped.append([a_index, b_index])
+    y_training_filtered.append(y)
+
+x_training_mapped = np.array(x_training_mapped)
+y_training_filtered = np.array(y_training_filtered)
+
+x_test_mapped = []
+y_test_filtered = []
+
+for (a, b), y in zip(x_test, y_test):
+    a_index = asn_to_index.get(str(a), 0)
+    b_index = asn_to_index.get(str(b), 0)
+
+    if a_index == 0 or b_index == 0:
+        continue
+
+    x_test_mapped.append([a_index, b_index])
+    y_test_filtered.append(y)
+
+x_test_mapped = np.array(x_test_mapped)
+y_test_filtered = np.array(y_test_filtered)
+
+np.save(PATH + DATA + "x_training_mapped.npy", x_training_mapped)
+np.save(PATH + DATA + "y_training_filtered.npy", y_training_filtered)
+np.save(PATH + DATA + "x_test_mapped.npy", x_test_mapped)
+np.save(PATH + DATA + "y_test_filtered.npy", y_test_filtered)
+\end{lstlisting}
+
+\begin{lstlisting}[basicstyle=\ttfamily, caption=Modelo CNN utilizado en el enfoque BGP2Vec, label=anxcode:cnn_bgp2vec_model]
+experiment = None
+num_classes = len(class_names)
+embedding_trainable = False
+input_length = 2
+embedding_vector_length = embeddings.shape[1]
+total_ASNs = embeddings.shape[0]
+
+model = Sequential()
+model.add(Embedding(total_ASNs, embedding_vector_length, input_length=input_length,
+                    weights=[embeddings], trainable=embedding_trainable))
+model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+model.add(Reshape((32, 2)))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+model.add(Reshape((32, 16)))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Flatten())
+model.add(Dense(100, activation='relu'))
+model.add(Dense(num_classes, activation='softmax'))
+\end{lstlisting}
+
+\begin{lstlisting}[basicstyle=\ttfamily, caption=Cálculo de pesos por clase para balanceo, label=anxcode:class_weights_dict]
+from sklearn.utils import class_weight
+import numpy as np
+
+class_weights = class_weight.compute_class_weight(
+                    class_weight='balanced', 
+                    classes=np.array(list(range(num_classes))), 
+                    y=y_training_filtered)
+
+class_weight_dict = {i: w for i, w in enumerate(class_weights)}
+print('[class_weights_dict]:', class_weight_dict)
+\end{lstlisting}

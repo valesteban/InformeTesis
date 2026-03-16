@@ -53,98 +53,127 @@ Las RIBs corresponden a \textit{snapshots} que los routers mantienen con informa
 %----------------------------------------------
 Como se han realizado en otros estudios~\cite{AS-topology-2004,ExploringtheInternetRoutingRegistriestoAugmentAS-LevelTopology} se podrían integrar más fuentes de datos para construir una topología más completa. Sin embargo, utilizando únicamente los colectores de RouteViews y RIPE, se logra obtener la mayoría de los sistemas autónomos~\cite{AS-topology-2004}, y se ha observado que la estructura de Internet cambia poco en el tiempo~\cite{InterntTopologyOverTime}, salvo en la longitud media de ruta (\textit{average path length}) y el coeficiente de agrupamiento medio (\textit{average clustering coefficient}). Además, la mayoría de los trabajos previos han utilizado las RIBs de estos colectores, por lo que seguir este enfoque permite mantener una consistencia en la metodología y facilitar comparaciones adecuadas entre los estudios anteriores.
 
-
+% TODO: Revisar/leer
 Existen distintas formas de obtener las tablas RIBs. En primer lugar, a través de archivos en formato MRT, donde se pueden encontrar tanto RIBs como mensajes \textit{UPDATE}, organizados por colector y fecha. Estos archivos son generados periódicamente: las tablas RIBs se generan cada 2 horas, mientras que los mensajes \textit{UPDATE}, al ser paquetes que se envían continuamente entre ASes, se almacenan en intervalos de 15 minutos. Otro formato consiste en la salida del comando \texttt{show ip bgp} realizado en los recolectores. Sin embargo, no se tomaron estos enfoques, primero debido a la falta de documentación y explicaciones claras sobre su uso, y segundo, porque casi ningún estudio previo utiliza este camino para obtener RIBs o mensajes \textit{UPDATE} en investigaciones relacionadas con uso de datos BGP.\\
-
-Por lo anterior, se decidió utilizar la biblioteca \texttt{BGPStream}~\cite{BGPStream}, la cual permite extraer datos tanto de los colectores de RIPE RIS como desde los de RV. Además, esta biblioteca ofrece la opción de filtrar por fecha y otras condiciones específicas del protocolo.\\
-El Código~\ref{code:bgpstream_download} muestra pseudocódigo utilizado para la extracción de rutas BGP mediante la biblioteca \texttt{BGPStream}.\\
-
-
-% \begin{lstlisting}[language=Python, caption=Extracto del archivo \texttt{create\_bgp\_routs.py} donde se utiliza la biblioteca BGPStream para la extracción de las RIBs, label=code:bgpstream_download]
-% import pybgpstream
-
-% def downloader(start_date, duration):
-%     base = int(datetime.datetime.strptime(start_date, '%m/%d/%Y').strftime('%s'))
-    
-%     stream = BGPStream()
-%     stream.add_interval_filter(base, base + int(duration))
-%     stream.add_filter('record-type', 'ribs')
-%     stream.add_interval_filter(base, base + int(duration))
-%     stream.start()
-    
-%     path_set = set()
-%     f = open('data/rib.txt', 'w')
-    
-%     while True:
-%         elem = rec.get_next_elem()
-%         while(elem):
-%             path = elem.fields['as-path']
-%             if '{' in path or '(' in path:
-%                 elem = rec.get_next_elem()
-%                 continue
-%             prefix = elem.fields['prefix']
-%             if ":" not in prefix and path not in path_set:
-%                 f.write(path.replace(' ', '|') + '\n')
-%                 path_set.add(path)
-%             elem = rec.get_next_elem()
-    
-%     f.close()
-% \end{lstlisting}
 
 Por lo anterior, se decidió utilizar la biblioteca \texttt{BGPStream}~\cite{BGPStream}, la cual permite extraer datos tanto de los colectores de RIPE RIS como de RouteViews. Además, esta biblioteca ofrece la posibilidad de filtrar por intervalo temporal y por condiciones específicas del protocolo BGP.\\
 
-% TODO: Revisar código (cambiado)
-El Algoritmo~\ref{alg:bgpstream_download} resume el procedimiento general utilizado para la extracción de rutas BGP a partir de RIBs públicas mediante \texttt{BGPStream}.\\
+El Algoritmo~\ref{alg:bgp_extraccion_filtrado} resume el procedimiento de descarga y filtrado inicial de rutas BGP. 
+El pseudocódigo omite detalles de implementación particulares, como el uso de la biblioteca \texttt{BGPStream}, la conversión exacta de fechas a tiempo Unix y el manejo explícito de archivos, los cuales pertenecen al nivel de implementación y no alteran la lógica general del proceso. La implementación concreta puede consultarse en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:bgpstream_download}.
 
 \begin{algorithm}[H]
-\caption{Extracción de rutas BGP desde RIBs públicas utilizando \texttt{BGPStream}}
-\label{alg:bgpstream_download}
+\caption{Extracción y filtrado inicial de rutas BGP}
+\label{alg:bgp_extraccion_filtrado}
 \begin{algorithmic}[1]
-\Require Fecha inicial $d$, duración $\Delta t$
-\Ensure Archivo con rutas BGP únicas en formato sanitizado
-\State Convertir $d$ a formato temporal Unix
-\State Inicializar flujo BGP
-\State Filtrar el flujo al intervalo $[d, d+\Delta t]$
-\State Filtrar por registros de tipo \texttt{ribs}
-\State Iniciar el flujo de datos
-\State Inicializar conjunto de rutas observadas $R \gets \emptyset$
-\State Abrir archivo de salida \texttt{rib.txt}
-\For{cada elemento del flujo}
-    \State Extraer el atributo \texttt{AS\_PATH}
-    \State Extraer el prefijo asociado
-    \If{la ruta contiene conjuntos, paréntesis o estructuras no válidas}
-        \State Continuar con el siguiente elemento
-    \EndIf
-    \If{el prefijo corresponde a IPv4 y la ruta no ha sido observada previamente}
-        \State Guardar la ruta en el archivo de salida usando el separador ``|''
-        \State Agregar la ruta a $R$
-    \EndIf
+\Require Fecha de inicio $f$, duración $d$
+\Ensure Archivo con rutas BGP únicas y filtradas
+\State Convertir $f$ a tiempo Unix
+\State Inicializar flujo BGP en el intervalo $[f, f+d]$
+\State Filtrar únicamente registros de tipo \texttt{ribs}
+\State Inicializar conjunto de rutas únicas $P$
+\For{cada registro del flujo}
+    \For{cada elemento del registro}
+        \State Extraer \texttt{AS\_PATH} y prefijo
+        \If{\texttt{AS\_PATH} contiene estructuras ambiguas}
+            \State Continuar con el siguiente elemento
+        \EndIf
+        \If{el prefijo corresponde a IPv4 y la ruta no pertenece a $P$}
+            \State Guardar la ruta en archivo de salida
+            \State Agregar la ruta a $P$
+        \EndIf
+    \EndFor
 \EndFor
-\State Cerrar el archivo de salida
+\State Cerrar archivo de salida
 \end{algorithmic}
 \end{algorithm}
 
-% FIXME: Ver como eencajar est eparrafo 
-El procedimiento general de extracción de rutas BGP a partir de RIBs públicas se resume en el Algoritmo~\ref{alg:bgpstream_download}. La implementación concreta se realizó utilizando la biblioteca BGPStream, la cual permite filtrar por intervalo temporal y tipo de registro.
 
-Cabe destacar que se optó por utilizar un sistema operativo basado en Linux, debido a la mayor compatibilidad y facilidad de uso e instalación de bibliotecas como \texttt{BGPStream} en comparación con otros sistemas operativos como Windows. Asimismo, se trabajó con un entorno virtual, con el fin de evitar conflictos entre versiones de las distintas bibliotecas utilizadas, considerando su continua actualización y la compatibilidad con scripts provenientes de otros repositorios utilizados en distintas partes del proyecto.\\
+
+
+% \begin{lstlisting}[language=Python, caption=Extracto de implementación para descarga y filtrado de rutas BGP con BGPStream, label=code:bgpstream_download]
+% import datetime
+% import pybgpstream
+
+% def downloader(start_date, duration):
+%     base = int(datetime.datetime.strptime(start_date, "%m/%d/%Y").strftime("%s"))
+
+%     stream = pybgpstream.BGPStream()
+%     stream.add_interval_filter(base, base + int(duration))
+%     stream.add_filter("record-type", "ribs")
+%     stream.start()
+
+%     path_set = set()
+%     f = open("data/rib.txt", "w")
+
+%     rec = stream.get_next_record()
+%     while rec:
+%         elem = rec.get_next_elem()
+%         while elem:
+%             path = elem.fields["as-path"]
+%             if "{" in path or "(" in path:
+%                 elem = rec.get_next_elem()
+%                 continue
+
+%             prefix = elem.fields["prefix"]
+%             if ":" not in prefix and path not in path_set:
+%                 f.write(path.replace(" ", "|") + "\\n")
+%                 path_set.add(path)
+
+%             elem = rec.get_next_elem()
+
+%         rec = stream.get_next_record()
+
+%     f.close()
+% \end{lstlisting}
+
+% TODO: Revisar/leer
+En términos prácticos, este bloque realiza las siguientes operaciones sobre los datos reales:
+\begin{enumerate}
+    \item Convierte la fecha de entrada a tiempo Unix para definir la ventana temporal de consulta.
+    \item Crea un flujo \texttt{BGPStream} y filtra únicamente registros de tipo \texttt{ribs}.
+    \item Recorre registros y elementos del flujo, extrayendo los campos \texttt{as-path} y \texttt{prefix}.
+    \item Descarta rutas con estructuras no simples en \texttt{AS\_PATH} (por ejemplo, presencia de \texttt{\{} o \texttt{(}), para evitar casos ambiguos en el grafo.
+    \item Conserva solo rutas IPv4 (cuando el prefijo no contiene \texttt{:}) y elimina duplicados usando un conjunto en memoria.
+    \item Escribe el resultado en \texttt{data/rib.txt}, reemplazando espacios por \texttt{|} para dejar un ASN por separador.
+\end{enumerate}
+
+El resultado de esta etapa es un archivo con rutas BGP únicas y en formato homogéneo, que luego se utiliza en la limpieza y construcción del grafo.
+
+Cabe destacar que se optó por utilizar un sistema operativo basado en Linux, 
+debido a la mayor compatibilidad y facilidad de uso e instalación de 
+bibliotecas como \texttt{BGPStream} en comparación con otros sistemas 
+operativos como Windows. Asimismo, se trabajó con un entorno virtual, 
+con el fin de evitar conflictos entre versiones de las distintas 
+bibliotecas utilizadas, considerando su continua actualización y la 
+compatibilidad con scripts provenientes de otros repositorios utilizados 
+en distintas partes del proyecto.\\
 
 
 \subsection{Formato y Limpieza de las Rutas BGP}
 
-Las rutas recolectadas se guardaron en un archivo de nombre \texttt{rib.txt}. Su formato consiste en una ruta por línea y los ASNs de un mismo path separados por el carácter ``\texttt{|}''. La decisión de utilizar este formato se tomó debido a su simplicidad y la compatibilidad con otros métodos utilizados en el \textit{benchmark} (Sección~\ref{sec:Benchmark_section}). A continuación, un extracto del archivo (ver código \ref{code:formato_ribs}).\\
+Las rutas recolectadas se guardaron en un archivo de nombre \texttt{rib.txt}. Su formato consiste en una ruta por línea y los ASNs de un mismo path separados por el carácter ``\texttt{|}''. La decisión de utilizar este formato se tomó debido a su simplicidad y la compatibilidad con otros métodos utilizados en el \textit{benchmark} (Sección~\ref{sec:Benchmark_section}). A continuación, se muestra un ejemplo del formato utilizado en el Listado~\ref{lst:sanitized_ribs_format}.\\
 
-\begin{lstlisting}[language=Python, caption=Extracto contenido archivo rib.txt, label=code:formato_ribs]
+% \begin{lstlisting}[language=Python, caption=Extracto contenido archivo rib.txt, label=code:formato_ribs]
+% 12350|6939|7843|11351|40625
+% 61218|6939|59105|45679
+% 50629|6461|52320|23106|53216
+% 25091|5511|2914|45974
+% 835|1299|7819|20201
+% 286|3257|46887|393962
+% 3491|3356|6128
+% 28624|3356|6453|4755|17439|56272
+% 37100|32017
+% \end{lstlisting}
+{
+\renewcommand{\lstlistingname}{Formato}
+\begin{lstlisting}[caption={Ejemplo del formato del archivo \texttt{sanitized\_ribs.txt}}, label={lst:sanitized_ribs_format}]
 12350|6939|7843|11351|40625
 61218|6939|59105|45679
 50629|6461|52320|23106|53216
-25091|5511|2914|45974
-835|1299|7819|20201
-286|3257|46887|393962
-3491|3356|6128
-28624|3356|6453|4755|17439|56272
-37100|32017
 \end{lstlisting}
+}
+El formato~\ref{lst:sanitized_ribs_format} muestra un ejemplo de la forma utilizada para almacenar las rutas BGP procesadas. En este caso no se presenta pseudocódigo, ya que el objetivo no es describir un procedimiento, sino ilustrar la estructura concreta de los datos de entrada o salida utilizada por los experimentos.
+
 
 Una vez extraídas las rutas BGP, se continuó con la limpieza de estas por medio de los siguientes pasos: 
 
@@ -157,7 +186,7 @@ Una vez extraídas las rutas BGP, se continuó con la limpieza de estas por medi
     \item Eliminación de paths con ASN reservados.
 \end{enumerate}
 
-El resultado de este proceso se guarda en un archivo de nombre \texttt{sanitized\_ribs.txt}, manteniendo el mismo formato descrito en el código~\ref{code:formato_ribs}.\\
+El resultado de este proceso se guarda en un archivo de nombre \texttt{sanitized\_ribs.txt}, manteniendo el mismo formato descrito en el Listado~\ref{lst:sanitized_ribs_format}.\\
 
 
 % Los archivos \texttt{ribs.txt} y \texttt{sanitized\_ribs.txt} se encuentran disponibles en el repositorio~\cite{BenchmarkCode}, correspondientes a las diferentes fechas en las que se ejecutó el código para su recolección.\\
@@ -174,17 +203,30 @@ Un segundo dataset que se utilizó fue el CAIDA AS Relationships~\cite{CAIDAS-re
 El formato de este dataset se muestra en el Código~\ref{code:formato_asrank}. Los archivos generados por CAIDA incluyen dos tipos de relaciones: provider–to-client (P2C) y peer-to-peer (P2P), y se actualizan diariamente.\\
 
 % TODO: hablar de que hay dos dataset de caida as relationships
-\newpage
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[language=Python, caption=Formato archivos AS Relationships, label=code:formato_asrank]
 <provider-as>|<customer-as>|-1
 <peer-as>|<peer-as>|0|<source>
 \end{lstlisting}
+}
 
-Como el dataset de CAIDA solo incluía relaciones P2C, se generaron relaciones C2P invirtiendo el orden de los ASes y ajustando sus etiquetas, en caso de existir esa relación en el grafo creado a partir de las RIBs. El formato resultante se muestra en el Código~\ref{code:formato_mio_relaciones}, donde se representan los tres tipos de relaciones consideradas para este trabajo.\\
+Como el dataset de CAIDA solo incluía relaciones P2C, se generaron relaciones C2P invirtiendo el orden de los ASes y ajustando sus etiquetas, en caso de existir esa relación en el grafo creado a partir de las RIBs. La codificación final de etiquetas utilizada en esta tesis se resume en la Tabla~\ref{tab:valores_relaciones}.\\
 
-\begin{lstlisting}[language=Python, caption=Valores relaciones, label=code:formato_mio_relaciones]
-LABELS_DICT = {'P2P':0, 'C2P': 1, 'P2C': 3}
-\end{lstlisting}
+\begin{table}[H]
+\centering
+\caption{Codificación de etiquetas de relaciones entre ASes utilizada en esta tesis.}
+\label{tab:valores_relaciones}
+\begin{tabular}{lc}
+\hline
+\textbf{Tipo de relación} & \textbf{Etiqueta} \\
+\hline
+P2P (\textit{peer-to-peer}) & 0 \\
+C2P (\textit{customer-to-provider}) & 1 \\
+P2C (\textit{provider-to-customer}) & 2 \\
+\hline
+\end{tabular}
+\end{table}
 
 
 Como luego se construyó un \textit{benchmark}, el cual contenía métodos tanto heurísticos como de Machine Learning, se dividieron los datos en entrenamiento y evaluación. Esto con el fin de evaluar los distintos métodos con un mismo conjunto de datos para poder comparar de mejor manera sus resultados. Aquí se dividieron las aristas en 80 \% entrenamiento y 20\% evaluación, mediante muestreo aleatorio.\\
@@ -278,10 +320,23 @@ Una descripción más detallada de cada uno de estos métodos puede ser encontra
 
 \subsection{Estructura del Repositorio}
 
-El repositorio se organizó como se muestra en la Figura~\ref{repo_estructura_benchmark}. Cada método cuenta con una carpeta, la cual contiene el código fuente del algoritmo correspondiente, junto con un archivo Jupyter Notebook (extensión \texttt{.ipynb}) encargado de importar los datos, ejecutar el algoritmo y generar los resultados. Además, se incluye en el repositorio una carpeta \texttt{data}, donde se guardan los archivos necesarios para construir los \textit{datasets} de las RIBs y sus respectivas etiquetas. También se encuentran los scripts \texttt{create\_bgp\_routes.py} y \texttt{create\_tor\_dataset.py}, encargados de la extracción de las RIBs y de la obtención de los datos de las relaciones entre ASes (CAIDA AS Relationships), descritos previamente en la Sección~\ref{sec:obtencion_datos_section}.
+El repositorio se organizó como se muestra en la estructura siguiente. Cada método cuenta con una carpeta, la cual contiene el código fuente del algoritmo correspondiente, junto con un archivo Jupyter Notebook (extensión \texttt{.ipynb}) encargado de importar los datos, ejecutar el algoritmo y generar los resultados. Además, se incluye en el repositorio una carpeta \texttt{data}, donde se guardan los archivos necesarios para construir los \textit{datasets} de las RIBs y sus respectivas etiquetas. También se encuentran los scripts \texttt{create\_bgp\_routes.py} y \texttt{create\_tor\_dataset.py}, encargados de la extracción de las RIBs y de la obtención de los datos de las relaciones entre ASes (CAIDA AS Relationships), descritos previamente en la Sección~\ref{sec:obtencion_datos_section}.
 
 
-\begin{lstlisting}[basicstyle=\ttfamily,label=repo_estructura_benchmark ,frame=single, caption=Estructura del repositorio del \textit{benchmark}]
+% \begin{lstlisting}[basicstyle=\ttfamily,label=repo_estructura_benchmark ,frame=single, caption=Estructura del repositorio del \textit{benchmark}]
+% data/
+% gao/
+% ruan/
+% problink/
+% bgp2vec/
+% create_bgp_routes.py
+% create_tor_dataset.py
+% tor_results.py
+% utils.py
+% \end{lstlisting}
+
+% TODO: revisar/leer
+\begin{verbatim}
 data/
 gao/
 ruan/
@@ -291,8 +346,8 @@ create_bgp_routes.py
 create_tor_dataset.py
 tor_results.py
 utils.py
-\end{lstlisting}
-
+\end{verbatim}
+La estructura anterior resume la organización del repositorio utilizado en esta etapa. No se presenta como pseudocódigo, ya que no describe una secuencia algorítmica, sino la distribución de archivos y módulos que componen la implementación experimental.
 
 
 
@@ -369,61 +424,107 @@ Para hacer comparables los resultados, se siguió el siguiente flujo:
 \end{enumerate}
 
     
-\begin{lstlisting}[language=Python, caption=Formato salida de los resultados de metodos de inferencia, label=code:formato_out_benchmark]
+% \begin{lstlisting}[language=Python, caption=Formato salida de los resultados de metodos de inferencia, label=code:formato_out_benchmark]
+% <provider as>|<customer-as>|2|<real relationship>
+% <customer-as>|<provider as>|1|<real relationship> 
+% <peer-as>|<peer-as>|0|<real relationship> 
+% \end{lstlisting}
+
+{
+\renewcommand{\lstlistingname}{Formato}
+\begin{lstlisting}[caption=Salida de los resultados de métodos de inferencia, label=code:formato_out_benchmark]
 <provider as>|<customer-as>|2|<real relationship>
 <customer-as>|<provider as>|1|<real relationship> 
 <peer-as>|<peer-as>|0|<real relationship> 
 \end{lstlisting}
+}
+
 
 \subsection{Desafíos de Integración de Métodos}
 
 Uno de los primeros obstáculos fue el formato de entrada de los distintos métodos, ya que no todos esperaban recibir un archivo con extensión \texttt{.txt} o directamente una variable con las rutas. Algunos requerían archivos en formatos específicos o estructuras de datos particulares, lo que llevó a que se estandarizara el formato de entrada. Esta estandarización consistió en el siguiente fragmento de código:\\
-\newpage
-\begin{lstlisting}[language=Python, caption=Extracto código importación de rutas bgp de archivo RIBs., label=code:importar_bgp_routes]
 
-bgp_routes = [] 
+% \begin{lstlisting}[language=Python, caption=Extracto código importación de rutas bgp de archivo RIBs., label=code:importar_bgp_routes]
 
-with open(nombre_archivo, 'r') as archivo:
-    for i,linea in enumerate(archivo):
-        if i > MAX_NUM_ROUTES:
-            break
-        numeros = linea.strip().split('|')
-        bgp_routes.append(numeros) 
+% bgp_routes = [] 
 
-print("[RUTAS BGP]:",bgp_routes[:10])
-print("[CANTIDAD PATHS]",len(bgp_routes))
-\end{lstlisting}
+% with open(nombre_archivo, 'r') as archivo:
+%     for i,linea in enumerate(archivo):
+%         if i > MAX_NUM_ROUTES:
+%             break
+%         numeros = linea.strip().split('|')
+%         bgp_routes.append(numeros) 
 
-El Código~\ref{code:importar_bgp_routes} carga las rutas BGP desde el archivo \texttt{sanitized\_rib.txt}, guardándolas en la variable \texttt{bgp\_routes}, la cual es una lista de listas, donde cada sublista representa un AS\_PATH. Además, se establece un límite máximo de rutas a leer definido por la variable \texttt{MAX\_NUM\_ROUTES}. Con esto, se definió que todos los métodos del \textit{benchmark} recibirían esta variable como entrada estandarizada y por tanto del mismo archivo y con las mismas rutas.\\
+% print("[RUTAS BGP]:",bgp_routes[:10])
+% print("[CANTIDAD PATHS]",len(bgp_routes))
+% \end{lstlisting}
 
-Otro proceso de estandarización que se tuvo que integrar para el correcto funcionamiento de del \textit{benchmark}, fue identificar y adaptar los formatos de salida generados por cada algoritmo. A continuación, se muestra  brevemente la estructura de salida de cada uno de los métodos utilizados:\\
+
+
+
+% TODO: Revisar/leer
+
+\begin{algorithm}[H]
+\caption{Carga estandarizada de rutas BGP desde archivo}
+\label{alg:carga_rutas_bgp}
+\begin{algorithmic}[1]
+\Require Archivo de rutas sanitizadas $A$, máximo de rutas $M$
+\Ensure Lista de rutas BGP
+\State Inicializar lista vacía $R$
+\For{cada línea $l$ en $A$}
+    \If{se alcanzó el límite $M$}
+        \State Terminar lectura
+    \EndIf
+    \State Separar $l$ usando ``\texttt{|}''
+    \State Agregar la secuencia resultante a $R$
+\EndFor
+\State Retornar $R$
+\end{algorithmic}
+\end{algorithm}
+
+% TODO: Revisar/leer
+El Algoritmo~\ref{alg:carga_rutas_bgp} presenta la estrategia utilizada para importar las rutas BGP desde el archivo \texttt{sanitized\_ribs.txt} y transformarlas a una representación homogénea en memoria. 
+En la implementación concreta, esta estructura se almacena como una lista de listas, donde cada sublista representa un \texttt{AS\_PATH}, y además se incorpora un límite máximo de lectura para controlar el 
+volumen de datos utilizado en cada experimento. Un extracto del código correspondiente puede verse en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:importar_bgp_routes}.
+Con esto, se definió que todos los métodos del \textit{benchmark} recibirían esta variable como entrada estandarizada y por tanto del mismo archivo y con las mismas rutas.\\
+
+Otro proceso de estandarización que se tuvo que integrar para el correcto funcionamiento del \textit{benchmark}, fue identificar y adaptar los formatos de salida generados por cada algoritmo. A continuación, se muestra  brevemente la estructura de salida de cada uno de los métodos utilizados:\\
 
 \begin{itemize}
 \item \textbf{GAO y RUAN}:
-    \begin{lstlisting}[language=Python, caption=Formato de salida del algoritmo GAO y RUAN., label=code:formato_salida_gao_ruan]
-    <peer-as>|<peer-as>|0
-    <customer-as>|<provider-as>|1
-    <sibling-as>|<sibling-as>|2
-    <provider-as>|<customer-as>|3
-    \end{lstlisting}
+
+    {
+    \renewcommand{\lstlistingname}{Formato}
+        \begin{lstlisting}[caption=Formato de salida del algoritmo GAO y RUAN., label=code:formato_salida_gao_ruan]
+        <peer-as>|<peer-as>|0
+        <customer-as>|<provider-as>|1
+        <sibling-as>|<sibling-as>|2
+        <provider-as>|<customer-as>|3
+        \end{lstlisting}
+    }
+
     Tanto el algoritmo de GAO como el de RUAN utilizan el mismo formato de salida para representar las relaciones inferidas entre Sistemas Autónomos (ASes). En este caso, el valor \texttt{0} representa una relación peer-to-peer, \texttt{1} una relación customer-to-provider, \texttt{2} una relación sibling-to-sibling, y \texttt{3} una relación provider-to-customer. Estos métodos consideraron únicamente las relaciones peer-to-peer y customer-provider, por lo que las relaciones sibling-to-sibling fueron descartadas.
 
 \item \textbf{ProbLink y TopoScope}:
-
-    \begin{lstlisting}[language=Python, caption=Formato de salida del algoritmo ProbLink y TopoScope. , label=code:formato_salida_problink]
+    {
+    \renewcommand{\lstlistingname}{Formato}
+    \begin{lstlisting}[caption=Formato de salida del algoritmo ProbLink y TopoScope. , label=code:formato_salida_problink]
     <provider-as>|<customer-as>|-1
     <peer-as>|<peer-as>|0
     <sibling-as>|<sibling-as>|1
     \end{lstlisting}
-
+    }
     De manera similar, los algoritmos ProbLink y TopoScope también coinciden en el formato utilizado para representar relaciones. En este caso, el valor \texttt{-1} representa una relación provider-to-customer, \texttt{0} una relación peer-to-peer, y \texttt{1} una relación sibling-to-sibling. Al igual que en los métodos anteriores, las relaciones sibling-to-sibling fueron descartadas.
 
 \item \textbf{BGP2Vec}:
-    \begin{lstlisting}[language=Python, caption=Formato de salida de nuestro formato estandar definido. , label=code:formato_salida_estandar_mia]
+    {
+    \renewcommand{\lstlistingname}{Formato}
+    \begin{lstlisting}[caption=Formato de salida de nuestro formato estandar definido. , label=code:formato_salida_estandar_mia]
     <peer-as>|<peer-as>|0
     <customer-as>|<provider-as>|1
     <provider-as>|<customer-as>|2
     \end{lstlisting}
+    }
 
 Dado que este método se debe entrenar para entregar resultados, se separa el conjunto de datos de CAIDA AS Relationships en conjunto de entrenamiento y test. A diferencia de los métodos anteriores, BGP2Vec recibe tanto el conjunto de entrenamiento como el de prueba, mientras que los otros utilizan únicamente el de prueba. Las salidas de sus inferencias se ajustan al formato del conjunto de entrenamiento, el cual utiliza el formato presentado en el Código~\ref{code:formato_asrank}. Sin embargo, se decidió transformar dicho formato, previo al entrenamiento, a un formato estándar propio, con el objetivo de uniformar las salidas.
 
@@ -431,40 +532,64 @@ Dado que este método se debe entrenar para entregar resultados, se separa el co
 
 \subsection{Estandarización}
 
-Tras ejecutar los \textit{scripts} de cada método y obtener sus resultados de inferencia, se continuó con la estandarización de las salidas. Esta etapa consistió en convertir cada salida al formato previamente definido (Código~\ref{code:formato_salida_estandar_mia}). Un ejemplo concreto de esta transformación se muestra en el Código~\ref{code:transformacion_estandar_gao}.
+Tras ejecutar los \textit{scripts} de cada método y obtener sus resultados de inferencia, se continuó con la estandarización de las salidas. Esta etapa consistió en convertir cada salida al formato previamente definido (Código~\ref{code:formato_salida_estandar_mia}). Un ejemplo concreto de esta transformación puede consultarse en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:transformacion_estandar_gao}.
 
 
-\begin{lstlisting}[language=Python, caption=Ejemplo de código de GAO para transformar el formato de salida al estándar utilizado., label=code:transformacion_estandar_gao]
-# Convertimos las etiquetas de Gao a las etiquetas de ToR
+% \begin{lstlisting}[language=Python, caption=Ejemplo de código de GAO para transformar el formato de salida al estándar utilizado., label=code:transformacion_estandar_gao]
+% # Convertimos las etiquetas de Gao a las etiquetas de ToR
 
-y_test_prediction_new = []
-for i in range(len(y_test_prediction)):
-    if y_test_prediction[i] % 2 == 0:
-        y_test_prediction_new.append(0)
-    elif y_test_prediction[i] == 3:
-        y_test_prediction_new.append(2)
-    elif y_test_prediction[i] == 1:
-        y_test_prediction_new.append(1)
-    else:
-        y_test_prediction_new.append(-1)
+% y_test_prediction_new = []
+% for i in range(len(y_test_prediction)):
+%     if y_test_prediction[i] % 2 == 0:
+%         y_test_prediction_new.append(0)
+%     elif y_test_prediction[i] == 3:
+%         y_test_prediction_new.append(2)
+%     elif y_test_prediction[i] == 1:
+%         y_test_prediction_new.append(1)
+%     else:
+%         y_test_prediction_new.append(-1)
 
-y_test_prediction_new = np.asarray(y_test_prediction_new)
-print(len(y_test_prediction_new))
-y_test_prediction = y_test_prediction_new
-\end{lstlisting}
+% y_test_prediction_new = np.asarray(y_test_prediction_new)
+% print(len(y_test_prediction_new))
+% y_test_prediction = y_test_prediction_new
+% \end{lstlisting}
+
+% TODO: Revisar/leer reemplaza los dos coidigos
+\begin{algorithm}[H]
+\caption{Estandarización y limpieza de predicciones}
+\label{alg:estandarizacion_limpieza_predicciones}
+\begin{algorithmic}[1]
+\Require Predicciones de un método $Y_{pred}$, pares evaluados $X$, etiquetas reales $Y$
+\Ensure Predicciones y etiquetas en formato común
+\State Inicializar listas vacías $X'$, $Y'$, $Y'_{pred}$
+\For{cada predicción $p_i$ asociada al par $x_i$}
+    \State Convertir $p_i$ al esquema estándar de etiquetas
+    \If{$p_i$ corresponde a una relación válida}
+        \State Agregar $x_i$ a $X'$
+        \State Agregar su etiqueta real a $Y'$
+        \State Agregar la predicción convertida a $Y'_{pred}$
+    \EndIf
+\EndFor
+\State Retornar $X'$, $Y'$, $Y'_{pred}$
+\end{algorithmic}
+\end{algorithm}
+El Algoritmo~\ref{alg:estandarizacion_limpieza_predicciones} resume la etapa de normalización de las salidas de los distintos métodos del benchmark. En la implementación concreta, 
+el mapeo exacto depende del formato particular de salida de cada algoritmo, por lo que algunas 
+etiquetas deben transformarse y otras descartarse. 
+Posteriormente, también se eliminan aquellas inferencias cuya existencia no puede ser validada en el conjunto de evaluación, con el fin de asegurar una comparación homogénea entre métodos. Los extractos de implementación asociados a esta etapa se incluyen en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Códigos~\ref{anxcode:transformacion_estandar_gao} y~\ref{anxcode:limpieza_valores_no_encontrados}.
 
 
-Junto a la transformación del formato, se verifica la existencia de cada relación inferida en el dataset de evaluación y se eliminan aquellas relaciones cuya existencia no pudo ser validada en el dataset de evaluación (Código~\ref{code:limpieza_valores_no_encontrados}).\\
+Junto a la transformación del formato, se verifica la existencia de cada relación inferida en el dataset de evaluación y se eliminan aquellas relaciones cuya existencia no pudo ser validada en el dataset de evaluación. Un extracto del código utilizado para esta limpieza se presenta en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:limpieza_valores_no_encontrados}.\\
 
 
-\begin{lstlisting}[language=Python, caption=Ejemplo de código para la limpieza de relaciones cuyo valor ground truth no fue encontrado en el dataset de evaluación., label=code:limpieza_valores_no_encontrados]
-# Valores Ground Truth
-x_test_cleaned = np.asarray([np.asarray(x_test[i]) for i in range(len(x_test)) if y_test_prediction[i] != -1]) # x_test en las relaciones cuyo label es -1
-y_test_cleaned = np.asarray([y_test[i] for i in range(len(y_test)) if y_test_prediction[i] != -1])
+% \begin{lstlisting}[language=Python, caption=Ejemplo de código para la limpieza de relaciones cuyo valor ground truth no fue encontrado en el dataset de evaluación., label=code:limpieza_valores_no_encontrados]
+% # Valores Ground Truth
+% x_test_cleaned = np.asarray([np.asarray(x_test[i]) for i in range(len(x_test)) if y_test_prediction[i] != -1]) # x_test en las relaciones cuyo label es -1
+% y_test_cleaned = np.asarray([y_test[i] for i in range(len(y_test)) if y_test_prediction[i] != -1])
 
-# Valor Predicho
-y_test_prediction_cleaned = np.asarray([y_test_prediction[i] for i in range(len(y_test_prediction)) if y_test_prediction[i] != -1])
-\end{lstlisting}
+% # Valor Predicho
+% y_test_prediction_cleaned = np.asarray([y_test_prediction[i] for i in range(len(y_test_prediction)) if y_test_prediction[i] != -1])
+% \end{lstlisting}
 
 
 
@@ -497,62 +622,94 @@ Aunque se contaba con el repositorio con el uso de BGP2Vec para la tarea especí
 
 Ante esta situación, lo primero que se hizo fue estudiar el flujo interno de la clase \texttt{BGP2Vec} para entender, a grandes rasgos, su funcionamiento general, especialmente sus entradas y salidas. A partir de esto, se identificó que \texttt{BGP2Vec} requiere como entrada un archivo con un formato específico, distinto al utilizado en los demás métodos del \textit{benchmark}. Por esta razón, se modificó el código para que pudiera recibir como entrada el archivo \texttt{sanitized\_ribs.txt} y a partir de este generar y entrenar las representaciones vectoriales de los ASes.\\
 
+% TODO: revisar/leer (se reemplaza este código por de los siguients hartos )
+% Por lso que estan en parentesis de la forma (x)
+%
+\begin{algorithm}[H]
+\caption{Integración de BGP2Vec y mapeo de ASNs a índices}
+\label{alg:bgp2vec_integracion}
+\begin{algorithmic}[1]
+\Require Rutas BGP $R$, pares etiquetados de entrenamiento y prueba
+\Ensure Embeddings y conjuntos mapeados a índices internos
+\State Inicializar BGP2Vec con las rutas $R$ y los parámetros de entrenamiento
+\State Entrenar el modelo para obtener embeddings de ASes
+\State Construir diccionario $\texttt{asn\_to\_index}$
+\For{cada par $(a,b)$ del conjunto de entrenamiento}
+    \If{$a$ y $b$ existen en $\texttt{asn\_to\_index}$}
+        \State Reemplazar $(a,b)$ por sus índices internos
+        \State Guardar el par transformado y su etiqueta
+    \EndIf
+\EndFor
+\For{cada par $(a,b)$ del conjunto de prueba}
+    \If{$a$ y $b$ existen en $\texttt{asn\_to\_index}$}
+        \State Reemplazar $(a,b)$ por sus índices internos
+        \State Guardar el par transformado y su etiqueta
+    \EndIf
+\EndFor
+\State Guardar embeddings y conjuntos transformados
+\end{algorithmic}
+\end{algorithm}
 
-\begin{lstlisting}[language=Python, caption=Ejemplo de inicialización de BGP2Vec, label=code:formato_sanitized_rib]
-bgp2vec = BGP2VEC(model_path = MODELS_PATH,
-                  bgp_routes = bgp_routes,
-                  rewrite = True,
-                  test_limit = test_limit,
-                  mode = mode,
-                  epochs = epochs)
+% TODO: revisar/leer 
+El Algoritmo~\ref{alg:bgp2vec_integracion} resume la adaptación de BGP2Vec al flujo experimental de esta tesis. En la implementación real, fue necesario modificar la entrada del método para trabajar directamente con el archivo \texttt{sanitized\_ribs.txt}, además de crear un diccionario que asociara cada ASN con un índice interno, ya que el modelo opera sobre identificadores enteros y no directamente sobre los números de Sistema Autónomo. En esta etapa también se filtran aquellos pares para los cuales alguno de los ASNs no posee representación aprendida. Los fragmentos concretos de inicialización y mapeo pueden consultarse en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Códigos~\ref{anxcode:bgp2vec_init} y~\ref{anxcode:bgp2vec_mapping}.
+
+
+% (1)
+% \begin{lstlisting}[language=Python, caption=Ejemplo de inicialización de BGP2Vec, label=code:formato_sanitized_rib]
+% bgp2vec = BGP2VEC(model_path = MODELS_PATH,
+%                   bgp_routes = bgp_routes,
+%                   rewrite = True,
+%                   test_limit = test_limit,
+%                   mode = mode,
+%                   epochs = epochs)
                    
-\end{lstlisting}
+% \end{lstlisting}
 
 Un segundo problema que se tuvo al trabajar con \texttt{BGP2Vec} fue que el código original estaba implementado con \texttt{Keras} y \texttt{TensorFlow}, mientras que nosotros 
 estábamos más familiarizados con \texttt{PyTorch}, dado que la biblioteca \texttt{DGL} utilizada en nuestro proyecto está basada en este último. Otro inconveniente que se presentó fue darse cuenta de que el identificador (\texttt{id}) que se pasa a la Red Neuronal no corresponde directamente al ASN (Autonomous System Number). Es decir, los modelos de embeddings trabajan con índices, no con los números de los sistemas autónomos. Para resolver esto se tuvo que crear un diccionario propio que mapease correctamente cada ASN con su correspondiente \texttt{id} interno, permitiéndonos así correr el modelo correctamente.\\
 
 
+% (2)
+% \begin{lstlisting}[language=Python, caption=Ejemplo de mapeo de ASN a índices para entrenamiento y prueba en BGP2Vec., label=code:formato_sanitized_rib]
+% # ASN a índice -> x_training y x_test
+% x_training_mapped = []
+% y_training_filtered = []
 
-\begin{lstlisting}[language=Python, caption=Ejemplo de mapeo de ASN a índices para entrenamiento y prueba en BGP2Vec., label=code:formato_sanitized_rib]
-# ASN a índice -> x_training y x_test
-x_training_mapped = []
-y_training_filtered = []
+% # Recorrer pares (asn, asn) y agregar sólo los válidos
+% for (a, b), y in zip(x_training, y_training):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-# Recorrer pares (asn, asn) y agregar sólo los válidos
-for (a, b), y in zip(x_training, y_training):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
-
-    # Ignorar si índice es 0 
-    if a_index == 0 or b_index == 0:
-        continue
+%     # Ignorar si índice es 0 
+%     if a_index == 0 or b_index == 0:
+%         continue
     
-    x_training_mapped.append([a_index, b_index])
-    y_training_filtered.append(y)
+%     x_training_mapped.append([a_index, b_index])
+%     y_training_filtered.append(y)
 
-# Convertir listas a arrays de NumPy
-x_training_mapped = np.array(x_training_mapped)
-y_training_filtered = np.array(y_training_filtered)
+% # Convertir listas a arrays de NumPy
+% x_training_mapped = np.array(x_training_mapped)
+% y_training_filtered = np.array(y_training_filtered)
 
-# ---------------------------------------------------------------------------
+% # ---------------------------------------------------------------------------
 
-x_test_mapped = []
-y_test_filtered = []
+% x_test_mapped = []
+% y_test_filtered = []
 
-for (a, b), y in zip(x_test, y_test):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
+% for (a, b), y in zip(x_test, y_test):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-    # Ignorar si índice es 0 
-    if a_index == 0 or b_index == 0:
-        continue
+%     # Ignorar si índice es 0 
+%     if a_index == 0 or b_index == 0:
+%         continue
     
-    x_test_mapped.append([a_index, b_index])
-    y_test_filtered.append(y)
+%     x_test_mapped.append([a_index, b_index])
+%     y_test_filtered.append(y)
 
-x_test_mapped = np.array(x_test_mapped)
-y_test_filtered = np.array(y_test_filtered)
-\end{lstlisting}
+% x_test_mapped = np.array(x_test_mapped)
+% y_test_filtered = np.array(y_test_filtered)
+% \end{lstlisting}
 
 % \subsection{Ejecución del Benchmark}
 
@@ -585,10 +742,12 @@ Una vez obtenida la información correspondiente a la topología de Internet a n
 
 Se parte del archivo \texttt{sanitized\_rib.txt}, el cual, como se ha mencionado previamente, contiene las rutas  \texttt{AS\_PATH}. Cada línea del archivo representa una secuencia de ASNs que indica el camino que sigue un paquete para llegar a un prefijo determinado. Un ejemplo es el caso mostrado en el Código~\ref{code:formato_sanitized_rib_0}.\\
 
-
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[language={Python}, caption={Ejemplo Línea del archivo sanitized\_rib.txt}, label={code:formato_sanitized_rib_0}]
 ASN1|ASN2|ASN3|ASN4
 \end{lstlisting}
+}
 
 Esto significa que para alcanzar un prefijo específico, un paquete debe atravesar los ASes listados en ese orden: primero pasar por ASN1, luego ASN2, ASN3 y finalmente ASN4, quien internamente se encarga de entregar el paquete al destino final. De esta manera, se puede decir que AS1 está conectado con ASN2 y ASN2 con ASN3 y ASN3 con ASN4. La Figura~\ref{fig:aspath_eejmplo_saltos} ilustra gráficamente cómo se representa esta ruta como una secuencia de saltos entre nodos del grafo.\\
 
@@ -603,11 +762,12 @@ Esto significa que para alcanzar un prefijo específico, un paquete debe atraves
 
 
 Porque la existencia de una ruta en una dirección (por ejemplo, de ASN1 a ASN4) no garantiza que el camino inverso exista o sea utilizado. Aunque en la práctica la comunicación IP requiere que haya retorno, BGP no asegura que ese camino de vuelta sea idéntico. Para que se asuma bidireccionalidad, se debe observar también el AS\_PATH inverso explícitamente en el archivo, es decir:\\
-
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[language=Python, caption=Ejemplo del camino inverso, label=code:formato_sanitized_rib_alreves]
 ASN4|ASN3|ASN2|ASN1
 \end{lstlisting}
-
+}
 
 La Figura~\ref{fig:aspath_ejemplos} muestra dos escenarios: (a) cuando se observa la ruta inversa, lo que indica que existe el mismo camino en sentido contrario, y (b) cómo se vería el grafo cuando se observan ambas rutas, permitiendo inferir conexión bidireccional entre los ASes.\\
 
@@ -666,48 +826,78 @@ La biblioteca DGL es una biblioteca diseñada para el fácil uso y manipulación
 
 Un extracto del contenido de los archivos \textbf{edges.csv} (Código~\ref{code:contenido_edges}) y \textbf{nodes.csv} (Código~\ref{code:contenido_nodes}) se puede ver a continuación. En el primer caso, se incluyen cuatro columnas: la primera indica a qué grafo pertenece la adyacencia, las dos siguientes corresponden a los ASN (Autonomous System Number, por sus siglas en inglés) que representan la existencia de una relación direccional entre dos ASes, y la cuarta columna señala el tipo de relación que comparten, según el formato definido en~\ref{code:formato_out_benchmark}. En cuanto al segundo archivo, contiene tres columnas: la primera identifica el grafo al que pertenece el nodo, la segunda a un identificador del nodo (en este caso, el ASN del Sistema Autónomo) y la tercera columna almacena un string con todos los atributos asociados a dicho nodo, separados por una coma.\\
 
-
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[language=Python, caption=Extracto contenido archivo edges.csv, label=code:contenido_edges]
 graph_id,src_id,dst_id, Relationship
 0,28792,6939,0
 0,28792,3257,1
 0,28792,9318,0
 \end{lstlisting}
+}
 
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[language=Python, caption=Extracto contenido archivo nodes.csv, label=code:contenido_nodes]
 graph_id,node_id,feat
 0,28792,"0.2842043341251542, 0.2928342377832154, 0.3340535381175178, 0.2554473035666517, 0.0, 0.0, 1.0, 0.0, ... ,
 ...
 \end{lstlisting}
-
+}
 
 % Explciar el codigo de crear grafo la clase q crea primero el grafo despeus agrega los attr pero esa se demora pero guaad en libreia dgl pero despues dse llama y es super rapdio ocuapr el grafo
 
-Como se explicó previamente, leer los archivos RIBs toma tiempo, y hacerlo repetidamente no es eficiente. Por esta razón, se optó por utilizar el formato de almacenamiento descrito anteriormente (formato de \textit{datasets} de la biblioteca DGL). Sin embargo, una vez generado el archivo \texttt{sanitized\_rib.txt}, es necesario recorrerlo al menos una vez línea por línea para poder construir los tres archivos descritos (\texttt{nodes.csv}, \texttt{edges.csv} y \texttt{meta.yaml}). Para facilitar este proceso se creó una clase específica encargada de crear el grafo~\ref{code:cclase_graph}.\\
+Como se explicó previamente, leer los archivos RIBs toma tiempo, y hacerlo repetidamente no es eficiente. Por esta razón, se optó por utilizar el formato de almacenamiento descrito anteriormente (formato de \textit{datasets} de la biblioteca DGL). Sin embargo, una vez generado el archivo \texttt{sanitized\_rib.txt}, es necesario recorrerlo al menos una vez línea por línea para poder construir los tres archivos descritos (\texttt{nodes.csv}, \texttt{edges.csv} y \texttt{meta.yaml}). Para facilitar este proceso se creó una clase específica encargada de crear el grafo, cuyo extracto de implementación se muestra en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:graph_class}.\\
 
-\begin{lstlisting}[language=Python, caption=Extracto clase Graph encargada de la construcción de la creación de archivos formato DGL. , label=code:cclase_graph]
-class Graph:
-    def __init__(self,dataset_graph_path ,max_paths,debug = False):
-        self.debug = debug
-        self.nx_graph = None
-        self.data_path = dataset_graph_path
+% \begin{lstlisting}[language=Python, caption=Extracto clase Graph encargada de la construcción de la creación de archivos formato DGL. , label=code:cclase_graph]
+% class Graph:
+%     def __init__(self,dataset_graph_path ,max_paths,debug = False):
+%         self.debug = debug
+%         self.nx_graph = None
+%         self.data_path = dataset_graph_path
         
-    def create_topology_from_ribs(self, rib_filename:str,filename_out="edges.csv"):
-        ...
-    def features_nodes(self,features_filename,filename_out="nodes.csv"):
-        ...
-    def remove_nodes_degree(self, degree,filename_out="edges.csv"):
-        ...
-...
-\end{lstlisting}
+%     def create_topology_from_ribs(self, rib_filename:str,filename_out="edges.csv"):
+%         ...
+%     def features_nodes(self,features_filename,filename_out="nodes.csv"):
+%         ...
+%     def remove_nodes_degree(self, degree,filename_out="edges.csv"):
+%         ...
+% ...
+% \end{lstlisting}
 
-\newpage
+% TODO: revisar/leer
+\begin{algorithm}[H]
+\caption{Construcción del grafo de Internet en formato DGL}
+\label{alg:construccion_grafo_dgl}
+\begin{algorithmic}[1]
+\Require Archivo de rutas sanitizadas, archivo de atributos de nodos
+\Ensure Archivos \texttt{edges.csv}, \texttt{nodes.csv}, \texttt{graphs.csv} y \texttt{meta.yaml}
+\State Inicializar grafo vacío $G$
+\For{cada ruta del archivo de entrada}
+    \State Obtener la secuencia de ASes del \texttt{AS\_PATH}
+    \For{cada par adyacente de ASes}
+        \State Agregar arista dirigida al grafo
+        \State Registrar los nodos involucrados
+    \EndFor
+\EndFor
+\State Incorporar atributos a los nodos desde el archivo correspondiente
+\If{se desea simplificar la topología}
+    \State Eliminar nodos según el criterio de grado definido
+\EndIf
+\State Exportar la estructura y atributos en formato compatible con DGL
+\end{algorithmic}
+\end{algorithm}
+El Algoritmo~\ref{alg:construccion_grafo_dgl} resume la creación del dataset del grafo de Internet a partir de las rutas BGP sanitizadas. En el código real, esta lógica fue encapsulada en una clase que permite crear la topología base, incorporar atributos a los nodos y aplicar operaciones de simplificación, como la eliminación iterativa de nodos hoja. Finalmente, el resultado se exporta en los archivos requeridos por el formato de datasets de DGL. Un extracto de esta implementación se incluye en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:graph_class}.
+
+
 Esta clase se encarga primero de crear la topología del grafo, es decir, leer el archivo con las RIBs y generar los archivos \textbf{edges.csv} y \textbf{nodes.csv}. Una vez construida la estructura base, la clase cuenta con distintos métodos que permiten agregar atributos a los nodos según los experimentos realizados (Sección~\ref{sec:gnn_result_section}). Algunos ejemplos de atributos utilizados son métricas de centralidad como el grado del nodo, el uso del dataset mencionado previamente que ya contenía atributos para ASes en una fecha específica (detallados en la Tabla~\ref{tab:as_attr_tabla_bechmark}) , y también un conjunto de atributos generado por nosotros para otras fechas, adaptado a las necesidades del estudio (detallado en Tabla~\ref{tab:as_attr_tabla} ) .\\
  
 Por último, se incluyó en el código la opción de eliminar nodos cuyo grado sea igual a un valor especificado, con el objetivo de remover nodos hoja (es decir, aquellos con grado igual a 1) que se ubican en la periferia del grafo de Internet. Esta operación puede repetirse durante una cantidad determinada de iteraciones, lo que permite simplificar la topología del grafo según los requerimientos de los distintos experimentos realizados.\\
 
 Una vez ejecutado el bloque de código, se obtiene la siguiente estructura de carpetas y archivos, como se muestra en la Figura~\ref{repo_grap_dataset}:\\
 
+{
+\renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[basicstyle=\ttfamily,label=repo_grap_dataset ,frame=single, caption=Estructura del repositorio del \textit{benchmark}]
 dgl_graph/
     graphs.csv
@@ -715,6 +905,7 @@ dgl_graph/
     edges.csv
     meta.yaml
 \end{lstlisting}
+}
 
 Como se mencionó en la Sección~\ref{sec:obtencion_datos_section}, en un comienzo se trabajó únicamente con los atributos de ASes extraídos del dataset utilizado en el trabajo de Giakatos et al.~\cite{BenchmarkingGNN}. Para poder utilizar esta información de manera adecuada, se desarrolló un código automatizado que permitiera identificar la fecha a la que correspondían dichos atributos. Esto se logró comparando la topología de Internet utilizada en el estudio con las topologías disponibles en el repositorio de CAIDA\cite{CAIDAS-relationship} (mismo repositorio con el que este estudio trabajó), correspondientes a diferentes fechas.\\
 
@@ -722,46 +913,47 @@ Para ello, se descargaron los archivos de CAIDA que contienen las conexiones ent
 
 Más adelante en el trabajo, cuando se contó con un mayor conocimiento sobre los Sistemas Autónomos, así como sobre los distintos \textit{datasets} y fuentes de información pública disponibles en Internet sobre el tema, se decidió construir un conjunto propio de atributos de ASes. Esto con el objetivo de analizar y evaluar si tenían un impacto significativo en los resultados obtenidos durante los experimentos, además de evitar la limitación de fecha que se tenía para los experimentos.\\
 
-\begin{lstlisting}[language=Python, caption=Ejemplo de mapeo de ASN a índices para entrenamiento y prueba en BGP2Vec., label=code:formato_sanitized_rib]
-# ASN a índice -> x_training y x_test
-x_training_mapped = []
-y_training_filtered = []
+% (3)
+% \begin{lstlisting}[language=Python, caption=Ejemplo de mapeo de ASN a índices para entrenamiento y prueba en BGP2Vec., label=code:formato_sanitized_rib]
+% # ASN a índice -> x_training y x_test
+% x_training_mapped = []
+% y_training_filtered = []
 
-# Recorrer pares (asn, asn) y agregar sólo los válidos
-for (a, b), y in zip(x_training, y_training):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
+% # Recorrer pares (asn, asn) y agregar sólo los válidos
+% for (a, b), y in zip(x_training, y_training):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-    # Ignorar si índice es 0 
-    if a_index == 0 or b_index == 0:
-        continue
+%     # Ignorar si índice es 0 
+%     if a_index == 0 or b_index == 0:
+%         continue
     
-    x_training_mapped.append([a_index, b_index])
-    y_training_filtered.append(y)
+%     x_training_mapped.append([a_index, b_index])
+%     y_training_filtered.append(y)
 
-# Convertir listas a arrays de NumPy
-x_training_mapped = np.array(x_training_mapped)
-y_training_filtered = np.array(y_training_filtered)
+% # Convertir listas a arrays de NumPy
+% x_training_mapped = np.array(x_training_mapped)
+% y_training_filtered = np.array(y_training_filtered)
 
-# ---------------------------------------------------------------------------
+% # ---------------------------------------------------------------------------
 
-x_test_mapped = []
-y_test_filtered = []
+% x_test_mapped = []
+% y_test_filtered = []
 
-for (a, b), y in zip(x_test, y_test):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
+% for (a, b), y in zip(x_test, y_test):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-    # Ignorar si índice es 0 
-    if a_index == 0 or b_index == 0:
-        continue
+%     # Ignorar si índice es 0 
+%     if a_index == 0 or b_index == 0:
+%         continue
     
-    x_test_mapped.append([a_index, b_index])
-    y_test_filtered.append(y)
+%     x_test_mapped.append([a_index, b_index])
+%     y_test_filtered.append(y)
 
-x_test_mapped = np.array(x_test_mapped)
-y_test_filtered = np.array(y_test_filtered)
-\end{lstlisting}
+% x_test_mapped = np.array(x_test_mapped)
+% y_test_filtered = np.array(y_test_filtered)
+% \end{lstlisting}
 
 
 \subsection{Atributos extraídos de PeeringDB} \label{sec:Atributos_extraidos_PeeringDB}
@@ -770,7 +962,7 @@ Para la obtención de atributos para los Sistemas Autónomos se utilizaron los d
 
 %este análisis se encuentra en el Anexo~\ref{sec:estudio_attr_peeringdb_anexo}
 
-Para decidir los atributos más relevantes para este trabajo, primero se realizó un análisis exploratorio de los datos disponibles en PeringDB, con el objetivo de comprender el tipo de información ofrecida y su posible utilidad para la tarea de inferencia (este estudio se encuentra detallado en el Anexo~\ref{sec:anexo_exploracion_datos_peeringdb}). Luego, se llevó a cabo la preparación de los datos, que incluyó la limpieza del conjunto de datos y el tratamiento de atributos faltantes. En esta etapa, se identificaron dos tipos principales de atributos: numéricos y categóricos.\\
+Para decidir los atributos más relevantes para este trabajo, primero se realizó un análisis exploratorio de los datos disponibles en PeeringDB, con el objetivo de comprender el tipo de información ofrecida y su posible utilidad para la tarea de inferencia (este estudio se encuentra detallado en el Anexo~\ref{sec:anexo_exploracion_datos_peeringdb}). Luego, se llevó a cabo la preparación de los datos, que incluyó la limpieza del conjunto de datos y el tratamiento de atributos faltantes. En esta etapa, se identificaron dos tipos principales de atributos: numéricos y categóricos.\\
 
 
 
@@ -865,49 +1057,75 @@ Las arquitecturas de GNNs que se utilizaron fueron: GCN (Graph Convolutional Net
 
 
 
-En el Codigo~\ref{code:modelo_gcn} correspondiente a una clase que implementa un modelo basado en GCN. En este ejemplo, el método \textit{encode} realiza el forward pass, correspondiente a las dos capas GNN, mientras que los métodos \textit{decodeDotProduct}, \textit{decodeMLP} y \textit{decodeBilinear} actúan como \textit{decoders}.\\
+El Algoritmo~\ref{alg:gnn_encoder_decoder} resume una clase representativa de un modelo basado en GCN. En este ejemplo, el método \textit{encode} realiza el \textit{forward pass} de las capas GNN, mientras que los métodos \textit{decodeDotProduct}, \textit{decodeMLP} y \textit{decodeBilinear} actúan como \textit{decoders}.\\
 
-\begin{lstlisting}[language=Python, caption=Ejemplo modelo GraphSAGE , label=code:modelo_gcn]
-class GCN(nn.Module):
-    def __init__(self, in_feats, hidden_feats, out_feats, out_feats_mlp=1, drop=0.3):
-        super().__init__()
-        self.conv1 = GraphConv(in_feats, hidden_feats)
-        self.conv2 = GraphConv(hidden_feats, out_feats)
+% \begin{lstlisting}[language=Python, caption=Ejemplo modelo GraphSAGE , label=code:modelo_gcn]
+% class GCN(nn.Module):
+%     def __init__(self, in_feats, hidden_feats, out_feats, out_feats_mlp=1, drop=0.3):
+%         super().__init__()
+%         self.conv1 = GraphConv(in_feats, hidden_feats)
+%         self.conv2 = GraphConv(hidden_feats, out_feats)
     
-        self.MLP = MLPPredictor(out_feats,out_feats_mlp)
-        self.BilinearDecoder = BilinearPredictor(out_feats, 3)
-        self.regressor = nn.Linear(out_feats, 1)
-        self.drop  = nn.Dropout(drop)           
+%         self.MLP = MLPPredictor(out_feats,out_feats_mlp)
+%         self.BilinearDecoder = BilinearPredictor(out_feats, 3)
+%         self.regressor = nn.Linear(out_feats, 1)
+%         self.drop  = nn.Dropout(drop)           
 
 
-    def encode(self, g, x):
-        g = dgl.add_self_loop(g)
-        h = self.drop(F.relu(self.conv1(g, x)))  
-        h = self.conv2(g, h)                     
-        return h
+%     def encode(self, g, x):
+%         g = dgl.add_self_loop(g)
+%         h = self.drop(F.relu(self.conv1(g, x)))  
+%         h = self.conv2(g, h)                     
+%         return h
 
     
-    def decodeDotProduct(self, g, h):
-        with g.local_scope():
-            g.ndata["h"] = h
-            # Compute a new edge feature named 'score' by a dot-product between the
-            # source node feature 'h' and destination node feature 'h'.
-            g.apply_edges(fn.u_dot_v("h", "h", "score"))
-            # u_dot_v returns a 1-element vector for each edge so you need to squeeze it.
-            return g.edata["score"][:, 0]
+%     def decodeDotProduct(self, g, h):
+%         with g.local_scope():
+%             g.ndata["h"] = h
+%             # Compute a new edge feature named 'score' by a dot-product between the
+%             # source node feature 'h' and destination node feature 'h'.
+%             g.apply_edges(fn.u_dot_v("h", "h", "score"))
+%             # u_dot_v returns a 1-element vector for each edge so you need to squeeze it.
+%             return g.edata["score"][:, 0]
         
-    def decodeMLP(self, g, h):
-        return self.MLP(g, h)  
+%     def decodeMLP(self, g, h):
+%         return self.MLP(g, h)  
     
-    def decodeBilinear(self, g, h):
-        return self.BilinearDecoder(g, h)
+%     def decodeBilinear(self, g, h):
+%         return self.BilinearDecoder(g, h)
 
-    def forward(self, g, x):
-        h = self.encode(g, x)  # Embeddings
-        out = self.regressor(h).squeeze(-1)  # Predicción final
-        return out 
+%     def forward(self, g, x):
+%         h = self.encode(g, x)  # Embeddings
+%         out = self.regressor(h).squeeze(-1)  # Predicción final
+%         return out 
         
-\end{lstlisting}
+% \end{lstlisting}
+
+% TODO: revisar/leer
+\begin{algorithm}[H]
+\caption{Esquema general de un modelo GNN encoder--decoder}
+\label{alg:gnn_encoder_decoder}
+\begin{algorithmic}[1]
+\Require Grafo $G$, atributos de nodos $X$
+\Ensure Embeddings de nodos o predicciones sobre nodos/aristas
+\State Agregar auto-conexiones al grafo
+\State Aplicar una primera capa GNN sobre $(G, X)$
+\State Aplicar función de activación y \textit{dropout}
+\State Aplicar una segunda capa GNN para obtener embeddings $H$
+\If{la tarea usa decodificador por producto punto}
+    \State Calcular puntajes sobre aristas a partir de $H$
+\ElsIf{la tarea usa decodificador MLP}
+    \State Predecir usando una MLP sobre pares de embeddings
+\ElsIf{la tarea usa decodificador bilineal}
+    \State Predecir usando una transformación bilineal
+\Else
+    \State Aplicar una capa lineal para predicción nodal
+\EndIf
+\State Retornar embeddings o predicciones
+\end{algorithmic}
+\end{algorithm}
+El Algoritmo~\ref{alg:gnn_encoder_decoder} sintetiza la estructura general de los modelos GNN utilizados en esta tesis bajo un esquema encoder--decoder. En la implementación concreta se definieron capas específicas según la arquitectura elegida (por ejemplo, GCN, GraphSAGE o GAT), además de distintos decodificadores para adaptarse a tareas de predicción de enlaces, clasificación de relaciones o predicción de atributos nodales. El código también incorpora operaciones propias de DGL para aplicar funciones sobre las aristas y manipular los atributos internos del grafo. Un ejemplo representativo puede consultarse en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:modelo_gcn}.
+
 
 Cabe mencionar que en el entrenamiento en Redes Neuronales de Grafos existen diferentes modalidades para entrenar un modelo, dependiendo de cómo se utilicen los nodos y el grafo durante el entrenamiento e inferencia.\\
 
@@ -1078,98 +1296,137 @@ Para la segunda etapa correspondiente a la predicción de relaciones, se utiliz�
 
 
 
-Dado que los modelos de embeddings trabajan con IDs en lugar de valores simbólicos como los ASN (forma en que nuestro dataset ToR era identificado), se tuvo que adaptar el conjunto de entrenamiento y prueba. Específicamente, se mapeó cada ASN a un ID utilizando un diccionario que se creó previamente en el trabajo, si alguno de los ASN no era encontrado en dicho diccionario (es decir, no tenía un ID asociado), el nodo era descartado del conjunto (Código~\ref{code:mapeo_asn_id}).\\
+Dado que los modelos de embeddings trabajan con IDs en lugar de valores simbólicos como los ASN (forma en que nuestro dataset ToR era identificado), se tuvo que adaptar el conjunto de entrenamiento y prueba. Específicamente, se mapeó cada ASN a un ID utilizando un diccionario que se creó previamente en el trabajo; si alguno de los ASN no era encontrado en dicho diccionario, el nodo era descartado del conjunto. El código de esta etapa se incluye en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:mapeo_asn_id}.\\
 
 
 
 %, si alguno de los ASN no se encontraba en los conjuntos, no se encontraba presente en el diccionario (es decir, no tenía un ID asociado); este ejemplo se descartaba del conjunto (Código~\ref{code:mapeo_asn_id}). \\
 
 
+% (4)
+% \begin{lstlisting}[language=Python, basicstyle=\ttfamily\footnotesize, label=code:mapeo_asn_id, frame=single, caption={Modelo CNN utilizado en el enfoque BGP2VEC para clasificación de relaciones AS.}]
+% # Mapeo de ASN a índices para conjuntos de entrenamiento
+% x_training_mapped = []
+% y_training_filtered = []
 
-\begin{lstlisting}[language=Python, basicstyle=\ttfamily\footnotesize, label=code:mapeo_asn_id, frame=single, caption={Modelo CNN utilizado en el enfoque BGP2VEC para clasificación de relaciones AS.}]
-# Mapeo de ASN a índices para conjuntos de entrenamiento
-x_training_mapped = []
-y_training_filtered = []
+% # Recorrer cada par (asn, asn) en entrenamiento y filtrar válidos
+% for (a, b), y in zip(x_training, y_training):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-# Recorrer cada par (asn, asn) en entrenamiento y filtrar válidos
-for (a, b), y in zip(x_training, y_training):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
+%     # Ignorar si alguno de los índices es 0 (no mapeado)
+%     if a_index == 0 or b_index == 0:
+%         continue
 
-    # Ignorar si alguno de los índices es 0 (no mapeado)
-    if a_index == 0 or b_index == 0:
-        continue
+%     x_training_mapped.append([a_index, b_index])
+%     y_training_filtered.append(y)
 
-    x_training_mapped.append([a_index, b_index])
-    y_training_filtered.append(y)
+% # Convertir a arreglos NumPy
+% x_training_mapped = np.array(x_training_mapped)
+% y_training_filtered = np.array(y_training_filtered)
 
-# Convertir a arreglos NumPy
-x_training_mapped = np.array(x_training_mapped)
-y_training_filtered = np.array(y_training_filtered)
+% # ---------------------------------------------------------------------------
+% # Mismo proceso para el conjunto de prueba
+% x_test_mapped = []
+% y_test_filtered = []
 
-# ---------------------------------------------------------------------------
-# Mismo proceso para el conjunto de prueba
-x_test_mapped = []
-y_test_filtered = []
+% for (a, b), y in zip(x_test, y_test):
+%     a_index = asn_to_index.get(str(a), 0)
+%     b_index = asn_to_index.get(str(b), 0)
 
-for (a, b), y in zip(x_test, y_test):
-    a_index = asn_to_index.get(str(a), 0)
-    b_index = asn_to_index.get(str(b), 0)
+%     if a_index == 0 or b_index == 0:
+%         continue
 
-    if a_index == 0 or b_index == 0:
-        continue
+%     x_test_mapped.append([a_index, b_index])
+%     y_test_filtered.append(y)
 
-    x_test_mapped.append([a_index, b_index])
-    y_test_filtered.append(y)
+% x_test_mapped = np.array(x_test_mapped)
+% y_test_filtered = np.array(y_test_filtered)
 
-x_test_mapped = np.array(x_test_mapped)
-y_test_filtered = np.array(y_test_filtered)
+% # Guardar los datos procesados
+% np.save(PATH + DATA + "x_training_mapped.npy", x_training_mapped)
+% np.save(PATH + DATA + "y_training_filtered.npy", y_training_filtered)
+% np.save(PATH + DATA + "x_test_mapped.npy", x_test_mapped)
+% np.save(PATH + DATA + "y_test_filtered.npy", y_test_filtered)
+% \end{lstlisting}
 
-# Guardar los datos procesados
-np.save(PATH + DATA + "x_training_mapped.npy", x_training_mapped)
-np.save(PATH + DATA + "y_training_filtered.npy", y_training_filtered)
-np.save(PATH + DATA + "x_test_mapped.npy", x_test_mapped)
-np.save(PATH + DATA + "y_test_filtered.npy", y_test_filtered)
-\end{lstlisting}
+% TODO: revisar/leer
+\begin{algorithm}[H]
+\caption{Clasificación de relaciones entre ASes usando una CNN sobre embeddings}
+\label{alg:cnn_relaciones_as_resumen}
+\begin{algorithmic}[1]
+\Require Pares de ASes representados por índices, matriz de embeddings
+\Ensure Predicción de la relación entre pares de ASes
+\State Obtener embeddings asociados a cada par de entrada
+\State Aplicar una primera capa convolucional
+\State Aplicar una operación de \textit{pooling}
+\State Aplicar una segunda capa convolucional
+\State Aplicar una nueva operación de \textit{pooling}
+\State Aplanar la representación resultante
+\State Aplicar una capa densa intermedia
+\State Aplicar una capa final con \textit{softmax}
+\State Retornar la clase predicha
+\end{algorithmic}
+\end{algorithm}
+El Algoritmo~\ref{alg:cnn_relaciones_as_resumen} resume la arquitectura empleada para clasificar relaciones entre ASes a partir de embeddings previamente generados. En el código real se especifican detalles adicionales, como la dimensión del vocabulario, el tamaño de los embeddings, la posibilidad de fijar o entrenar la capa \texttt{Embedding}, el número de filtros convolucionales y los reacomodos de dimensión necesarios antes de cada etapa de \textit{pooling}.
 
 
 
 
 La Red Neuronal utilizada en esta etapa fue la misma propuesta en el enfoque BGP2Vec para la clasificación de relaciones entre Sistemas Autónomos. Este modelo se basa en una arquitectura de \textit{Convolutional Neural Network (CNN)}. La entrada corresponde a secuencias de pares de identificadores, correspondientes a los ASN involucrados. Estos IDs son transformados en sus representaciones vectoriales mediante una capa de tipo \textit{Embedding}, la cual puede estar fija (no entrenable) o entrenarse junto al modelo, dependiendo del experimento. Luego, se aplican capas convolucionales para extraer patrones espaciales en las representaciones, seguidas por capas de \textit{MaxPooling}, \textit{Flatten} y, finalmente, capas densas que concluyen en una función \textit{softmax} para obtener una salida única que corresponde a la clase predicha.\\
 
-\newpage
 A continuación se muestra el código correspondiente a la implementación del modelo:\\
 
 
 
 
 
-\begin{lstlisting}[basicstyle=\ttfamily, label=code:cnn_bgp2vec_model, frame=single, caption=Modelo CNN utilizado en el enfoque BGP2VEC para clasificación de relaciones AS.]
-# Configuración de la red BGP2VEC
-experiment = None
-num_classes = len(class_names)
-embedding_trainable = False
-input_length = 2  # Longitud de la secuencia de entrada
-embedding_vector_length = embeddings.shape[1]  # Dimensión de los vectores de embedding
-total_ASNs = embeddings.shape[0]  # Tamaño del vocabulario (número de ASes)
+% \begin{lstlisting}[basicstyle=\ttfamily, label=code:cnn_bgp2vec_model, frame=single, caption=Modelo CNN utilizado en el enfoque BGP2VEC para clasificación de relaciones AS.]
+% # Configuración de la red BGP2VEC
+% experiment = None
+% num_classes = len(class_names)
+% embedding_trainable = False
+% input_length = 2  # Longitud de la secuencia de entrada
+% embedding_vector_length = embeddings.shape[1]  # Dimensión de los vectores de embedding
+% total_ASNs = embeddings.shape[0]  # Tamaño del vocabulario (número de ASes)
 
-# Definición del modelo
-model = Sequential()
-model.add(Embedding(total_ASNs, embedding_vector_length, input_length=input_length,
-                    weights=[embeddings], trainable=embedding_trainable))
-model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+% # Definición del modelo
+% model = Sequential()
+% model.add(Embedding(total_ASNs, embedding_vector_length, input_length=input_length,
+%                     weights=[embeddings], trainable=embedding_trainable))
+% model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
 
-model.add(Reshape((32, 2)))  # Ajuste necesario de dimensiones para la siguiente capa
-model.add(MaxPooling1D(pool_size=2))
+% model.add(Reshape((32, 2)))  # Ajuste necesario de dimensiones para la siguiente capa
+% model.add(MaxPooling1D(pool_size=2))
 
-model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
-model.add(Reshape((32, 16)))  # Nuevo ajuste de dimensiones
-model.add(MaxPooling1D(pool_size=2))
+% model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+% model.add(Reshape((32, 16)))  # Nuevo ajuste de dimensiones
+% model.add(MaxPooling1D(pool_size=2))
 
-model.add(Flatten())
-model.add(Dense(100, activation='relu'))
-model.add(Dense(num_classes, activation='softmax'))
-\end{lstlisting}
+% model.add(Flatten())
+% model.add(Dense(100, activation='relu'))
+% model.add(Dense(num_classes, activation='softmax'))
+% \end{lstlisting}
+
+% TODO: Revisar/leer
+% \begin{algorithm}[H]
+% \caption{Clasificación de relaciones entre ASes usando una CNN sobre embeddings}
+% \label{alg:cnn_relaciones_as}
+% \begin{algorithmic}[1]
+% \Require Pares de ASes representados por índices, matriz de embeddings
+% \Ensure Predicción de la relación entre pares de ASes
+% \State Obtener embeddings asociados a cada par de entrada
+% \State Aplicar una primera capa convolucional
+% \State Aplicar operación de \textit{pooling}
+% \State Aplicar una segunda capa convolucional
+% \State Aplicar una nueva operación de \textit{pooling}
+% \State Aplanar la representación resultante
+% \State Aplicar una capa densa intermedia
+% \State Aplicar una capa final con \textit{softmax}
+% \State Retornar la clase predicha
+% \end{algorithmic}
+% \end{algorithm}
+El Algoritmo~\ref{alg:cnn_relaciones_as_resumen} sintetiza la arquitectura empleada para clasificar relaciones entre ASes a partir de embeddings previamente generados. En el código real se especifican hiperparámetros concretos, como el tamaño de los filtros, el número de canales, las operaciones de reacomodo de dimensiones y la posibilidad de mantener fija o entrenable la capa de embeddings. La implementación correspondiente se presenta en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:cnn_bgp2vec_model}.
 
 Una breve explicación de las demás capas utilizadas en esta arquitectura, además de las convoluciones:\\
 
@@ -1189,21 +1446,41 @@ Un problema que se conocía desde el inicio, y que se hizo especialmente evident
 
 %Esto también se aprecia en los resultados obtenidos, como se muestra en las Figuras ~\ref{fig:anex:matrices_confusion_experimentos_gnns_decoder}  correspondientes a las matrices de confusión para diferentes experimentos.\\
 
-Para trabajar este problema, se calcularon pesos específicos para cada clase en función de su frecuencia en el conjunto de entrenamiento. Con estos valores se crea un diccionario \texttt{class\_weight\_dict}, el cual se utiliza para ajustar la función de pérdida para las diferentes clases, asignando mayor peso a las clases menos representadas y menor peso a las clases más frecuentes (Código~\ref{code:class_weights_dict}).\\
+Para trabajar este problema, se calcularon pesos específicos para cada clase en función de su frecuencia en el conjunto de entrenamiento. Con estos valores se crea un diccionario \texttt{class\_weight\_dict}, el cual se utiliza para ajustar la función de pérdida para las diferentes clases, asignando mayor peso a las clases menos representadas y menor peso a las clases más frecuentes (Algoritmo~\ref{alg:pesos_clase}).\\
 
-\begin{lstlisting}[basicstyle=\ttfamily, label=code:class_weights_dict, frame=single, caption=Estructura del repositorio de los experimentos para la tarea de inferencia usando GNNs]
-from sklearn.utils import class_weight
-import numpy as np
+% TODO: Revisar/leer
+% \begin{lstlisting}[basicstyle=\ttfamily, label=code:class_weights_dict, frame=single, caption=Estructura del repositorio de los experimentos para la tarea de inferencia usando GNNs]
+% from sklearn.utils import class_weight
+% import numpy as np
 
-class_weights = class_weight.compute_class_weight(
-                    class_weight='balanced', 
-                    classes=np.array(list(range(num_classes))), 
-                    y=y_training_filtered)
+% class_weights = class_weight.compute_class_weight(
+%                     class_weight='balanced', 
+%                     classes=np.array(list(range(num_classes))), 
+%                     y=y_training_filtered)
 
-class_weight_dict = {i: w for i, w in enumerate(class_weights)}
-# {0: 0.49730749665083795, 1: 2.020894588161655, 2: 2.0228938408395782}
-print('[class_weights_dict]:', class_weight_dict)
-\end{lstlisting}
+% class_weight_dict = {i: w for i, w in enumerate(class_weights)}
+% # {0: 0.49730749665083795, 1: 2.020894588161655, 2: 2.0228938408395782}
+% print('[class_weights_dict]:', class_weight_dict)
+% \end{lstlisting}
+% TODO: revisar/leer
+\begin{algorithm}[H]
+\caption{Cálculo de pesos por clase para balanceo}
+\label{alg:pesos_clase}
+\begin{algorithmic}[1]
+\Require Etiquetas del conjunto de entrenamiento $Y$
+\Ensure Diccionario de pesos por clase
+\State Contar la frecuencia de cada clase en $Y$
+\For{cada clase $c$}
+    \State Calcular un peso inversamente proporcional a su frecuencia
+\EndFor
+\State Construir diccionario \texttt{clase} $\rightarrow$ \texttt{peso}
+\State Retornar diccionario de pesos
+\end{algorithmic}
+\end{algorithm}
+
+El Algoritmo~\ref{alg:pesos_clase} resume el procedimiento utilizado para mitigar el desbalance de clases presente en la tarea de inferencia. En la implementación concreta, estos pesos se calculan automáticamente a partir de la distribución observada en el conjunto de entrenamiento y luego se incorporan a la función de pérdida, asignando mayor importancia a las clases menos representadas. Un extracto del código usado para este cálculo se muestra en el Anexo~\ref{sec:anexo_fragmentos_codigo}, Código~\ref{anxcode:class_weights_dict}.
+
+
 
 También se decidió generar representaciones vectoriales (embeddings) de los nodos utilizando el algoritmo \textbf{DeepWalk}, para comparar su desempeño respecto a los embeddings generados por la GNN. A diferencia de las GNN, DeepWalk se basa únicamente en la estructura del grafo.\\
 
@@ -1291,6 +1568,8 @@ Al igual que en el \textit{benchmark} mencionado previamente (Sección~\ref{sec:
 
 La Figura~\ref{benchmark_repo_estructura} muestra la estructura del repositorio que se utilizó para los experimentos utilizando GNNs. El directorio contiene los datos, los resultados, los módulos implementados y diversos notebooks con los diferentes enfoques que se utilizaron.\\
 
+{
+    \renewcommand{\lstlistingname}{Formato}
 \begin{lstlisting}[basicstyle=\ttfamily, label=benchmark_repo_estructura, frame=single, caption=Estructura del repositorio de los experimentos para la tarea de inferencia usando GNNs.]
 data/
 results/
@@ -1305,6 +1584,7 @@ create_as_attr.ipynb
 create_graph.ipynb
 utils.py
 \end{lstlisting}
+}
 
 Dentro del directorio \texttt{data/} se almacenan todos los archivos necesarios para la realización de los experimentos: los embeddings de los Sistemas Autónomos generados durante el entrenamiento, los modelos entrenados, los archivos necesarios para la construcción del grafo de ASes, así como las RIBs ya sanitizadas, los \textit{datasets} con las relaciones entre ASes extraídas de CAIDA y los archivos provenientes de PeeringDB.\\
 
@@ -1410,6 +1690,5 @@ Finalmente, el archivo \texttt{create\_as\_attr.ipynb} se encarga de descargar y
 
 % Ahi es cuando se mpzo a optimmizar el codigo para crear el datast con todos los AS PATHS y se logro. Pero luego al corrr en l pc la funcion de la librria para leer el grafo moria. 
 % Siqu se corrio en colab.
-
 
 

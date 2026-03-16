@@ -4,6 +4,7 @@ En este capítulo se presentan conceptos fundamentales para la comprensión de e
 Se comienza con una descripción del funcionamiento de Internet, su estructura y componentes fundamentales. Luego, se explica el protocolo de enrutamiento BGP, a través del cual se obtuvo la información de ruteo para construir el grafo.
 Finalmente, se provee una explicación del funcionamiento de las Redes Neuronales de Grafos (GNN), herramienta que se utilizó para la tarea de inferencia de relaciones económicas entre Sistemas Autónomos.\\
 
+
 \section{Internet} \label{internet_section}
 
 El \textbf{Internet} es una \textbf{red global de redes} que interconecta miles de dispositivos en todo el mundo que proporcionan servicios a aplicaciones distribuidas~\cite{Computer-Networking}. Entre estos dispositivos se encuentran computadoras, teléfonos celulares, servidores de contenido y muchos otros.\\
@@ -48,7 +49,7 @@ En la Figura~\ref{fig:topologia-ASes} se observa una serie de Sistemas Autónomo
 
 Otro concepto importante para entender la estructura de Internet son los Internet Exchange Points (IXPs). Estos corresponden a puntos de interconexión, donde múltiples ASes se conectan, y establecen conexión con otros ASes sin necesidad de estar directamente conectados.
 
-Más información sobre los Sistemas Autónomos y los IXPs puede encontrarse en los Anexos \ref{sec:sistemas_autonomos_section} y \ref{sec:ixp_section}, respectivamente.
+Más información sobre los Sistemas Autónomos y los IXPs puede encontrarse en los Anexos \ref{sec:anexo_sistemas_autonomos} y \ref{sec:anexo_internet_exchange_points}, respectivamente.
 
 
 \section{Ruteo}
@@ -87,6 +88,7 @@ BGP~\cite{RFC-BGP} pertenece al tipo dinámico; este se encarga de analizar toda
 Luego, comparte esta información con sus ASes vecinos, quienes a su vez repiten el proceso. 
 Así, cada Sistema Autónomo (AS) genera caminos hacia los distintos prefijos de Internet y, cuando ocurren cambios en la red, BGP también se encarga de actualizar las rutas mediante el intercambio de mensajes \textit{UPDATE}.\\
 
+A diferencia de otros protocolos de enrutamiento que buscan principalmente caminos mínimos o métricas de costo, BGP es un protocolo \textbf{basado en políticas}. Esto significa que la selección y propagación de rutas no depende únicamente de criterios técnicos, sino también de reglas administrativas y acuerdos comerciales definidos por cada Sistema Autónomo. Por esta razón, BGP no solo refleja conectividad entre redes, sino también decisiones económicas y estratégicas que influyen directamente en la estructura observable del enrutamiento interdominio.\\
 
 BGP comienza una vez que se ha establecido la conexión TCP entre los pares BGP, estos intercambian mensajes \textit{OPEN} para confirmar los parámetros de la sesión. Luego, envían un mensajes \textit{KEEPALIVE} para confirmar la conexión.\\
 
@@ -94,6 +96,8 @@ La información que se intercambia en primera instancia consiste en una porción
 Además, para asegurar que la conexión sigue activa, los pares BGP intercambian cada cierto tiempo mensajes \textit{KEEPALIVE}.\\
 
 En caso de que se detecte algún tipo de error durante la conexión, se envía un mensaje \textit{NOTIFICATION} el cual indica el tipo de error y tras su envío la conexión BGP se cierra y todas las rutas aprendidas en la sesión son eliminadas.\\
+
+Uno de los atributos más relevantes en BGP para esta tesis es \texttt{AS\_PATH}, el cual registra la secuencia de Sistemas Autónomos atravesados por un anuncio antes de alcanzar el AS que lo recibe. Este atributo permite reconstruir caminos observados entre ASes y, por lo tanto, construir una aproximación de la topología AS-level de Internet. En este trabajo, las rutas extraídas desde las tablas RIB se representan precisamente a partir de este atributo, ya que cada secuencia de ASes permite identificar conexiones adyacentes observadas en el plano de control.\\
 
 La Figura~\ref{fig:Funcionamiento-BGP} muestra cómo BGP propaga la información de ruteo entre distintos AS.
 Cada sistema autónomo anuncia la dirección de destino a sus pares, en este caso específico el AS 64503 anuncia su dirección a sus pares $64502$ y $64504$, quienes a su vez anuncian la dirección a sus pares, modificando el \textit{AS\_PATH}  a medida que la información se propaga. Finalmente, el AS 64501 recibe estos anuncios y, basándose en la información acumulada, determina la mejor ruta para alcanzar la red del AS 64503.\\
@@ -108,6 +112,17 @@ Cada sistema autónomo anuncia la dirección de destino a sus pares, en este cas
 
 
 Más información sobre los tipos de mensajes del protocolo puede encontrarse en el Anexo \ref{sec:anexo_mensajes_bgp}.
+
+% TODO:
+\subsection{Prefijos IP y su asociación con Sistemas Autónomos}
+Un \textbf{prefijo IP} corresponde a un bloque de direcciones IP representado mediante notación CIDR (\textit{Classless Inter-Domain Routing}), por ejemplo \texttt{192.0.2.0/24}. Esta notación indica qué parte de la dirección identifica a la red y qué parte queda disponible para los hosts. En Internet, los prefijos constituyen las unidades básicas de alcanzabilidad que se anuncian mediante BGP.\\
+
+Cada Sistema Autónomo administra o anuncia uno o más prefijos IP, los cuales representan redes que pueden ser alcanzadas a través de dicho AS. Cuando un AS anuncia un prefijo en BGP, informa a sus vecinos que ese bloque de direcciones puede alcanzarse a través suyo, ya sea porque es el origen del prefijo o porque conoce una ruta válida hacia él.\\
+
+A medida que el anuncio de un prefijo se propaga entre distintos Sistemas Autónomos, el atributo \texttt{AS\_PATH} registra la secuencia de ASes atravesados por la ruta. De esta manera, BGP no solo indica qué prefijos son alcanzables, sino también a través de qué secuencia de Sistemas Autónomos puede llegarse a ellos. En esta tesis, esta relación entre prefijos y caminos AS es fundamental, ya que las rutas observadas en las tablas RIB permiten construir una aproximación de la topología AS-level de Internet.\\
+
+Así, las tablas RIB almacenan anuncios de prefijos junto con atributos como \texttt{AS\_PATH}, constituyendo una fuente clave para reconstruir rutas observadas entre Sistemas Autónomos.\\
+
 
 \subsection{\textbf{BGP} Routing Information Base (RIB)}
 
@@ -126,7 +141,7 @@ primero, se reciben los mensajes \textit{UPDATE} de los vecinos, los cuales se a
 
 Es importante destacar que las bases de datos que almacenan la información de rutas BGP no son lo mismo que la tabla de ruteo de un router, que es la que el router utiliza para realizar el forwarding de los paquetes. Las rutas almacenadas en la RIB deben cumplir con ciertos criterios, definidos por el software o el proveedor del router, para ser agregadas a la tabla de ruteo.\\
 
-
+En esta tesis, las tablas RIB son especialmente importantes porque constituyen la fuente principal desde la cual se extrajeron las rutas BGP utilizadas para construir el grafo de Internet. En particular, el atributo \texttt{AS\_PATH} contenido en estas tablas permite identificar pares adyacentes de Sistemas Autónomos y generar la estructura de conexiones observadas entre ellos. De esta manera, las RIBs actúan como una representación del conocimiento de alcanzabilidad mantenido por los routers BGP y, al mismo tiempo, como una fuente de datos clave para el análisis topológico realizado en este trabajo.\\
 \section{Redes Neuronales}
 
 A continuación, se presenta una introducción básica a las Redes Neuronales, para luego pasar al funcionamiento y arquitecturas básicas  de las Redes Neuronales de Grafos, las cuales fueron utilizadas en el desarrollo de esta tesis.\\
@@ -167,6 +182,18 @@ Durante el entrenamiento de las Redes Neuronales, se emplea el descenso de gradi
 En problemas de regresión, se suele utilizar funciones como el Mean Squared Error y Mean Absolute Error, mientras que en problemas de clasificación, destaca la Cross-Entropy Loss. \\
 
 
+
+
+% TODO: Revisar/leer
+\subsection{Embeddings y representaciones vectoriales}
+
+Un \textit{embedding} corresponde a una representación vectorial densa de una entidad en un espacio de menor dimensión, diseñada para capturar propiedades relevantes de dicha entidad. En el contexto de aprendizaje automático, los embeddings permiten transformar objetos discretos o estructurados, como palabras, nodos o Sistemas Autónomos, en vectores numéricos que pueden ser utilizados como entrada para modelos predictivos.\\
+
+En esta tesis, los embeddings de nodos representan a los Sistemas Autónomos dentro de la topología AS-level de Internet. La idea es que nodos con roles o posiciones estructurales similares dentro del grafo deberían poseer representaciones vectoriales cercanas en el espacio latente. Estas representaciones pueden luego utilizarse para tareas posteriores, como la clasificación de relaciones entre pares de ASes.\\
+
+En el caso de las Redes Neuronales de Grafos, los embeddings se aprenden a partir de la estructura de conectividad del grafo y, cuando están disponibles, también a partir de atributos asociados a los nodos. De esta manera, la representación final de cada nodo combina información local, estructural y semántica, permitiendo modelar tareas más complejas que aquellas basadas únicamente en atributos tabulares.
+
+% TODO: Agregar imagen
 \section{Graph Neural Network (GNN)}
 
 Las GNN son una arquitectura de redes neuronales especialmente diseñada para realizar predicciones basadas en datos representativos de grafos~\cite{scarselli_graph_2009}. A diferencia de las Redes Neuronales convencionales, las GNNs reciben datos en forma de tensores que pueden representar nodos, atributos de nodos, aristas y atributos de aristas.\\
@@ -239,6 +266,10 @@ Donde $\sigma$ se define como la función de activación, $h^{(l)}$ la matriz de
 Es así como GCN permite la creación de embeddings para los nodos de un grafo dada la matriz de adyacencia de este, lo que quiere decir que debe conocer el grafo completo para poder realizar la tarea de aprendizaje. Este es un enfoque transductivo, en contraste a otros enfoques inductivos como GraphSAGE.\\
 
 \subsection{Graph Attention Network (GAT)}
+
+Antes de describir la arquitectura \textit{Graph Attention Network} (GAT), es útil introducir el concepto de \textbf{mecanismo de atención}. En términos generales, un mecanismo de atención permite que un modelo asigne distinta importancia relativa a los elementos de entrada al momento de construir una representación. En lugar de tratar toda la información de manera uniforme, el modelo aprende qué partes son más relevantes para la tarea que se desea resolver.\\
+
+En el caso de grafos, esto significa que un nodo no necesariamente debe considerar a todos sus vecinos con el mismo peso, sino que puede aprender cuáles vecinos aportan más información para actualizar su representación. En una GAT, este mecanismo se implementa aprendiendo coeficientes de atención para cada par de nodos conectados. Estos coeficientes indican cuánto influye cada vecino en la nueva representación del nodo central, permitiendo una agregación más flexible que la suma o el promedio uniforme utilizados en otras arquitecturas.
 
 Otra variante de MPNN son las Graph Attention Networks (GAT). A diferencia de una Red Neuronal de Convolución, GAT incorpora un mecanismo de atención que permite que cada nodo pondere de forma diferenciada, indicando la importancia de las representaciones de cada vecino para la actualización de las características de un nodo~\cite{GAT}.\\
 

@@ -24,7 +24,7 @@ utilizando \textbf{enfoques heurísticos}~\cite{ASRank,Inferring-Multilateral-Pe
 Estos métodos han permitido construir vistas aproximadas de las \textbf{relaciones económicas} 
 de Internet, a partir de reglas, observaciones de rutas BGP y supuestos. 
 Más recientemente, algunos trabajos han incorporado técnicas de 
-\textbf{aprendizaje automático (Machine Learning)} para automatizar este 
+\textbf{Machine Learning} para automatizar este 
 proceso~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning}, 
 logrando mejoras en la clasificación de relaciones, aunque sin aprovechar plenamente la 
 estructura de grafo inherente a los datos de Internet.\\
@@ -80,11 +80,12 @@ Autónomos, comparando su desempeño con métodos existentes del estado del arte
 
 % Conocer las relaciones entre los ASes es de vital importancia, ya que permite entender el  comportamiento del tráfico de Internet, detectar posibles ataques y fallos en la red, y optimizar el ruteo de los paquetes. Sin embargo estas no son de acceso público, por lo que inferir estas relaciones es un problema de gran relevancia en la actualidad. A través de las rutas anunciadas mediante BGP, es posible inferir el tipo de relación  entre los ASes. 
 \section{Hipótesis}
-
-Las \textbf{Redes Neuronales de Grafos (GNNs)} son capaces de capturar patrones estructurales presentes en la topología AS-level de Internet, representada  a partir de información de enrutamiento BGP, permitiendo obtener una \textit{Accuracy} superior  a las metodologías del estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank} en la tarea de inferencia de relaciones económicas entre Sistemas Autónomos”.\\
-
 % Las \textbf{Redes Neuronales de Grafos (GNNs)} pueden ofrecer una \textit{Accuracy} superior a las metodologías del estado del arte~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank} en la tarea de \textbf{inferencia del tipo de relación económica entre Sistemas Autónomos}. Además, las representaciones aprendidas por las GNNs pueden proporcionar \textbf{información estructural} y \textbf{semántica} sobre la topología de Internet, permitiendo identificar patrones de interconexión, características de los ASes y dinámicas subyacentes en las \textbf{relaciones comerciales}, lo cual resulta relevante para \textbf{investigadores} y \textbf{operadores} de red interesados en mejorar la \textbf{visibilidad}, \textbf{seguridad} y \textbf{resiliencia} del ecosistema de interconexión global.\\
 
+Las Redes Neuronales de Grafos (GNNs) son capaces de capturar patrones estructurales relevantes 
+presentes en la topología AS-level de Internet, representada a partir de información de enrutamiento BGP,
+ y que dichas representaciones pueden ser utilizadas para inferir relaciones económicas entre Sistemas Autónomos, 
+obteniendo un desempeño comparable en Accuracy a métodos existentes del estado del arte.~\cite{UnveilingtheTypeRelationshipBetweenAutonomousSystemsUsingDeepLearning,ASRank}
 
 
 
@@ -98,9 +99,15 @@ Las \textbf{Redes Neuronales de Grafos (GNNs)} son capaces de capturar patrones 
 % Desarrollando un \textbf{\textit{benchmark}} que permita analizar en qué condiciones y cuáles son atributos relevantes de los Sistemas Autónomos que ofrecen una mejor performance.
 
 
-El objetivo de esta tesis es analizar el comportamiento de distintas arquitecturas de \textbf{Redes Neuronales de Grafos (GNNs)} sobre la topología de Internet a nivel de Sistemas Autónomos, representada como un grafo construido a partir de información de enrutamiento BGP.\\
+El objetivo de esta tesis es analizar el comportamiento de distintas arquitecturas de 
+\textbf{Redes Neuronales de Grafos (GNNs)} sobre la topología de Internet a nivel de Sistemas Autónomos, 
+representada como un grafo construido a partir de información de 
+enrutamiento BGP.\\
 
-En particular, se estudia si estos modelos son capaces de capturar patrones estructurales del grafo AS-level y mejorar la inferencia de relaciones económicas entre Sistemas Autónomos. Para ello, se desarrolla un \textbf{benchmark experimental} que permite comparar distintas arquitecturas de GNN con métodos heurísticos y de aprendizaje automático del estado del arte.
+En particular, se estudia si estos modelos son capaces de capturar patrones estructurales del grafo AS-level 
+y contribuir a la inferencia de relaciones económicas entre Sistemas Autónomos. Para ello, se desarrolla un 
+\textbf{benchmark experimental} que permite comparar distintas arquitecturas de GNN con métodos heurísticos 
+y de Machine Learning del estado del arte.
 
 
 

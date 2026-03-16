@@ -1,0 +1,33 @@
+\section{Conceptos adicionales de grafos para modelado} \label{sec:anexo_conceptos_grafos_modelado}
+
+Este anexo fija notación y definiciones básicas sobre grafos utilizadas a lo largo de la tesis, tanto para la construcción de la topología a nivel de Sistemas Autónomos como para el uso de modelos de aprendizaje sobre grafos.
+
+\subsection{Formalización de grafos}
+
+Un grafo es una estructura discreta formada por un conjunto de vértices (o nodos) y un conjunto de aristas que conectan pares de nodos. Formalmente, se define como $G=(V,E)$, donde $V$ es un conjunto no vacío de nodos y $E$ es un conjunto de aristas.
+
+Usamos $v_i \in V$ para denotar que un nodo forma parte del grafo, y $e_{ij}=(v_i,v_j)\in E$ para indicar que existe una arista entre los nodos $v_i$ y $v_j$. En un grafo no dirigido, $e_{ij}$ representa una conexión bidireccional; en un grafo dirigido, la arista tiene orientación y expresa una relación desde $v_i$ hacia $v_j$.
+
+La vecindad de un nodo $v_i$ se define como $N(v_i)=\{v_j \in V : (v_i,v_j)\in E\}$. El número de nodos y aristas se denota por $n=|V|$ y $m=|E|$, respectivamente.
+
+Una representación habitual es la matriz de adyacencia $A\in\mathbb{R}^{n\times n}$, donde:
+\[
+A_{ij} =
+\begin{cases}
+1 & \text{si } e_{ij}\in E,\\
+0 & \text{si } e_{ij}\notin E.
+\end{cases}
+\]
+En grafos ponderados puede utilizarse $A_{ij}=w_{ij}$ para reflejar el peso asociado a la arista. En problemas de aprendizaje automático suele considerarse, además, una matriz de atributos $X\in\mathbb{R}^{n\times d}$, donde cada fila corresponde a un vector de características de un nodo.
+
+\subsection{Categorías de grafos usadas en modelado}
+
+\begin{itemize}
+    \item \textbf{Grafos dirigidos/no dirigidos}: en grafos dirigidos cada arista tiene una dirección específica, indicando un flujo unidireccional entre nodos; en grafos no dirigidos las aristas no tienen orientación y representan conexiones bidireccionales.
+    \item \textbf{Grafos ponderados/no ponderados}: en grafos ponderados cada arista posee un valor asociado (por ejemplo, frecuencia de observación, capacidad o costo); en grafos no ponderados solo se modela existencia/ausencia de conexión.
+    \item \textbf{Grafos homogéneos/heterogéneos}: en grafos homogéneos nodos y aristas son de un único tipo; en grafos heterogéneos pueden existir distintos tipos de nodos y/o relaciones.
+    \item \textbf{Grafos estáticos/dinámicos}: un grafo estático mantiene su topología fija en el tiempo, mientras que un grafo dinámico cambia su estructura (nodos/aristas/pesos) conforme evoluciona el sistema observado.
+\end{itemize}
+
+En este trabajo, la topología de conectividad a nivel de AS se modela usualmente como un grafo no dirigido para describir adyacencias, mientras que la inferencia de relaciones económicas requiere distinguir dirección en los enlaces (por ejemplo, proveedor$\rightarrow$cliente).
+
