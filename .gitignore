@@ -26,8 +26,7 @@ build_tmp.pdf
 main_tmp.bbl
 pdflatex*.fls
 
-# Generated main output PDF (remove this line if you want to version it)
-main.pdf
+# Generated main output PDF (tracked)
 
 # Local scratch exports
 build_tmp_informe_valentina.txt
