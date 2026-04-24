@@ -1,0 +1,44 @@
+name: Compile LaTeX PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.tex'
+      - '**.bib'
+      - '**.bst'
+      - 'img/**'
+      - 'Anexos/**'
+      - 'Capitulos/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          latexmk_use_pdflatex: true
+          latexmk_shell_escape: true
+          args: -pdf -interaction=nonstopmode -halt-on-error
+
+      - name: Commit generated PDF
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add main.pdf
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "ci: actualiza main.pdf compilado [skip ci]"
+            git push
+          fi

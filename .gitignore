@@ -1,5 +1,8 @@
 preguntas*
 
+# Build output directory
+build/
+
 # LaTeX temporary/build files
 *.aux
 *.bbl
